@@ -5,13 +5,13 @@
 - 요청 > 특정 브랜드 크롤링>비교>클렌징>DB
 
 
-## crawling
+## crawling.py
 ### 브랜드 크롤링
 1. 해당 브랜드가 api/html/manual중 어디에 속하는지 판단 후 크롤링
 2. data/brand/crawling/old.json에 new.json 덮어쓰기(처음이라면 복사)
 3. data/brand/crawling/new.json 에 저장
 
-결과 : brand, name, category, color, volume, type, salePrice, originalPrice, url, image
+결과 : brand, name, color, volume, type, salePrice, originalPrice, url, image
 createAt, updateAt
 
 ## cleansing
@@ -38,9 +38,14 @@ createAt, updateAt
 
 
 # 크롤링방법
-## python - 어떤 모듈?
-- urllib > 정빈 정리
-- selenium > 영진
+## python 
+- urllib, bs4, selenium 활용
+- urllib으로 page 정보 request, bs4 이용해서 필요한 데이터 가져옴.
+- 페이지에 담긴 내용이 바뀌어도 url 주소가 바뀌지 않는 경우
+- ex : urllib으로는 제어할 수 없는 JavaScript 요소가 있는 페이지를 다루어야 할 때
+-      urllib을 통한 접속이 막혀 있는 사이트를 스크래핑 할 때)
+- selenium으로 직접 firefox나 chromedriver 을 작동시켜서 데이터를 수집할 수 있으나, 시간이나 안정성 면에서 최대한 사용을 줄이는 것이 좋음.
+
 
 ## js
 - 진구님
