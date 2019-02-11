@@ -11,7 +11,7 @@
 2. data/brand/crawling/old.json에 new.json 덮어쓰기(처음이라면 복사)
 3. data/brand/crawling/new.json 에 저장
 
-결과 : brand, name, color, volume, type, salePrice, originalPrice, url, image
+결과 : brand, name, category, color, volume, type, salePrice, originalPrice, url, image
 
 
 ## cleansing
