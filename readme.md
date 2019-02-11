@@ -5,14 +5,14 @@
 - 요청 > 특정 브랜드 크롤링>비교>클렌징>DB
 
 
-## crawling.py
+## crawling
 ### 브랜드 크롤링
 1. 해당 브랜드가 api/html/manual중 어디에 속하는지 판단 후 크롤링
 2. data/brand/crawling/old.json에 new.json 덮어쓰기(처음이라면 복사)
 3. data/brand/crawling/new.json 에 저장
 
 결과 : brand, name, color, volume, type, salePrice, originalPrice, url, image
-createAt, updateAt
+
 
 ## cleansing
 ### status 포함된 data 클렌징
@@ -20,7 +20,7 @@ createAt, updateAt
 2. data/brand/crawling/new.json 클렌징!
 3. data/brand/cleansing/new.json에 저장
 
-결과 : crawling column + skuid
+결과 : cleansing values
 
 ## compare
 ### 새로 크롤링한 데이터와 기존 데이터 비교
@@ -28,7 +28,8 @@ createAt, updateAt
 2. data/brand/cleansing/old, new 비교
 3. data/brand/compare/new.json에 저장 
 
-결과 : cleansing column + status, 정보갱신
+결과 : cleansing column + status, 정보갱신, SKUid
+createAt(신규), updateAt(변동)
 
 
 ## AWS 연동
