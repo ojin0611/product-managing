@@ -3,11 +3,9 @@ from datetime import datetime
 import sys
 import os
 
-if sys.argv[1] is not None:
-    brand = sys.argv[1]
+
 
 def compare(brand):
-    
     now = datetime.now()
     request_time = '%s-%s-%s / %s:%s' % ( now.year, now.month, now.day, now.hour, now.minute )
 
@@ -41,15 +39,17 @@ def compare(brand):
         if new_dict not in old_cleansing:
             for old_dict in old_cleansing:
                 if new_dict['brand'] == old_dict['brand'] and new_dict['name'] == old_dict['name'] and new_dict['color'] == old_dict['color'] and new_dict['volume'] == old_dict['volume']: # and new_dict['type'] == old_dict['type']:
-                    new_dict['status'] = "정보갱신" # sku 단위는 변화없으나, 정보만 변한 상태.
-                    new_dict['discon'] = "#" # 단종이 아님 
+                    new_dict['info_status'] = "갱신요청" # sku 단위는 변화없으나, 부수 항목(price, image, url, sale_status 만 변한 상태
+                    new_dict['discon'] = "#" # 단종이 아님
                     new_dict['request_time'] = request_time
+                    new_dict['sale_status'] = "#"
                     renew.append(new_dict)
                     break
                 else:
-                    new_dict['status'] = "등록요청"
+                    new_dict['info_status'] = "등록요청"
                     new_dict['discon'] = "#" # 단종이 아님
                     new_dict['request_time'] = request_time
+                    new_dict['sale_status'] = "#"
                     new_pos.append(new_dict)
                     break
 
@@ -60,9 +60,10 @@ def compare(brand):
                     before_renew.append(new_dict) # just for check
                     pass
                 else:
-                    old_dict['status'] = "정보갱신"
+                    old_dict['info_status'] = "갱신요청"
                     old_dict['discon'] = "단종" # 공식 사이트에서 더 이상 그 제품을 찾을 수 없는 경우를 의미.
                     old_dict['request_time'] = request_time
+                    old_dict['sale_status'] = "#"
                     discon.append(old_dict)
                     break
 
@@ -95,4 +96,7 @@ def compare(brand):
     with open(new_file,'w',encoding='UTF-8') as file:
         file.write(output)
 
-compare(brand)
+if __name__ == "__main__":
+    if sys.argv[1] is not None:
+        brand = sys.argv[1]
+        compare(brand)
