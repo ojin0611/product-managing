@@ -2,82 +2,102 @@ import json
 import pandas as pd
 from pandas.io.json import json_normalize
 from pprint import pprint
+from datetime import datetime
+import sys
+import os
 
-with open('../data/drjart/cleansing/old.json', encoding="UTF-8") as old_data:
-    old_cleansing = json.load(old_data)
-    old_df = pd.DataFrame.from_dict(json_normalize(old_cleansing), orient='columns')
+if sys.argv[1] is not None:
+    brand = sys.argv[1]
 
-with open('../data/drjart/cleansing/new.json', encoding="UTF-8") as new_data:
-    new_cleansing = json.load(new_data)
-    new_df = pd.DataFrame.from_dict(json_normalize(new_cleansing), orient='columns')
+def compare(brand):
+    
+    now = datetime.now()
+    request_time = '%s-%s-%s / %s:%s' % ( now.year, now.month, now.day, now.hour, now.minute )
 
-sku_list = ['name', 'color', 'volume', 'type']
+    old_path = '../data/' + brand + "/cleansing/old.json"
+    with open(old_path, encoding="UTF-8") as old_data:
+        old_cleansing = json.load(old_data)
+        old_df = pd.DataFrame.from_dict(json_normalize(old_cleansing), orient='columns')
 
-old_items = [list(old_dict.values()) for old_dict in old_cleansing]
+    new_path = '../data/' + brand + '/cleansing/new.json'
+    with open('../data/drjart/cleansing/new.json', encoding="UTF-8") as new_data:
+        new_cleansing = json.load(new_data)
+        new_df = pd.DataFrame.from_dict(json_normalize(new_cleansing), orient='columns')
 
-renew_list = ['url', 'image', 'salePrice', 'originalPrice']
+    #sku_attributes = ['brand', 'name', 'color', 'volume', 'type']
 
-not_changed_data = []
-# old data에만 있는 것
-old_only = []
-# new data에만 있는 것
-new_only = []
-# --> old_only와 new data 비교 => name, color, volume, type 같으면 renew
-# --> 다르면 old_only 에 있는지 new_only 에 있는지 확인 : old_only -> discon, new_only -> newpos
-# 갱신되야 하는 것
-renew = []
-# 판매 상태 : 한정판매/할인중/세트 존재
-# 처리 상태(status) :
-# 등록요청 (크롤러가 새롭게 가져온 제품에 대해 admin 이 확인하도록 요청)
-# 등록검토중(신규 제품에 대해 admin이 확인 중)
-# 등록완료(신규 제품에 대해 admin이 카테고리 선택 및 확인완료)
-# 에러(코드수정필요) / 크롤러가 데이터 수집 및 처리하는 과정에서 문제가 생긴 상태 (엔지니어 팀에게 수정 요청)
-# 수정중(기존 확인) / 고객에게 제품 내용에 대한 수정 요청이 와서 admin이 확인 중인 상태
-# -> 제품 url을 통해 확인 해본 결과, 이상 없는 경우 => 등록완료로 다시 전환.
-# -> 제품 url을 통해 확인 해본 결과, 크롤러에는 문제가 없으나 정보를 수정할 필요는 있는 경우 => 해당 정보 수정 및 원래 내용을 수정 전 내용에 추가, 등룍완료로 다시 전환.
-# -> 제품 url을 통해 확인 해본 결과, 크롤링 자체가 잘못된 경우 -> 에러로 전환 및 엔지니어 팀에게 수정 요청.
-# 단종 : 단종된 제품
-# 수정 전 내용 : admin이 직접 내용을 바꾸기 전의 크롤러가 확보했던 데이터 
+    #renew_attributes = ['url', 'image', 'salePrice', 'originalPrice']
 
-# 단종된 것
-discon = []
-# 새로 등록 된 것
-newpos = []
+    # old data에만 있는 것
+    old_only = []
+    # new data에만 있는 것
+    new_only = []
+    # --> old_only와 new data 비교 => name, color, volume, type 같으면 renew
+    # --> 다르면 old_only 에 있는지 new_only 에 있는지 확인 : old_only -> discon, new_only -> newpos
+    # 갱신되야 하는 것
+    renew = []
+    before_renew = []
+    # 단종된 것
+    discon = []
+    # 새로 등록 된 것
+    new_pos = []
 
-for new_dict in new_cleansing:
-    if new_dict in old_cleansing:
-        not_changed_data.append(new_dict)
-    else:
-        diff_data.append(new_dict)
+    for new_dict in new_cleansing:
+        if new_dict not in old_cleansing:
+            for old_dict in old_cleansing:
+                if new_dict['brand'] == old_dict['brand'] and new_dict['name'] == old_dict['name'] and new_dict['color'] == old_dict['color'] and new_dict['volume'] == old_dict['volume']: # and new_dict['type'] == old_dict['type']:
+                    new_dict['status'] = "정보갱신" # sku 단위는 변화없으나, 정보만 변한 상태.
+                    new_dict['discon'] = "#" # 단종이 아님 
+                    new_dict['request_time'] = request_time
+                    renew.append(new_dict)
+                    break
+                else:
+                    new_dict['status'] = "등록요청"
+                    new_dict['discon'] = "#" # 단종이 아님
+                    new_dict['request_time'] = request_time
+                    new_pos.append(new_dict)
+                    break
 
-for old_dict in old_cleansing:
-    if old_dict not in new_cleansing:
-        diff_data.append(new_dict)
+    for old_dict in old_cleansing:
+        if old_dict not in new_cleansing:
+            for new_dict in new_cleansing:
+                if new_dict['brand'] == old_dict['brand'] and new_dict['name'] == old_dict['name'] and new_dict['color'] == old_dict['color'] and new_dict['volume'] == old_dict['volume']:
+                    before_renew.append(new_dict) # just for check
+                    pass
+                else:
+                    old_dict['status'] = "정보갱신"
+                    old_dict['discon'] = "단종" # 공식 사이트에서 더 이상 그 제품을 찾을 수 없는 경우를 의미.
+                    old_dict['request_time'] = request_time
+                    discon.append(old_dict)
+                    break
 
+# just for check, if below two line not equal zero, check the code above
+    print(len(old_cleansing) - len(new_cleansing) + len(new_pos) - len(discon) + len(renew))
+    print(len(renew) - len(before_renew))
 
-new_posted_list = []
+    result_json = renew + new_pos + discon
+# just for check
+# print(result_json) 
 
-for diff_dic in diff_data:
-    if diff_dic['brand'] not in old_brands:
-        new_posted_list.append(diff_dic)
-    elif diff_dic['category'] not in old_brands:
-        new_posted_list.append(diff_dic)
-    elif diff_dic['name'] not in old_brands:
-        new_posted_list.append(diff_dic)
-    elif diff_dic['color'] not in old_brands:
-        new_posted_list.append(diff_dic)
-    elif diff_dic['volume'] not in old_brands:
-        new_posted_list.append(diff_dic)
+    output_path = '../data/' + brand + '/compare'
 
-print(len(old_cleansing))
-print(len(new_cleansing))
-print(not_changed_data)
-print(len(not_changed_data))
-print(diff_data)
-print(len(diff_data))
+    # 경로 없으면 디렉토리 생성
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+        
+    new_file = output_path + '/new.json'
+    old_file = output_path + '/old.json'
 
+    # 기존 new file 덮어쓰기
+    if os.path.isfile(new_file):
+        # old file 존재 시 삭제 후 덮어쓰기
+        if os.path.isfile(old_file):
+            os.remove(old_file)
+        os.rename(new_file, old_file)
+        
+    output = json.dumps(result_json,ensure_ascii=False, indent='\t')
+    
+    with open(new_file,'w',encoding='UTF-8') as file:
+        file.write(output)
 
-#for new_dict in new_cleansing:
-#    new_data_set.update(tuple(new_dict.values()))
-
-#print(old_data_set & new_data_set)
+compare(brand)
