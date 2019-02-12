@@ -1,8 +1,8 @@
 import os, sys, re
 import json
-import platform
 import time
 import copy
+import platform
 
 from bs4 import BeautifulSoup as bs          
 from selenium import webdriver
@@ -34,3 +34,4 @@ def writeJSON(jsonString):
 
     with open(new_file,'w',encoding='UTF-8') as file:
         file.write(jsonString)
+
