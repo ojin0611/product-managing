@@ -1,6 +1,8 @@
 import json
 import sys
-
+from glob import glob
+import os
+import subprocess
 def main():
     with open('brandlist.json', encoding='UTF-8') as brandlist:
         brand_dict = json.load(brandlist)
@@ -10,9 +12,14 @@ def main():
         if brand in value:
             print('crawling method :',key)
             if key=='html':
-                print(sys.path)
-                break
+                filelist = glob("./"+brand+"/*.py")
 
+                for file in filelist:
+                    print(file)
+                    #exec(open(file, encoding='utf8').read())
+                    # os.system(file)
+                    subprocess.run(["python", brand+'/'+brand+".py"])
+                break
             if key=='api':
                 pass
             if key=='manual':
@@ -28,3 +35,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

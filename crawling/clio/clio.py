@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
-
 import sys
 sys.path.append('../')
 from crawling import *
 
 def main():
+    
     def readNextPage():
         html = driver.page_source
         soup = bs(html, 'html.parser')
@@ -121,7 +121,7 @@ def main():
     start_time = time.time() 
     #-------------------------------------------------------------#
     for i, itemURL in enumerate(itemList):
-        print(i)
+        print(i,)
         itemURL = seeDetailInfo(itemURL)
         result += getItem(itemURL)
     #-------------------------------------------------------------#
@@ -132,3 +132,5 @@ def main():
     writeJSON(output)
 
 
+if __name__ == "__main__":
+    main()
