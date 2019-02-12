@@ -1,7 +1,4 @@
 import json
-import pandas as pd
-from pandas.io.json import json_normalize
-from pprint import pprint
 from datetime import datetime
 import sys
 import os
@@ -17,12 +14,10 @@ def compare(brand):
     old_path = '../data/' + brand + "/cleansing/old.json"
     with open(old_path, encoding="UTF-8") as old_data:
         old_cleansing = json.load(old_data)
-        old_df = pd.DataFrame.from_dict(json_normalize(old_cleansing), orient='columns')
 
     new_path = '../data/' + brand + '/cleansing/new.json'
     with open('../data/drjart/cleansing/new.json', encoding="UTF-8") as new_data:
         new_cleansing = json.load(new_data)
-        new_df = pd.DataFrame.from_dict(json_normalize(new_cleansing), orient='columns')
 
     #sku_attributes = ['brand', 'name', 'color', 'volume', 'type']
 

@@ -1,5 +1,12 @@
-import os
-import re
+import os, sys, re
+import json
+import platform
+import time
+import copy
+
+from bs4 import BeautifulSoup as bs          
+from selenium import webdriver
+from urllib.request import urlopen
 
 def getNumber(string):
     numExtracter = re.compile('[0-9]+')
