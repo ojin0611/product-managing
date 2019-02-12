@@ -38,11 +38,12 @@ def compare(brand):
     for new_dict in new_cleansing:
         if new_dict not in old_cleansing:
             for old_dict in old_cleansing:
-                if new_dict['brand'] == old_dict['brand'] and new_dict['name'] == old_dict['name'] and new_dict['color'] == old_dict['color'] and new_dict['volume'] == old_dict['volume']: # and new_dict['type'] == old_dict['type']:
+                if new_dict['brand'] == old_dict['brand'] and new_dict['name'] == old_dict['name'] and new_dict['color'] == old_dict['color'] and new_dict['volume'] == old_dict['volume'] and new_dict['type'] == old_dict['type']:
                     new_dict['info_status'] = "갱신요청" # sku 단위는 변화없으나, 부수 항목(price, image, url, sale_status 만 변한 상태
                     new_dict['discon'] = "#" # 단종이 아님
                     new_dict['request_time'] = request_time
                     new_dict['sale_status'] = "#"
+                    new_dict['confirm_time'] = "*"
                     renew.append(new_dict)
                     break
                 else:
@@ -50,13 +51,14 @@ def compare(brand):
                     new_dict['discon'] = "#" # 단종이 아님
                     new_dict['request_time'] = request_time
                     new_dict['sale_status'] = "#"
+                    new_dict['confirm_time'] = "*"
                     new_pos.append(new_dict)
                     break
 
     for old_dict in old_cleansing:
         if old_dict not in new_cleansing:
             for new_dict in new_cleansing:
-                if new_dict['brand'] == old_dict['brand'] and new_dict['name'] == old_dict['name'] and new_dict['color'] == old_dict['color'] and new_dict['volume'] == old_dict['volume']:
+                if new_dict['brand'] == old_dict['brand'] and new_dict['name'] == old_dict['name'] and new_dict['color'] == old_dict['color'] and new_dict['volume'] == old_dict['volume'] and new_dict['type'] == old_dict['type']:
                     before_renew.append(new_dict) # just for check
                     pass
                 else:
@@ -64,6 +66,7 @@ def compare(brand):
                     old_dict['discon'] = "단종" # 공식 사이트에서 더 이상 그 제품을 찾을 수 없는 경우를 의미.
                     old_dict['request_time'] = request_time
                     old_dict['sale_status'] = "#"
+                    old_dict['confirm_time'] = "*"
                     discon.append(old_dict)
                     break
 
