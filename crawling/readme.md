@@ -40,9 +40,14 @@
 
 
 ## Crawler Guide - python
-- urllib
-- selenium
-- bs4
+- urllib : 페이지 정보 받아오기
+- bs4(beautifulsoup) : 필요한 데이터 받아오기
+- selenium : 직접 firefox나 chromedriver 을 작동시켜서 데이터를 수집할 수 있으나, 시간이나 안정성 면에서 최대한 사용을 줄이는 것이 좋다.
+1. 페이지에 담긴 내용이 바뀌어도 url 주소가 바뀌지 않는 경우
+2. urllib으로는 제어할 수 없는 JavaScript 요소가 있는 페이지를 다루어야 할 때
+3. urllib을 통한 접속이 막혀 있는 사이트를 스크래핑 할 때
+=> 이런 경우에는 selenium으로 해야한다.
+
 
 ```python
 from crawling_module import *
