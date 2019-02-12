@@ -1,8 +1,8 @@
 # crawling
 ## 파일 설명
-- brand : 해당 브랜드 크롤링 함수 
-- crawling.py : 자주쓰이는 python 함수
-- api,html,manual.json : 각 브랜드가 어떤 방식으로 크롤링됐는지 기록 (ts, js, python)
+- brand : 해당 브랜드 crawler (홈페이지 링크가 주어지면 상품파일 json을 입력하는 함수) 저장
+- crawling_module.py : system, 저장 위치 등에 따라 유동적으로 변경할 수 있도록!
+- brandlist.json : 각 브랜드가 어떤 방식으로 크롤링됐는지 기록 (ts, js, python, manual)
 - crawling list : https://docs.google.com/spreadsheets/d/1xQvezndG9q9OYohG3FUXVOBo72X-tll46cmgsQIwSR4/edit?usp=sharing
 
 ## Output
@@ -30,23 +30,34 @@
 
 
 
-## Guide - python
+## Crawler Guide - python
 - urllib
 - selenium
 - bs4
 
 ```python
-read(siteHomeURL)
+from crawling_module import *
+import otherModules # bs4, urlopen, selenium, json, ...
+def main():
+    def getCategoryList():
+        return categoryList
+    def getItemList():
+        return itemList
+    def getItem(itemURL):
+        return items
 
-categoryList = getCategoryList() # category urls (or clickable object)
-result = []
-for category in categoryList:
-	read(category)
-	clickSeeMoreButton() # or next page.
-	itemList = getItemList() # item urls
-	for itemURL in itemList:
-        result += getItem(itemURL)
+    path = path_chromedriver()
 
-write(result) # def writeJSON(jsonString) 
+    read(siteHomeURL)
+    categoryList = getCategoryList() # category urls (or clickable object)
+    result = []
+    for category in categoryList:
+        read(category)
+        clickSeeMoreButton() # or next page.
+        itemList = getItemList() # item urls
+        for itemURL in itemList:
+            result += getItem(itemURL)
+
+    writeJSON(result) # def writeJSON(jsonString) 
 ```
 

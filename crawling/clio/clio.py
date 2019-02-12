@@ -1,11 +1,26 @@
 #!/usr/bin/env python
 # coding: utf-8
 import sys
+import os, sys, re
+import json
+import time
+import copy
+import platform
+
+from bs4 import BeautifulSoup as bs          
+from selenium import webdriver
+from urllib.request import urlopen
+
+sys.path.append(os.getcwd())
 sys.path.append('../')
-from crawling import *
+from crawling_module import *
 
 def main():
-    
+    def getNumber(string):
+        numExtracter = re.compile('[0-9]+')
+        return int(''.join(numExtracter.findall(string)))
+        
+
     def readNextPage():
         html = driver.page_source
         soup = bs(html, 'html.parser')
@@ -65,7 +80,7 @@ def main():
 
 
         item={'name':'#', 'url':'#', 'image':'#', 'salePrice':'#', 'originalPrice':'#', 'color':'#', 
-                        'category':'#', 'brand':'#','volume':'#'}
+                        'category':'#', 'brand':'#','volume':'#','type':'#'}
         item['name'] = name
         item['image']= image
         item['category']=category
@@ -73,7 +88,7 @@ def main():
         item['salePrice']=salePrice
         item['originalPrice']=originalPrice
         item['brand']=brandName
-        item['url']=driver.current_url
+        item['url']=itemURL
 
         items=[]
         colorList = soup.find('select',{'id':'O_1'})
@@ -99,9 +114,8 @@ def main():
             items.append(item)
         return items
 
-    path = 'chromedriver.exe' if (platform.system() == 'Windows') else '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver'
+    path = path_chromedriver()
     driver = webdriver.Chrome(path)
-
     url_home = 'http://www.cliocosmetic.com/ko/product/list.asp'
     url_products = 'http://www.cliocosmetic.com/ko/product/list.asp'
 
@@ -115,19 +129,20 @@ def main():
         except Exception as e:
             break
 
+    driver.close()
     itemList = list(set(itemList))
     print('상품 개수 :', len(itemList))
     result=[]
     start_time = time.time() 
     #-------------------------------------------------------------#
     for i, itemURL in enumerate(itemList):
-        print(i,)
+
+        print(i+1)
         itemURL = seeDetailInfo(itemURL)
         result += getItem(itemURL)
     #-------------------------------------------------------------#
     print("--- %0.2f seconds ---" %(time.time() - start_time))
 
-    driver.close()
     output = json.dumps(result,ensure_ascii=False, indent='\t')
     writeJSON(output)
 

@@ -3,6 +3,8 @@ import sys
 from glob import glob
 import os
 import subprocess
+import crawling_module
+
 def main():
     with open('brandlist.json', encoding='UTF-8') as brandlist:
         brand_dict = json.load(brandlist)
@@ -11,19 +13,19 @@ def main():
     for key, value in brand_dict.items():
         if brand in value:
             print('crawling method :',key)
-            if key=='html':
+            if key=='python':
                 filelist = glob("./"+brand+"/*.py")
 
                 for file in filelist:
-                    print(file)
-                    #exec(open(file, encoding='utf8').read())
-                    # os.system(file)
-                    subprocess.run(["python", brand+'/'+brand+".py"])
-                break
-            if key=='api':
+                    os.system("cd clio & python clio.py") # 이 때 current directory 변경됨
                 pass
+
+            if key=='js':
+                # do something
+                pass
+
             if key=='manual':
-                break
+                pass
 
             break
 

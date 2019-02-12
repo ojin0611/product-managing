@@ -1,22 +1,13 @@
-import os, sys, re
-import json
-import time
-import copy
+import os, sys
 import platform
 
-from bs4 import BeautifulSoup as bs          
-from selenium import webdriver
-from urllib.request import urlopen
-
-def getNumber(string):
-    numExtracter = re.compile('[0-9]+')
-    return int(''.join(numExtracter.findall(string)))
-    
-
+def path_chromedriver():
+    path = 'chromedriver.exe' if (platform.system() == 'Windows') else '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver'
+    return path
 
 def writeJSON(jsonString):
     brandname = os.getcwd().split('\\')[-1]
-    output_path = '../../data/'+brandname
+    output_path = '../../data/'+brandname+'/crawling'
 
     # 첫 크롤링이면 디렉토리 생성
     if not os.path.exists(output_path):
