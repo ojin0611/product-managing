@@ -1,4 +1,13 @@
 # crawling
+## 브랜드 크롤링
+1. 해당 브랜드가 api/html/manual중 어디에 속하는지 판단 후 크롤링
+2. data/brand/crawling/old.json에 new.json 덮어쓰기(처음이라면 복사)
+3. data/brand/crawling/new.json 에 저장
+
+결과 : brand, name, category, color, volume, type, salePrice, originalPrice, url, image
+
+
+
 ## 파일 설명
 - brand : 해당 브랜드 crawler (홈페이지 링크가 주어지면 상품파일 json을 입력하는 함수) 저장
 - crawling_module.py : system, 저장 위치 등에 따라 유동적으로 변경할 수 있도록!

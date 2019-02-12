@@ -6,13 +6,7 @@
 
 
 ## crawling
-### 브랜드 크롤링
-1. 해당 브랜드가 api/html/manual중 어디에 속하는지 판단 후 크롤링
-2. data/brand/crawling/old.json에 new.json 덮어쓰기(처음이라면 복사)
-3. data/brand/crawling/new.json 에 저장
-
-결과 : brand, name, category, color, volume, type, salePrice, originalPrice, url, image
-
+[자세히 보기](./crawling)
 
 ## cleansing
 ### status 포함된 data 클렌징
