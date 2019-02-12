@@ -3,11 +3,9 @@ from datetime import datetime
 import sys
 import os
 
-if sys.argv[1] is not None:
-    brand = sys.argv[1]
+
 
 def compare(brand):
-    
     now = datetime.now()
     request_time = '%s-%s-%s / %s:%s' % ( now.year, now.month, now.day, now.hour, now.minute )
 
@@ -37,7 +35,6 @@ def compare(brand):
     # 새로 등록 된 것
     new_pos = []
 
-    import ./cl
     for new_dict in new_cleansing:
         if new_dict not in old_cleansing:
             for old_dict in old_cleansing:
@@ -100,4 +97,6 @@ def compare(brand):
         file.write(output)
 
 if __name__ == "__main__":
-    compare(brand)
+    if sys.argv[1] is not None:
+        brand = sys.argv[1]
+        compare(brand)
