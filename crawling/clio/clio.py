@@ -1,16 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-
-from bs4 import BeautifulSoup as bs          
-from selenium import webdriver
-from urllib.request import urlopen
-import json
-import platform
-import time
-import copy
-import os
-
 import sys
 sys.path.append('../')
 from crawling import *
@@ -109,38 +99,33 @@ def getItem(itemURL):
         items.append(item)
     return items
 
+def main():
+    path = 'chromedriver.exe' if (platform.system() == 'Windows') else '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver'
+    driver = webdriver.Chrome(path)
 
-path = 'chromedriver.exe' if (platform.system() == 'Windows') else '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver'
-driver = webdriver.Chrome(path)
+    url_home = 'http://www.cliocosmetic.com/ko/product/list.asp'
+    url_products = 'http://www.cliocosmetic.com/ko/product/list.asp'
 
-url_home = 'http://www.cliocosmetic.com/ko/product/list.asp'
-url_products = 'http://www.cliocosmetic.com/ko/product/list.asp'
+    driver.get(url_products)
 
-driver.get(url_products)
+    itemList = []
+    while True:
+        try:
+            itemList += getItemList()
+            readNextPage()
+        except:
+            break
 
-itemList = []
-while True:
-    try:
-        itemList += getItemList()
-        readNextPage()
-    except:
-        break
+    itemList = list(set(itemList))
+    print('상품 개수 :', len(itemList))
+    result=[]
+    for i, itemURL in enumerate(itemList):
+        print(i)
+        itemURL = seeDetailInfo(itemURL)
+        result += getItem(itemURL)
 
-itemList = list(set(itemList))
-print('상품 개수 :', len(itemList))
-result=[]
-for i, itemURL in enumerate(itemList):
-    print(i)
-    itemURL = seeDetailInfo(itemURL)
-    result += getItem(itemURL)
-
-driver.close()
-output = json.dumps(result,ensure_ascii=False, indent='\t')
-writeJSON(output)
-
-
-# In[ ]:
-
-
+    driver.close()
+    output = json.dumps(result,ensure_ascii=False, indent='\t')
+    writeJSON(output)
 
 
