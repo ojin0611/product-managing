@@ -1,9 +1,25 @@
 import os, sys
 import platform
+from selenium import webdriver
 
-def path_chromedriver():
-    path = 'chromedriver.exe' if (platform.system() == 'Windows') else '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver'
-    return path
+def openChromedriver():
+    if 0:
+        if platform.system() == 'Windows':
+            path = 'chromedriver.exe'  
+        elif platform.system() == 'Linux':
+            path = '/home/ec2-user/chromedriver'
+        else:
+            path = '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver'
+        driver = webdriver.Chrome(path)
+
+    else:
+        # another way
+        options = webdriver.chrome.options.Options()
+        options.headless = True
+        driver = webdriver.Chrome(options=options)
+
+
+    return driver
 
 def writeJSON(jsonString):
     brandname = os.getcwd().split('\\')[-1]

@@ -114,8 +114,7 @@ def main():
             items.append(item)
         return items
 
-    path = path_chromedriver()
-    driver = webdriver.Chrome(path)
+    driver = openChromedriver()
     url_home = 'http://www.cliocosmetic.com/ko/product/list.asp'
     url_products = 'http://www.cliocosmetic.com/ko/product/list.asp'
 
@@ -136,7 +135,8 @@ def main():
     start_time = time.time() 
     #-------------------------------------------------------------#
     for i, itemURL in enumerate(itemList):
-
+        if i>5:
+            break
         print(i+1)
         itemURL = seeDetailInfo(itemURL)
         result += getItem(itemURL)
