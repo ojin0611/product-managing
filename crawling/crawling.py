@@ -5,6 +5,11 @@ import os
 import subprocess
 import crawling_module
 
+if platform.system() == 'Linux':
+    python_version = 'python3 '
+else:
+    python_version = 'python '
+
 def main():
     with open('brandlist.json', encoding='UTF-8') as brandlist:
         brand_dict = json.load(brandlist)
@@ -13,15 +18,13 @@ def main():
     for key, value in brand_dict.items():
         if brand in value:
             print('crawling method :',key)
+            print('directory :',brand)
             if key=='python':
-                filelist = glob(brand+"/*.py") # 모든 python file 실행할것! 추후에 crawler로 이름 바꿔도 됨.
-#                filelist = glob("/*.py")
-                print(filelist)
-
+                filelist = glob(brand+"/*.py") # file name change recommended
                 for file in filelist:
-                    cmd = "cd "+brand+" & python "+file
-
-                    os.system(cmd) # 이 때 current directory 변경됨
+                    cmd = "cd "+brand+" & "+python_version+brand+".py"
+                    print(cmd)
+                    os.system(cmd) # 
                 pass
 
             if key=='js':
@@ -32,11 +35,6 @@ def main():
                 pass
 
             break
-
-    try:
-        print('directory :',sys.argv[1])
-    except Exception as e:
-        print("Error :", e)
 
 
 if __name__ == "__main__":
