@@ -25,13 +25,15 @@ def save_json(jsonstring, brand, activity):
     file_time = '%sy-%sm-%sd-%sh' % (now.year, now.month, now.day, now.hour)
 
     output_path = '../data/' + brand + '/' + activity + '/'
-    # 첫 크롤링이면 디렉토리 생성
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
     new_file = output_path + 'new.json'
     old_file = output_path + 'old.json'
-    history_file = output_path + 'history/' + file_time + ".json"
+    history_path = output_path + 'history/'
+    history_file = history_path + file_time + ".json"
+    if not os.path.exists(history_path):
+        os.makedirs(history_path)
     # 기존 new file 덮어쓰기
     if os.path.isfile(new_file):
         # old file 존재 시 삭제 후 덮어쓰기
@@ -40,6 +42,8 @@ def save_json(jsonstring, brand, activity):
         os.rename(new_file, old_file)
 
     output = json.dumps(jsonstring, ensure_ascii=False, indent='\t')
+
+
 
     with open(new_file, 'w', encoding='UTF-8') as file:
         file.write(output)

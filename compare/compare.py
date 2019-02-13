@@ -2,7 +2,8 @@ import json
 from datetime import datetime
 import sys
 import os
-import compare_module
+sys.path.append("../modules")
+import io_module
 
 
 def compare(brand):
@@ -10,8 +11,8 @@ def compare(brand):
     now = datetime.now()
     request_time = '%s-%s-%s / %s:%s' % (now.year, now.month, now.day, now.hour, now.minute)
 
-    new_cleansing = compare_module.load_json("new", brand, "cleansing")
-    old_cleansing = compare_module.load_json("old", brand, "cleansing")
+    new_cleansing = io_module.load_json("new", brand, "cleansing")
+    old_cleansing = io_module.load_json("old", brand, "cleansing")
     #sku_attributes = ['brand', 'name', 'color', 'volume', 'type']
 
     #renew_attributes = ['url', 'image', 'salePrice', 'originalPrice']
@@ -69,7 +70,7 @@ def compare(brand):
 # just for check
 # print(result_json) 
 
-    compare_module.save_json(result_json, brand, "compare")
+    io_module.save_json(result_json, brand, "compare")
 
 if __name__ == "__main__":
     if sys.argv[1] is not None:
