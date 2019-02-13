@@ -1,6 +1,7 @@
 import os, sys
 import platform
 from selenium import webdriver
+from datetime import datetime
 
 def openChromedriver():
     '''
@@ -41,3 +42,4 @@ def writeJSON(jsonString):
     with open(new_file,'w',encoding='UTF-8') as file:
         file.write(jsonString)
 
+    print(datetime.now())

@@ -14,16 +14,12 @@
 
 ## compare
 [자세히 보기](./compare)
-데이터 저장 경로
-1. data/brand/compare/old.json에 new.json 덮어쓰기(처음이라면 복사)
-2. data/brand/cleansing/old, new 비교
-3. data/brand/compare/new.json에 저장 
 
 
 
 ## AWS 연동
 - product-managing > EC2로 이동
 - data 디렉토리 > S3 디렉토리로 이동
-- cleansing 결과 > DynamoDB로 이동
-
+- S3 > compare 최종 결과를 DynamoDB로 push 
+- athena로 S3 볼 수 있도록 설정
 
