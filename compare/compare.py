@@ -7,8 +7,8 @@ import os
 
 def compare(brand):
     now = datetime.now()
-    request_time = '%sy_%sm_%sd_%sh_%sm' % ( now.year, now.month, now.day, now.hour, now.minute )
-
+    request_time = '%s-%s-%s / %s:%s' % (now.year, now.month, now.day, now.hour, now.minute)
+    file_time = '%sy-%sm-%sd-%sh' % (now.year, now.month, now.day, now.hour)
     old_path = '../data/' + brand + '/cleansing/old.json'
     with open(old_path, encoding="UTF-8") as old_data:
         old_cleansing = json.load(old_data)
@@ -89,7 +89,7 @@ def compare(brand):
         
     new_file = output_path + 'new.json'
     old_file = output_path + 'old.json'
-    history_file = history_path + request_time + ".json"
+    history_file = history_path + file_time + ".json"
 
     # 기존 new file 덮어쓰기
     if os.path.isfile(new_file):
