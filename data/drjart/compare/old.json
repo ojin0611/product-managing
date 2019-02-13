@@ -9,9 +9,11 @@
 		"originalPrice": 11000,
 		"brand": "woodbury",
 		"volume": "#",
-		"status": "등록요청",
+		"info_status": "등록요청",
 		"discon": "#",
-		"request_time": "2019-2-12 / 13:52"
+		"request_time": "2019y_2m_13d_12h_11m",
+		"sale_status": "#",
+		"confirm_time": "*"
 	},
 	{
 		"name": "시크 글로우 워터 쿠션",
@@ -23,9 +25,11 @@
 		"originalPrice": 25000,
 		"brand": "woodbury",
 		"volume": "#",
-		"status": "등록요청",
+		"info_status": "등록요청",
 		"discon": "#",
-		"request_time": "2019-2-12 / 13:52"
+		"request_time": "2019y_2m_13d_12h_11m",
+		"sale_status": "#",
+		"confirm_time": "*"
 	},
 	{
 		"name": "시크 글로우 워터 쿠션",
@@ -37,9 +41,11 @@
 		"originalPrice": 25000,
 		"brand": "woodbury",
 		"volume": "#",
-		"status": "등록요청",
+		"info_status": "등록요청",
 		"discon": "#",
-		"request_time": "2019-2-12 / 13:52"
+		"request_time": "2019y_2m_13d_12h_11m",
+		"sale_status": "#",
+		"confirm_time": "*"
 	},
 	{
 		"name": "시크 글로우 워터 쿠션",
@@ -51,9 +57,11 @@
 		"originalPrice": 25000,
 		"brand": "woodbury",
 		"volume": "#",
-		"status": "등록요청",
+		"info_status": "등록요청",
 		"discon": "#",
-		"request_time": "2019-2-12 / 13:52"
+		"request_time": "2019y_2m_13d_12h_11m",
+		"sale_status": "#",
+		"confirm_time": "*"
 	},
 	{
 		"name": "시크 글로우 워터 쿠션",
@@ -65,9 +73,11 @@
 		"originalPrice": 25000,
 		"brand": "woodbury",
 		"volume": "#",
-		"status": "등록요청",
+		"info_status": "등록요청",
 		"discon": "#",
-		"request_time": "2019-2-12 / 13:52"
+		"request_time": "2019y_2m_13d_12h_11m",
+		"sale_status": "#",
+		"confirm_time": "*"
 	},
 	{
 		"name": "스테이24",
@@ -79,9 +89,11 @@
 		"originalPrice": 11000,
 		"brand": "woodbury",
 		"volume": "#",
-		"status": "정보갱신",
+		"info_status": "갱신요청",
 		"discon": "단종",
-		"request_time": "2019-2-12 / 13:52"
+		"request_time": "2019y_2m_13d_12h_11m",
+		"sale_status": "#",
+		"confirm_time": "*"
 	},
 	{
 		"name": "시크 글로우 워터 쿠션",
@@ -93,9 +105,11 @@
 		"originalPrice": 25000,
 		"brand": "woodbury",
 		"volume": "#",
-		"status": "정보갱신",
+		"info_status": "갱신요청",
 		"discon": "단종",
-		"request_time": "2019-2-12 / 13:52"
+		"request_time": "2019y_2m_13d_12h_11m",
+		"sale_status": "#",
+		"confirm_time": "*"
 	},
 	{
 		"name": "시크 글로우 워터 쿠션",
@@ -107,8 +121,10 @@
 		"originalPrice": 25000,
 		"brand": "woodbury",
 		"volume": "#",
-		"status": "정보갱신",
+		"info_status": "갱신요청",
 		"discon": "단종",
-		"request_time": "2019-2-12 / 13:52"
+		"request_time": "2019y_2m_13d_12h_11m",
+		"sale_status": "#",
+		"confirm_time": "*"
 	}
 ]

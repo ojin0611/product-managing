@@ -7,9 +7,9 @@ import os
 
 def compare(brand):
     now = datetime.now()
-    request_time = '%s-%s-%s / %s:%s' % ( now.year, now.month, now.day, now.hour, now.minute )
+    request_time = '%sy_%sm_%sd_%sh_%sm' % ( now.year, now.month, now.day, now.hour, now.minute )
 
-    old_path = '../data/' + brand + "/cleansing/old.json"
+    old_path = '../data/' + brand + '/cleansing/old.json'
     with open(old_path, encoding="UTF-8") as old_data:
         old_cleansing = json.load(old_data)
 
@@ -78,14 +78,18 @@ def compare(brand):
 # just for check
 # print(result_json) 
 
-    output_path = '../data/' + brand + '/compare'
-
+    output_path = '../data/' + brand + '/compare/'
+    history_path = output_path + 'history/'
     # 경로 없으면 디렉토리 생성
     if not os.path.exists(output_path):
         os.makedirs(output_path)
+
+    if not os.path.exists(history_path):
+        os.makedirs(history_path)
         
-    new_file = output_path + '/new.json'
-    old_file = output_path + '/old.json'
+    new_file = output_path + 'new.json'
+    old_file = output_path + 'old.json'
+    history_file = history_path + request_time + ".json"
 
     # 기존 new file 덮어쓰기
     if os.path.isfile(new_file):
@@ -95,8 +99,11 @@ def compare(brand):
         os.rename(new_file, old_file)
         
     output = json.dumps(result_json,ensure_ascii=False, indent='\t')
-    
+
     with open(new_file,'w',encoding='UTF-8') as file:
+        file.write(output)
+
+    with open(history_file, 'w', encoding='UTF-8') as file:
         file.write(output)
 
 if __name__ == "__main__":
