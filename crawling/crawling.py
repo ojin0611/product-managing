@@ -13,10 +13,12 @@ def main():
     for key, value in brand_dict.items():
         if brand in value:
             print('crawling method :',key)
+            print('directory :',brand)
             if key=='python':
                 filelist = glob(brand+"/*.py") # file name change recommended
                 for file in filelist:
                     cmd = "cd "+brand+" & python "+brand+".py"
+                    print(cmd)
                     os.system(cmd) # 
                 pass
 
@@ -28,11 +30,6 @@ def main():
                 pass
 
             break
-
-    try:
-        print('directory :',sys.argv[1])
-    except Exception as e:
-        print("Error :", e)
 
 
 if __name__ == "__main__":
