@@ -5,6 +5,11 @@ import os
 import subprocess
 import crawling_module
 
+if platform.system() == 'Linux':
+    python_version = 'python3 '
+else:
+    python_version = 'python '
+
 def main():
     with open('brandlist.json', encoding='UTF-8') as brandlist:
         brand_dict = json.load(brandlist)
@@ -17,7 +22,7 @@ def main():
             if key=='python':
                 filelist = glob(brand+"/*.py") # file name change recommended
                 for file in filelist:
-                    cmd = "cd "+brand+" & python "+brand+".py"
+                    cmd = "cd "+brand+" & "+python_version+brand+".py"
                     print(cmd)
                     os.system(cmd) # 
                 pass
