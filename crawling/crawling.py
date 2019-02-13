@@ -4,11 +4,12 @@ from glob import glob
 import os
 import subprocess
 import crawling_module
+import platform
 
-if platform.system() == 'Linux':
-    python_version = 'python3 '
+if platform.system() == 'Windows':
+    python_version = ' & python '
 else:
-    python_version = 'python '
+    python_version = ' ; python3 '
 
 def main():
     with open('brandlist.json', encoding='UTF-8') as brandlist:
@@ -22,9 +23,9 @@ def main():
             if key=='python':
                 filelist = glob(brand+"/*.py") # file name change recommended
                 for file in filelist:
-                    cmd = "cd "+brand+" & "+python_version+brand+".py"
+                    cmd = "cd " + brand + python_version + brand + ".py"
                     print(cmd)
-                    os.system(cmd) # 
+                    os.system(cmd)
                 pass
 
             if key=='js':
