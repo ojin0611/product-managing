@@ -9,7 +9,8 @@ else:
 
 def main():
     brand = sys.argv[1]
-    cmd = "cd crawling"+python_version+ "crawling.py "+brand
+    cmd = "cd crawling" + python_version + "crawling.py "+ brand
+    print(cmd)
 #    cmd = "cd "+brand+" & python "+brand+".py"
     os.system(cmd)
 
