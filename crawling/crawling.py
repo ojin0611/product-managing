@@ -17,7 +17,9 @@ def main():
                 filelist = glob("./"+brand+"/*.py") # 모든 python file 실행할것! 추후에 crawler로 이름 바꿔도 됨.
 
                 for file in filelist:
-                    os.system("cd clio & python clio.py") # 이 때 current directory 변경됨
+                    cmd = "cd "+brand+" & python "+brand+".py"
+
+                    os.system(cmd) # 이 때 current directory 변경됨
                 pass
 
             if key=='js':
