@@ -14,10 +14,12 @@ def main():
         if brand in value:
             print('crawling method :',key)
             if key=='python':
-                filelist = glob("./"+brand+"/*.py") # 모든 python file 실행할것! 추후에 crawler로 이름 바꿔도 됨.
+                filelist = glob(brand+"/*.py") # 모든 python file 실행할것! 추후에 crawler로 이름 바꿔도 됨.
+#                filelist = glob("/*.py")
+                print(filelist)
 
                 for file in filelist:
-                    cmd = "cd "+brand+" & python "+brand+".py"
+                    cmd = "cd "+brand+" & python "+file
 
                     os.system(cmd) # 이 때 current directory 변경됨
                 pass
