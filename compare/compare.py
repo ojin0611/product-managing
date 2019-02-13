@@ -2,31 +2,22 @@ import json
 from datetime import datetime
 import sys
 import os
-
+import compare_module
 
 
 def compare(brand):
+
     now = datetime.now()
     request_time = '%s-%s-%s / %s:%s' % (now.year, now.month, now.day, now.hour, now.minute)
-    file_time = '%sy-%sm-%sd-%sh' % (now.year, now.month, now.day, now.hour)
-    old_path = '../data/' + brand + '/cleansing/old.json'
-    with open(old_path, encoding="UTF-8") as old_data:
-        old_cleansing = json.load(old_data)
 
-    new_path = '../data/' + brand + '/cleansing/new.json'
-    with open('../data/drjart/cleansing/new.json', encoding="UTF-8") as new_data:
-        new_cleansing = json.load(new_data)
-
+    new_cleansing = compare_module.load_json("new", brand, "cleansing")
+    old_cleansing = compare_module.load_json("old", brand, "cleansing")
     #sku_attributes = ['brand', 'name', 'color', 'volume', 'type']
 
     #renew_attributes = ['url', 'image', 'salePrice', 'originalPrice']
 
-    # old data에만 있는 것
-    old_only = []
-    # new data에만 있는 것
-    new_only = []
-    # --> old_only와 new data 비교 => name, color, volume, type 같으면 renew
-    # --> 다르면 old_only 에 있는지 new_only 에 있는지 확인 : old_only -> discon, new_only -> newpos
+    # --> old와 new data 비교 => name, color, volume, type 같으면 renew
+    # --> 다르면 old 에 있는지 new에 있는지 확인 : old_only -> discon, new_only -> newpos
     # 갱신되야 하는 것
     renew = []
     before_renew = []
@@ -70,7 +61,7 @@ def compare(brand):
                     discon.append(old_dict)
                     break
 
-# just for check, if below two line not equal zero, check the code above
+# just for check, if below two line not equal zero, please correct the code above
     print(len(old_cleansing) - len(new_cleansing) + len(new_pos) - len(discon) + len(renew))
     print(len(renew) - len(before_renew))
 
@@ -78,33 +69,7 @@ def compare(brand):
 # just for check
 # print(result_json) 
 
-    output_path = '../data/' + brand + '/compare/'
-    history_path = output_path + 'history/'
-    # 경로 없으면 디렉토리 생성
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-
-    if not os.path.exists(history_path):
-        os.makedirs(history_path)
-        
-    new_file = output_path + 'new.json'
-    old_file = output_path + 'old.json'
-    history_file = history_path + file_time + ".json"
-
-    # 기존 new file 덮어쓰기
-    if os.path.isfile(new_file):
-        # old file 존재 시 삭제 후 덮어쓰기
-        if os.path.isfile(old_file):
-            os.remove(old_file)
-        os.rename(new_file, old_file)
-        
-    output = json.dumps(result_json,ensure_ascii=False, indent='\t')
-
-    with open(new_file,'w',encoding='UTF-8') as file:
-        file.write(output)
-
-    with open(history_file, 'w', encoding='UTF-8') as file:
-        file.write(output)
+    compare_module.save_json(result_json, brand, "compare")
 
 if __name__ == "__main__":
     if sys.argv[1] is not None:
