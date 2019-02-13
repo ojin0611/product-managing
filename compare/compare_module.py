@@ -4,25 +4,27 @@ import sys
 import os
 
 
-def load_json(time, brand, type):
+def load_json(time, brand, activity):
 
-    file_path = '../data/' + brand + '/' + type + '/' + time + '.json'
-
+    # time : new / old 중 선택
+    # brand : 브랜드명
+    # activity : crawling / cleansing / compare 중 선택
+    file_path = '../data/' + brand + '/' + activity + '/' + time + '.json'
     with open(file_path, encoding="UTF-8") as json_data:
         result_json = json.load(json_data)
 
     return result_json
 
 
-def save_json(jsonstring, brand, type):
+def save_json(jsonstring, brand, activity):
 
     # jsonstring : 저장할 json 파일
     # brand : 브랜드명
-    # type : crawling / cleansing / compare 중 선택.
+    # activity : crawling / cleansing / compare 중 선택.
     now = datetime.now()
     file_time = '%sy-%sm-%sd-%sh' % (now.year, now.month, now.day, now.hour)
 
-    output_path = '../data/' + brand + '/' + type + '/'
+    output_path = '../data/' + brand + '/' + activity + '/'
     # 첫 크롤링이면 디렉토리 생성
     if not os.path.exists(output_path):
         os.makedirs(output_path)
