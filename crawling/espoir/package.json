@@ -1,5 +1,5 @@
 {
-  "name": "drjart",
+  "name": "espoir",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node ./dist/drjart.js"
+    "start": "node ./dist/espoir.js"
   },
   "author": "",
   "license": "ISC"

@@ -135,8 +135,6 @@ def main():
     start_time = time.time() 
     #-------------------------------------------------------------#
     for i, itemURL in enumerate(itemList):
-        if i>5:
-            break
         print(i+1)
         itemURL = seeDetailInfo(itemURL)
         result += getItem(itemURL)

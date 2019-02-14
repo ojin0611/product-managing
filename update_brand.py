@@ -3,18 +3,27 @@ import sys
 import platform
 
 if platform.system() == 'Windows':
-    python_version = ' & python '
+    python_version = 'python '
+    cmd_style = ' & '
 else:
-    python_version = ' ; python3 '
+    python_version = 'python3 '
+    cmd_style = ' ; '
 
 def main():
     brand = sys.argv[1]
-    cmd = "cd crawling" + python_version + "crawling.py "+ brand
+    # crawling
+    cmd = "cd crawling" + cmd_style +  python_version + "crawling.py "+ brand
     print(cmd)
-#    cmd = "cd "+brand+" & python "+brand+".py"
+    os.system(cmd)
+    '''
+    cmd = "cd cleansing" + cmd_style + python_version + "cleansing.py "+ brand
+    print(cmd)
     os.system(cmd)
 
-
+    cmd = "cd compare" + cmd_style + python_version + "compare.py "+ brand
+    print(cmd)
+    os.system(cmd)
+    '''
 if __name__ == "__main__":
     main()
 
