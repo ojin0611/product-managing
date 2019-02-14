@@ -8,7 +8,7 @@ def load_json(time, brand, activity):
 
     # time : new / old 중 선택
     # brand : 브랜드명
-    # activity : crawling / cleansing / compare 중 선택
+    # activity : "crawling" / "cleansing" / "compare" 중 선택
     file_path = '../data/' + brand + '/' + activity + '/' + time + '.json'
     with open(file_path, encoding="UTF-8") as json_data:
         print('--- load file from',file_path,'---')
@@ -33,6 +33,7 @@ def save_json(jsonstring, brand, activity):
     old_file = output_path + 'old.json'
     history_path = output_path + 'history/'
     history_file = history_path + file_time + ".json"
+
     if not os.path.exists(history_path):
         os.makedirs(history_path)
     # 기존 new file 덮어쓰기
@@ -41,10 +42,14 @@ def save_json(jsonstring, brand, activity):
         if os.path.isfile(old_file):
             os.remove(old_file)
         os.rename(new_file, old_file)
-
+    else:
+        empty_json = [{"name": "", "url": "", "image": "", "color": "", "category": "",
+                       "salePrice": "", "originalPrice": "", "brand": "", "volume": "", "type": ""}]
+        empty_output = json.dumps(empty_json, ensure_ascii=False, indent='\t')
+        with open(old_file, 'w', encoding='UTF-8') as file:
+            file.write(empty_output)
+        print('empty_output file saved')
     output = json.dumps(jsonstring, ensure_ascii=False, indent='\t')
-
-
 
     print('--- save file to',output_path,'---')
     with open(new_file, 'w', encoding='UTF-8') as file:
