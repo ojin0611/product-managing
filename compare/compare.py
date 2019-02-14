@@ -62,13 +62,13 @@ def compare(brand):
                     discon.append(old_dict)
                     break
 
-# just for check, if below two line not equal zero, please correct the code above
+    # just for check, if below two line not equal zero, please correct the code above
     print(len(old_cleansing) - len(new_cleansing) + len(new_pos) - len(discon) + len(renew))
     print(len(renew) - len(before_renew))
 
     result_json = renew + new_pos + discon
-# just for check
-# print(result_json) 
+    # just for check
+    # print(result_json) 
 
     io_module.save_json(result_json, brand, "compare")
 

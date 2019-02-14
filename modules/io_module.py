@@ -11,6 +11,7 @@ def load_json(time, brand, activity):
     # activity : crawling / cleansing / compare 중 선택
     file_path = '../data/' + brand + '/' + activity + '/' + time + '.json'
     with open(file_path, encoding="UTF-8") as json_data:
+        print('--- load file from',file_path,'---')
         result_json = json.load(json_data)
 
     return result_json
@@ -45,7 +46,12 @@ def save_json(jsonstring, brand, activity):
 
 
 
+    print('--- save file to',output_path,'---')
     with open(new_file, 'w', encoding='UTF-8') as file:
         file.write(output)
     with open(history_file, 'w', encoding='UTF-8') as file:
         file.write(output)
+
+
+def putIntoDynamoDB():
+    pass

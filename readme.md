@@ -23,3 +23,5 @@
 - S3 > compare 최종 결과를 DynamoDB로 push 
 - athena로 S3 볼 수 있도록 설정
 
+
+[Python으로 Bash 명령 실행](https://www.journaldev.com/16140/python-system-command-os-subprocess-call)
