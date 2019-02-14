@@ -4,15 +4,6 @@ from selenium import webdriver
 from datetime import datetime
 
 def openChromedriver():
-    '''
-    if platform.system() == 'Windows':
-        path = 'chromedriver.exe'  
-    elif platform.system() == 'Linux':
-        path = '/home/ec2-user/chromedriver'
-    else:
-        path = '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver'
-    driver = webdriver.Chrome(path)
-    '''
     # another way
     options = webdriver.chrome.options.Options()
     options.headless = True
