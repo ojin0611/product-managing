@@ -51,6 +51,7 @@
 
 ```python
 from crawling_module import *
+import io_module
 import otherModules # bs4, urlopen, selenium, json, ...
 def main():
     def getCategoryList():
@@ -60,7 +61,7 @@ def main():
     def getItem(itemURL):
         return items
 
-    path = path_chromedriver()
+    path = openChromedriver()
 
     read(siteHomeURL)
     categoryList = getCategoryList() # category urls (or clickable object)
