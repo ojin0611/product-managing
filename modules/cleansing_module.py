@@ -41,20 +41,16 @@ def cleanseName(jsonString):
     
     p = re.compile('set|세트', re.I)  # 컬렉션 / 박스 / 0종 / 키트 / 듀오 / 트리오 -> 세트 상품이 아닐 가능성 있음. 대부분이 세트로 걸러지긴 함-> 세트 표기가 더 나은지
     if p.search(name):
-        # sale_status.append('O')
         sale_status = '세트'
     else:
-        # sale_status.append('X')
         sale_status = '*'
     
     # 4. 한글명과 영문명 분리
     p = re.compile(r'(.*[가-힣])\s([a-zA-Z].*)')
     if p.search(name):
         name = p.sub(r'\1', name)
-        # en_name.append(p.sub(r'\2', name))
         en_name = p.sub(r'\2', name)
     else:
-        # en_name.append('*')
         en_name = '*'
         
     # 5. 한 칸 이상의 공백 제거
@@ -135,17 +131,22 @@ def cleanseColor(jsonString):
 # price는 무조건 numeric이라 가정
 
 def cleansePrice(jsonString):
-    brand = jsonString.get
-    price1 = jsonString.get('salePrice')
-    price2 = jsonString.get('originalPrice')
+    brand = jsonString.get('brand')
+    saleprice = jsonString.get('salePrice')
+    originalprice = jsonString.get('originalPrice')
     
     # thousand separator
-    if brand == 'tomford|TOMFORD':
+    if brand == 'tomford' or brand == 'TOMFORD':
         # 달러 기호 포함
-        price = '{:,}'.format(int(price))
+        p = re.compile(r'\D')
+        saleprice = p.sub('', saleprice)
+        originalprice = p.sub('', originalprice)
+        saleprice = '$' + '{:,}'.format(int(saleprice))
+        originalprice = '$' + '{:,}'.format(int(originalprice))
     else:
-        price = '{:,}'.format(price)
+        saleprice = '{:,}'.format(int(saleprice))
+        originalprice = '{:,}'.format(int(originalprice))
         
-    result =  dict(jsonString, **{'salePrice': price1, 'originalPrice':price2})
+    result =  dict(jsonString, **{'salePrice': saleprice, 'originalPrice': originalprice})
     
     return result
