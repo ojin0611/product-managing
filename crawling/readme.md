@@ -37,9 +37,15 @@
 9. salePrice (int)
 10. url (text)
 
+## Crawler Guide - JavaScript, TypeScript
+```
+$ cd brand
+$ npm install
+$ npm run
+```
+- 이렇게 실행했을 때 해당 디렉토리에 brand.json을 생성하면 완료
 
-
-## Crawler Guide - python
+## Crawler Guide - Python
 - urllib : 페이지 정보 받아오기
 - bs4(beautifulsoup) : 필요한 데이터 받아오기
 - selenium : 직접 firefox나 chromedriver 을 작동시켜서 데이터를 수집할 수 있으나, 시간이나 안정성 면에서 최대한 사용을 줄이는 것이 좋다.
@@ -51,6 +57,7 @@
 
 ```python
 from crawling_module import *
+import io_module
 import otherModules # bs4, urlopen, selenium, json, ...
 def main():
     def getCategoryList():
@@ -60,7 +67,7 @@ def main():
     def getItem(itemURL):
         return items
 
-    path = path_chromedriver()
+    path = openChromedriver()
 
     read(siteHomeURL)
     categoryList = getCategoryList() # category urls (or clickable object)
