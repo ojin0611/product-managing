@@ -40,9 +40,22 @@ $ python update_brand.py <brand>
 - 로컬 노드 버전 확인 : ```node --version```
 
 ```
+// Ctrl + Insert : 복사, Shift + Insert : 붙여넣기
 sudo yum update -y
 sudo yum install -y gcc gcc-c++ make openssl-devel
-curl -O https://nodejs.org/dist/latest-v10.x/node-v10.15.1.tar.gz
+
+/tmp
+curl -O https://nodejs.org/dist/v10.15.1/node-v10.15.1.tar.gz // maybe too new
+tar -xvf node-v10.15.1.tar.gz && rm node-v10.15.1.tar.gz
+
+cd node-v10.15.1
+./configure
+make
+sudo make install
+
+sudo ln -s /usr/local/bin/node /usr/bin/node
+sudo ln -s /usr/local/lib/node /usr/lib/node
+sudo ln -s /usr/local/bin/npm /usr/bin/npm
 ```
 
 ### python3
