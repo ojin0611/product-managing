@@ -7,6 +7,10 @@ global ref
 # 크롤링되지 않은 칼럼이 존재할 수 있음
 def cleanseColumns1(jsonString):
     columnList = jsonString.keys()
+    if 'category' not in columnList:
+        jsonString = dict(jsonString, **{'category':'#'})
+    if 'url' not in columnList:
+        jsonString = dict(jsonString, **{'url':'#'})
     if 'color' not in columnList:
         jsonString = dict(jsonString, **{'color':'#'})
     if 'type' not in columnList:
