@@ -43,7 +43,7 @@ def upload_json(jsonstring, brand, activity):
 
     history_path = s3_path + 'history/'
     now = datetime.now()
-    file_time = '%sy-%sm-%sd-%sh' % (now.year, now.month, now.day, now.hour)
+    file_time = '%s-%s-%s-%s-%s-%s' % (now.year, now.month, now.day, now.hour, now.minute, now.second0)
     history_file = history_path + file_time + ".json"
 
     output = json.dumps(jsonstring, ensure_ascii=False, indent='\t')
