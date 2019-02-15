@@ -1,6 +1,9 @@
-# 브랜드명 클렌징 + 취급안하는 브랜드 제거 + sku_id의 브랜드명 약어 부여
+# 브랜드명 클렌징 + 취급안하는 브랜드 제거 + skuid의 브랜드명 약어 부여
 def cleanseBrand(jsonString):
     
+    with open('./brandReference.json', encoding="UTF-8") as json_data:
+        ref = json.load(json_data)
+
     brand = jsonString.get('brand')
     brandList = list(ref.get('영문명').values()) # 취급 브랜드의 영문명 리스트
     abbList = list(ref.get('약어').values()) # 브랜드 약어 리스트
@@ -12,7 +15,7 @@ def cleanseBrand(jsonString):
     if brand not in brandList:
         return None
     
-    # skuID 브랜드 약어 부분 부여
+    # skuid 브랜드 약어 부분 부여
     else:
         idx = brandList.index(brand)
         skuid = abbList[idx]
