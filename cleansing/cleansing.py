@@ -6,7 +6,7 @@ import re
 
 sys.path.append("../modules")
 import io_module
-import cleansing_module
+from cleansing_module import *
 
 
 def main():
