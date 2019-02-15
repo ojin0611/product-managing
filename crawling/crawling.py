@@ -1,10 +1,4 @@
-import json
-import sys
-from glob import glob
-import os
-import subprocess
-import crawling_module
-import platform
+import json, sys, os, platform
 
 sys.path.append("../modules")
 import io_module
@@ -42,10 +36,13 @@ def main():
             elif key=='manual':
                 pass
 
-            else:
-                print('---',brand + ' crawler is not prepared! ---')
-
+            
+            crawled_data = io_module.get_json(brand, brand, 'local')
+            io_module.upload_json(crawled_data, brand, 'crawling')
             break
+
+    else: # crawler not exists
+        print('---',brand + ' crawler is not prepared! ---')
 
 
 if __name__ == "__main__":

@@ -11,8 +11,7 @@ from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from urllib.request import urlopen
 
-sys.path.append(os.getcwd())
-sys.path.append('../')
+sys.path.append('../../modules')
 from crawling_module import *
 
 def main():

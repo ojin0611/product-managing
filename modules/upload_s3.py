@@ -14,9 +14,10 @@ bucket_name = 'cosmee-product-data'
 
 # Uploads the given file using a managed uploader, which will split up large
 # files automatically and upload parts in parallel.
+'''
 s3.upload_file(local_path + filename, bucket_name, s3_path + filename)
 print('Upload Complete! - ',filename)
-
+'''
 
 s3 = boto3.client('s3')
 s3_object = s3.get_object(Bucket=bucket_name, Key=s3_path + filename)
@@ -26,16 +27,6 @@ for jsonfile in json_product:
     print(jsonfile.keys())
     break
 
-'''get S3 bucket list
-# Create an S3 client
-s3 = boto3.client('s3')
-
-# Call S3 to list current buckets
-response = s3.list_buckets()
-
-# Get a list of all bucket names from the response
-buckets = [bucket['Name'] for bucket in response['Buckets']]
-
-# Print out the bucket list
-print("Bucket List: %s" % buckets)
-'''
+# Method 2: Client.put_object()
+client = boto3.client('s3')
+client.put_object(Body=s3_text, Bucket=bucket_name, Key=s3_path + 'test.txt')

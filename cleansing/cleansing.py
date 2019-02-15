@@ -7,17 +7,16 @@ sys.path.append("../modules")
 import io_module
 
 
-def main(brand):
+def main():
+    brand = sys.argv[1]
     print('cleansing.py start')
-    crawled_data = io_module.load_json("new", brand, "crawling")
+    crawled_data = io_module.get_json("new", brand, "crawling")
     # clean the crawled_data in the block below
     # ----------------------------------------------------
     output = crawled_data
     # ----------------------------------------------------
-    io_module.save_json(output, brand, "cleansing")
+    io_module.upload_json(output, brand, "cleansing")
 
 if __name__ == "__main__":
-    if sys.argv[1] is not None:
-        brand = sys.argv[1]
-        main(brand)
+    main()
 

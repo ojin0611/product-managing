@@ -6,13 +6,13 @@ sys.path.append("../modules")
 import io_module
 
 
-def compare(brand):
-
+def main():
+    brand = sys.argv[1]
     now = datetime.now()
     request_time = '%s-%s-%s / %s:%s' % (now.year, now.month, now.day, now.hour, now.minute)
 
-    new_cleansing = io_module.load_json("new", brand, "cleansing")
-    old_cleansing = io_module.load_json("old", brand, "cleansing")
+    new_cleansing = io_module.get_json("new", brand, "cleansing")
+    old_cleansing = io_module.get_json("old", brand, "cleansing")
     #sku_attributes = ['brand', 'name', 'color', 'volume', 'type']
 
     #renew_attributes = ['url', 'image', 'salePrice', 'originalPrice']
@@ -70,9 +70,7 @@ def compare(brand):
     # just for check
     # print(result_json) 
 
-    io_module.save_json(result_json, brand, "compare")
+    io_module.upload_json(result_json, brand, "compare")
 
 if __name__ == "__main__":
-    if sys.argv[1] is not None:
-        brand = sys.argv[1]
-        compare(brand)
+    main()

@@ -2,61 +2,70 @@ import json
 from datetime import datetime
 import sys
 import os
+import boto3
+from botocore.errorfactory import ClientError
 
+def get_json(load_filename, brand, activity):
+    # load_filename : new / old
+    # brand : name of brand
+    # activity : crawling / cleansing / compare
 
-def load_json(time, brand, activity):
+    if activity == 'local':     # crawling
+        file_path = './' + brand + '/'+ brand +'.json'
+        with open(file_path, encoding="UTF-8") as json_data:
+            print('--- load file from',file_path,'---')
+            json_object = json.load(json_data)
 
-    # time : new / old 중 선택
-    # brand : 브랜드명
-    # activity : "crawling" / "cleansing" / "compare" 중 선택
-    file_path = '../data/' + brand + '/' + activity + '/' + time + '.json'
-    with open(file_path, encoding="UTF-8") as json_data:
-        print('--- load file from',file_path,'---')
-        result_json = json.load(json_data)
+    else:
+        s3 = boto3.client('s3')
+        bucket_name = 'cosmee-product-data'
+        s3_path = brand + '/' + activity + '/'
+        filename = load_filename + '.json'
+        print('--- load key : s3/'+s3_path+filename+' ---')
 
-    return result_json
+        s3_object = s3.get_object(Bucket=bucket_name, Key=s3_path + filename)
+        s3_text = s3_object['Body'].read().decode()
+        json_object = json.loads(s3_text)
+    
+    return json_object
 
+def upload_json(jsonstring, brand, activity):
 
-def save_json(jsonstring, brand, activity):
+    # jsonstring : json
+    # brand : name of brand
+    # activity : crawling / cleansing / compare
+    s3 = boto3.client('s3')
+    bucket_name = 'cosmee-product-data'
+    s3_path = brand + '/' + activity + '/'
+    
+    new_file = s3_path + 'new.json'
+    old_file = s3_path + 'old.json'
 
-    # jsonstring : 저장할 json 파일
-    # brand : 브랜드명
-    # activity : crawling / cleansing / compare 중 선택.
+    history_path = s3_path + 'history/'
     now = datetime.now()
     file_time = '%sy-%sm-%sd-%sh' % (now.year, now.month, now.day, now.hour)
-
-    output_path = '../data/' + brand + '/' + activity + '/'
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-
-    new_file = output_path + 'new.json'
-    old_file = output_path + 'old.json'
-    history_path = output_path + 'history/'
     history_file = history_path + file_time + ".json"
 
-    if not os.path.exists(history_path):
-        os.makedirs(history_path)
-    # 기존 new file 덮어쓰기
-    if os.path.isfile(new_file):
-        # old file 존재 시 삭제 후 덮어쓰기
-        if os.path.isfile(old_file):
-            os.remove(old_file)
-        os.rename(new_file, old_file)
-    else:
-        empty_json = [{"name": "", "url": "", "image": "", "color": "", "category": "",
-                       "salePrice": "", "originalPrice": "", "brand": "", "volume": "", "type": ""}]
-        empty_output = json.dumps(empty_json, ensure_ascii=False, indent='\t')
-        with open(old_file, 'w', encoding='UTF-8') as file:
-            file.write(empty_output)
-        print('empty_output file saved')
     output = json.dumps(jsonstring, ensure_ascii=False, indent='\t')
 
-    print('--- save file to',output_path,'---')
-    with open(new_file, 'w', encoding='UTF-8') as file:
-        file.write(output)
-    with open(history_file, 'w', encoding='UTF-8') as file:
-        file.write(output)
+    print('--- save key : s3/'+new_file+' ---')
+    print('--- save key : s3/'+old_file+' ---')
 
 
-def putIntoDynamoDB():
-    pass
+    # crawling first vs crawling again
+    try:
+        # check if crawled before (== old file doesn't exist)
+        s3.head_object(Bucket=bucket_name, Key=old_file)
+        print('--- old.json file is overwriten! ---')
+        s3_rename = boto3.resource('s3')
+        s3_rename.Object(bucket_name,old_file).delete()
+        s3_rename.Object(bucket_name,old_file).copy_from(CopySource=bucket_name+'/'+new_file)
+        s3_rename.Object(bucket_name,new_file).delete()
+    except ClientError: # crawling 1st time!
+        print('--- '+brand+' crawling 1st time!')
+        empty_json = [{"name": "", "url": "", "image": "", "color": "", "category": "", "salePrice": "", "originalPrice": "", "brand": "", "volume": "", "type": ""}]
+        empty_output = json.dumps(empty_json, ensure_ascii=False, indent='\t')
+        s3.put_object(Body=empty_output, Bucket=bucket_name, Key=old_file)
+        
+    s3.put_object(Body=output, Bucket=bucket_name, Key=new_file)
+    s3.put_object(Body=output, Bucket=bucket_name, Key=history_file)
