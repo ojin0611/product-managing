@@ -1,14 +1,15 @@
 # 상품 관리 자동화 시스템
-Amazon EC2 : 자동화
-Amazon S3  : 결과 데이터 저장
-Amazon DynamoDB : Admin DB Table 저장
-Amazon Athena : S3에 저장된 데이터 쿼리
+- Amazon EC2 : 자동화
+- Amazon S3  : 결과 데이터 저장
+- Amazon DynamoDB : Admin DB Table 저장
+- Amazon Athena : S3에 저장된 데이터 쿼리
 
 ## 2가지 process
 1. 주기적으로 전체 브랜드 크롤링 
 2. 요청시 특정 브랜드 크롤링 
+- 과정 : 특정 브랜드 크롤링>비교>클렌징>DB
 
-과정 : 특정 브랜드 크롤링>비교>클렌징>DB
+* * *
 
 ## 사용법
 ```
@@ -25,13 +26,7 @@ $ python update_brand.py <brand>
 ## compare
 [자세히 보기](./compare)
 
-
-## AWS 연동
-- product-managing > EC2로 이동
-- data 디렉토리 > S3 디렉토리로 이동
-- S3 > compare 최종 결과를 DynamoDB로 push 
-- athena로 S3 볼 수 있도록 설정
-
+* * *
 
 ## Requirements
 ### git
@@ -74,6 +69,7 @@ Default region name [None]: ap-northeast-2
 Default output format [None]: ENTER
 ```
 
+* * *
 
 
 ## 부록
