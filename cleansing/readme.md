@@ -4,7 +4,7 @@
 
    공유 링크: https://docs.google.com/spreadsheets/d/1969ZWZeSzIHcqA8Ix1wkBbEPrUR_gltpNMOrOqYeakA/edit?usp=sharing
 2. Excel에 정리된 각 항목에 대해 클렌징해야 할 칼럼별 ('brand', 'name', 'volume', 'color', 'type', 'salePrice', 'originalPrice') 
-   함수를 cleansing_module.py에 저장
+      함수를 cleansing_module.py에 저장
 3. 실행시 cleansing_module을 import해 해당 브랜드 클렌징하는 cleansing.py
 
 ## 파일 경로
