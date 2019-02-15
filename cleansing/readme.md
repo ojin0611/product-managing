@@ -1,8 +1,10 @@
 # Cleansing Process
 ## 상세 설명
 1. 코스미 상품 정보 등록 양식 + 크롤링된 json 파일 통해 기타 사항 확인 => Excel로 정리 
+
    공유 링크: https://docs.google.com/spreadsheets/d/1969ZWZeSzIHcqA8Ix1wkBbEPrUR_gltpNMOrOqYeakA/edit?usp=sharing
-2. Excel에 정리된 각 항목에 대해 클렌징해야 할 칼럼별 ('brand', 'name', 'volume', 'color', 'type', 'salePrice', 'originalPrice') 함수를 cleansing_module.py에 저장
+2. Excel에 정리된 각 항목에 대해 클렌징해야 할 칼럼별 ('brand', 'name', 'volume', 'color', 'type', 'salePrice', 'originalPrice') 
+   함수를 cleansing_module.py에 저장
 3. 실행시 cleansing_module을 import해 해당 브랜드 클렌징하는 cleansing.py
 
 ## 파일 경로
