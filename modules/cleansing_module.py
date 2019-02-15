@@ -2,11 +2,29 @@
 import json
 import re
 
+global ref
+
+# 크롤링되지 않은 칼럼이 존재할 수 있음
+def cleanseColumns1(jsonString):
+    columnList = jsonString.keys()
+    if 'color' not in columnList:
+        jsonString = dict(jsonString, **{'color':'#'})
+    if 'type' not in columnList:
+        jsonString = dict(jsonString, **{'type':'#'})
+    if 'volume' not in columnList:
+        jsonString = dict(jsonString, **{'volume':'#'})
+    if 'salePrice' not in columnList:
+        jsonString = dict(jsonString, **{'salePrice':'#'})
+    if 'originalPrice' not in columnList:
+        jsonString = dict(jsonString, **{'originalPrice':'#'})
+    return jsonString
+
+
 def cleanseBrand(jsonString):
     
-    with open('./brandReference.json', encoding="UTF-8") as json_data:
+    with open('./brandReference.json', encoding="UTF-8") as json_data:  # 
         ref = json.load(json_data)
-
+  
     brand = jsonString.get('brand')
     brandList = list(ref.get('영문명').values()) # 취급 브랜드의 영문명 리스트
     abbList = list(ref.get('약어').values()) # 브랜드 약어 리스트
@@ -28,14 +46,12 @@ def cleanseBrand(jsonString):
 
 
 
+# 각 내용 순서도 중요!
 def cleanseName(jsonString):
     
     name = jsonString.get('name')
     
-    # 1. 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★
-    p = re.compile(r'리미티드|한정|한정판|행사|1+1|1 + 1|[리미티드]|★|☆|추천|!|@|^|new', re.I) # * () [] / , . ' _ 제외 특수기호 ? \W
-    name = p.sub(' ', name)
-    
+
     # 2. [SPF00+ PA+] 형식으로 통일
     #p = re.compile(r'(.^spf)(\d)([+]*).*(pa)([+]$.)', re.I)
     #name = p.sub(r'[SPF\2\3 PA\5]', name)
@@ -43,15 +59,26 @@ def cleanseName(jsonString):
     #if p.search(name):
     #    name = p.sub(r'', name)
     
-    # 3. 세트 여부 구별 -> 세트로 구분되지 않은 상품 존재할 수 있음
-    
+    # 세트 여부 구별 -> 세트로 구분되지 않은 상품 존재할 수 있음
     p = re.compile('set|세트', re.I)  # 컬렉션 / 박스 / 0종 / 키트 / 듀오 / 트리오 -> 세트 상품이 아닐 가능성 있음. 대부분이 세트로 걸러지긴 함-> 세트 표기가 더 나은지
     if p.search(name):
-        sale_status = '세트'
+        sale_status = '세트상품'
     else:
         sale_status = '*'
+
+    # 할인 여부 구별 -> 할인으로 구분되지 않은 상품 존재할 수 있음
+    p = re.compile('sale|할인', re.I)
+    if p.search(name):
+        sale_status = '할인'
+    else:
+        sale_status = '*'
+        
+    # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★
+    p = re.compile(r'리미티드|한정|한정판|행사|1+1|1 + 1|[리미티드]|★|☆|추천|!|@|^|new|세일|sale', re.I) # * () [] / , . ' _ 제외 특수기호 ? \W
+    name = p.sub(' ', name)
     
-    # 4. 한글명과 영문명 분리
+    
+    # 한글명과 영문명 분리
     p = re.compile(r'(.*[가-힣])\s([a-zA-Z].*)')
     if p.search(name):
         name = p.sub(r'\1', name)
@@ -79,7 +106,7 @@ def cleanseVolume(jsonString):
     p = re.compile(r'(\d)\s+([가-힣a-zA-Z])')
     volume = p.sub(r'\1\2', volume)
 
-   #3. 용량 여러개 경우 / 로 구분
+    #3. 용량 여러개 경우 / 로 구분
     p = re.compile(r'([가-힣a-zA-Z])\s*(\d.)')
     volume = p.sub(r'\1/\2', volume)
     
@@ -156,3 +183,10 @@ def cleansePrice(jsonString):
     result =  dict(jsonString, **{'salePrice': saleprice, 'originalPrice': originalprice})
     
     return result
+
+def cleanseColumns2(jsonString):
+    columnList = jsonString.keys()
+    if 'sale_status' not in columnList:
+        jsonString = dict(jsonString, **{'sale_status':'*'})
+   
+    return jsonString
