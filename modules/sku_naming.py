@@ -4,24 +4,23 @@ import sys
 import os
 import io_module
 import pickle
-import pprint
 
-# Youngjin Yang [9:12 PM]
-# check) 첫 compare 결과 default old.json column에 status 추가할지말지 고민해보기!
-#
-# Youngjin Yang [9:37 PM]
-# +)
-# compare.py에 0 0 대신
-# 이해할수있는, 유의미한 문장 출력!
-
+import boto3
+from botocore.errorfactory import ClientError
 
 # sku naming 에 대한 dictionary를 브랜드 별로 만들어주자
 # brand  , product name , volume, type, color
 # sku id 목록 저장해놓은거 불러오고.
 
-
-
 def sku_naming(jsonstring):
+
+   s3 = boto3.client('s3')
+   bucket_name = 'cosmee-product-data'
+   s3_path = 'sku_dict'
+
+   sku_brand_path = s3_path + 'sku_brand_dict.pickle'
+   sku_name_path = s3_path + 'sku_name_dict.pickle'
+   sku_cvt_path = s3_path + 'sku_name_dict.pickle'
 
 #    with open('sku_brand_dict.pickle', 'rb') as f:
 #        sku_brand_dict = pickle.load(f)
@@ -33,10 +32,6 @@ def sku_naming(jsonstring):
     sku_brand_dict = {'clio': "clio"}
     sku_name_dict = {('clio', ''): str(000000)}
     sku_cvt_dict = {('clio', '', '', '', ''): str(000)}
-
-    pprint.pprint(sku_brand_dict)
-    pprint.pprint(sku_name_dict)
-
 
     for product in jsonstring:
         brand = product['brand']
@@ -65,8 +60,6 @@ def sku_naming(jsonstring):
         elif product['info_status'] == "갱신요청":
             if sku_brand_dict.get(name):
                 product['skuid'] = product['skuid'] + str(sku_name_dict.get(name)) + str(sku_cvt_dict.get(cvt))
-            else:
-                product.clear()
 
     with open('sku_brand_dict.pickle', 'wb') as f:
         pickle.dump(sku_brand_dict, f, pickle.HIGHEST_PROTOCOL)
