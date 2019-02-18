@@ -12,26 +12,25 @@ from botocore.errorfactory import ClientError
 # brand  , product name , volume, type, color
 # sku id 목록 저장해놓은거 불러오고.
 
+
 def sku_naming(jsonstring):
 
-   s3 = boto3.client('s3')
-   bucket_name = 'cosmee-product-data'
-   s3_path = 'sku_dict'
+    s3 = boto3.client('s3')
+    bucket_name = 'cosmee-product-data'
+    s3_path = 'sku_dict'
 
-   sku_brand_path = s3_path + 'sku_brand_dict.pickle'
-   sku_name_path = s3_path + 'sku_name_dict.pickle'
-   sku_cvt_path = s3_path + 'sku_name_dict.pickle'
-
-#    with open('sku_brand_dict.pickle', 'rb') as f:
-#        sku_brand_dict = pickle.load(f)
-#    with open('sku_name_dict.pickle', 'rb') as f:
-#        sku_name_dict = pickle.load(f)
-#    with open('sku_name_dict.pickle', 'rb') as f:
-#        sku_cvt_dict = pickle.load(f)
-
-    sku_brand_dict = {'clio': "clio"}
-    sku_name_dict = {('clio', ''): str(000000)}
-    sku_cvt_dict = {('clio', '', '', '', ''): str(000)}
+    sku_name_file = 'sku_name_dict.pickle'
+    print('--- load key : s3/' + s3_path + sku_name_file + ' ---')
+    sku_cvt_file = 'sku_cvt_dict.pickle'
+    print('--- load key : s3/' + s3_path + sku_cvt_file + ' ---')
+    try:
+        sku_name_pickle = s3.get_object(Bucket=bucket_name, Key=s3_path + sku_name_file)
+        sku_name_dict = pickle.load(sku_name_pickle)
+        sku_cvt_pickle = s3.get_object(Bucket=bucket_name, Key=s3_path + sku_cvt_file)
+        sku_cvt_dict = pickle.load(sku_cvt_pickle)
+    except ClientError:
+        sku_name_dict = {('clio', ''): "000000"}
+        sku_cvt_dict = {('clio', '', '', '', ''): "000"}
 
     for product in jsonstring:
         brand = product['brand']
@@ -58,16 +57,10 @@ def sku_naming(jsonstring):
             print("new_skuid_created : " + product['skuid'])
 
         elif product['info_status'] == "갱신요청":
-            if sku_brand_dict.get(name):
+            if sku_name_dict.get(name):
                 product['skuid'] = product['skuid'] + str(sku_name_dict.get(name)) + str(sku_cvt_dict.get(cvt))
 
-    with open('sku_brand_dict.pickle', 'wb') as f:
-        pickle.dump(sku_brand_dict, f, pickle.HIGHEST_PROTOCOL)
-
-    with open('sku_name_dict.pickle', 'wb') as f:
-        pickle.dump(sku_name_dict, f, pickle.HIGHEST_PROTOCOL)
-
-    with open('sku_cvt_dict.pickle', 'wb') as f:
-        pickle.dump(sku_name_dict, f, pickle.HIGHEST_PROTOCOL)
+    s3.put_object(Body=sku_name_dict, Bucket=bucket_name, Key=s3_path + sku_name_file)
+    s3.put_object(Body=sku_cvt_dict, Bucket=bucket_name, Key=s3_path + sku_cvt_file)
 
     return jsonstring
