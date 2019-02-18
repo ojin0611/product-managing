@@ -57,6 +57,7 @@ def cleanseName(jsonString):
     name = jsonString.get('name')
     volume = jsonString.get('volume')
     types = jsonString.get('type')
+
     # SPF00+ PA+ 형식으로 통일
     #p = re.compile(r'(.^spf)(\d)([+]*).*(pa)([+]$.)', re.I)
     #name = p.sub(r'[SPF\2\3 PA\5]', name)
@@ -143,7 +144,7 @@ def cleanseName(jsonString):
     
     
     # 한글명과 영문명 분리
-    p = re.compile(r'(.*[가-힣].*?)\s([^가-힣][a-zA-Z].*)+$')
+    p = re.compile(r'(.*[가-힣].*?)\s?([^가-힣][a-zA-Z]*)+$')
     p2 = re.compile('spf|pa', re.I) # SPF00+ PA+ 부분을 영문명으로 인식하지 않도록
     if p.search(name):
         en = p.sub(r'\2', name) 
@@ -192,7 +193,19 @@ def cleanseVolume(jsonString):
     
     # 용량x개수 표기 경우 용량*개수로 변경
     p = re.compile('x', re.I)
-    volume = p.sub('*', volume)
+    volume = p.sub(r'*', volume)
+
+    # 2가지 이상의 제품이 ,로 분류된 경우
+    p = re.compile(r'[,]')
+    if p.search(volume):
+        volumes = volume.split('+')
+        newvolumes = []
+        for separatedvolume in volumes:
+            p = re.compile(r'([가-힣]+.*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))')
+            if p.search(separatedvolume):
+                separatedvolume = p.sub(r'\2\3(\1)', separatedvolume)
+            newvolumes.append(separatedvolume)
+        volume = ', '.join(newvolumes)
 
     # 2가지 이상의 제품이 +로 분류된 경우
     p = re.compile(r'[+]')
@@ -200,23 +213,13 @@ def cleanseVolume(jsonString):
         volumes = volume.split('+')
         newvolumes = []
         for separatedvolume in volumes:
-            #p = re.compile(r'([가-힣]+).*?\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))')
+            #p = re.compile(r'([가-힣]+)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))')
             p = re.compile(r'([가-힣]+.*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))')
             if p.search(separatedvolume):
                 separatedvolume = p.sub(r'\2\3(\1)', separatedvolume)
             newvolumes.append(separatedvolume)
         volume = ', '.join(newvolumes)
-    # 2가지 이상의 제품이 ,로 분류된 경우
-    p = re.compile(r'[,]')
-    if p.search(volume):
-        volumes = volume.split('+')
-        newvolumes = []
-        for separatedvolume in volumes:
-            p = re.compile(r'([가-힣]+).*?\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))')
-            if p.search(separatedvolume):
-                separatedvolume = p.sub(r'\2\3(\1)', separatedvolume)
-            newvolumes.append(separatedvolume)
-        volume = ', '.join(newvolumes)
+    
 
     # bottle/spray/pat 등 용량 앞에 수식어 붙는 경우 수식어 유지 + 단위가 pieces 같은 영어일 경우
     p = re.compile('pieces|piece|pcs', re.I)
@@ -262,7 +265,7 @@ def cleanseColor(jsonString):
     color = jsonString.get('color')
  
     #1-1 특수문자/수식어 하나하나 따로 제거할 경우..
-    p = re.compile(r'new\s|추천', re.I) # 제거하고 싶은 단어 추가  renewal 주의
+    p = re.compile(r'new\s|추천|-|_', re.I) # 제거하고 싶은 단어 추가  renewal 주의
     color = p.sub(' ', color) # space 한 칸 줘야 한글끼리, 영어끼리 띄어쓰기가 유지됨. 하지만 필요 이상의 공백이 생길 수 있으므로 한칸 이상 공백 제거하는 식 필요
     
     #2 문자와 숫자는 띄어쓰기로 구분  -> 'A01 레드' 경우 ? 
@@ -276,7 +279,9 @@ def cleanseColor(jsonString):
     color = p.sub(r'\2 \1', color)
     
     # 괄호 안 부가설명 있을 경우 (품절, 가격변동)
-    
+    p = re.compile(r'품절')
+
+
     # 한 칸 이상의 공백은 제거
     p = re.compile(r'\s+')
     color = p.sub(' ', color)
@@ -331,7 +336,7 @@ def cleansePrice(jsonString):
         originalprice = p.sub('', originalprice)
         saleprice = '$' + '{:,}'.format(int(saleprice))
         originalprice = '$' + '{:,}'.format(int(originalprice))
-    else:
+    elif saleprice != '#' and originalprice != '#':
         saleprice = '{:,}'.format(int(saleprice))
         originalprice = '{:,}'.format(int(originalprice))
         
@@ -349,7 +354,7 @@ def cleanseColumns2(jsonString):
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
 
 #%%
-sample = {'name':'해피바스 마이크로2.5딥스크럽스틱폼 75g(18)','volume':'100ml + 14매', 'brand':'clio','category':'카테고리','type':'#'}
+sample = {'name':'[클리오] [텍스쳐도 용량도 UP!]킬커버 팟 컨실러','volume':'#', 'brand':'clio','category':'카테고리','type':'#'}
 sample = cleanseColumns1(sample)
 s=cleanseBrand(sample)
 s=cleanseName(s)
