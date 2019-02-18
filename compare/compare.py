@@ -4,15 +4,19 @@ import sys
 import os
 sys.path.append("../modules")
 import io_module
-
+import sku_naming
+import local_module
+import pprint
 
 def main():
     brand = sys.argv[1]
     now = datetime.now()
     request_time = '%s-%s-%s / %s:%s' % (now.year, now.month, now.day, now.hour, now.minute)
 
-    new_cleansing = io_module.get_json("new", brand, "cleansing")
-    old_cleansing = io_module.get_json("old", brand, "cleansing")
+#    new_cleansing = io_module.get_json("new", brand, "cleansing")
+#    old_cleansing = io_module.get_json("old", brand, "cleansing")
+    new_cleansing = local_module.load_json("new", brand, "cleansing")
+    old_cleansing = local_module.load_json("old", brand, "cleansing")
     #sku_attributes = ['brand', 'name', 'color', 'volume', 'type']
 
     #renew_attributes = ['url', 'image', 'salePrice', 'originalPrice']
@@ -37,6 +41,7 @@ def main():
                     new_dict['sale_status'] = "#"
                     new_dict['confirm_time'] = "*"
                     renew.append(new_dict)
+                    print("갱신요청,단종")
                     break
                 else:
                     new_dict['info_status'] = "등록요청"
@@ -62,15 +67,15 @@ def main():
                     discon.append(old_dict)
                     break
 
-    # just for check, if below two line not equal zero, please correct the code above
-    print(len(old_cleansing) - len(new_cleansing) + len(new_pos) - len(discon) + len(renew))
-    print(len(renew) - len(before_renew))
-
     result_json = renew + new_pos + discon
     # just for check
-    # print(result_json) 
+    # print(result_json)
+    result_json = sku_naming.sku_naming(result_json)
+#    io_module.upload_json(result_json, brand, "compare")
+    local_module.save_json(result_json, brand, "compare")
+    print("---- compare 및 결과물 저장완료 -----------")
+    local_module.save_json(result_json, brand, "complete")
 
-    io_module.upload_json(result_json, brand, "compare")
 
 if __name__ == "__main__":
     main()

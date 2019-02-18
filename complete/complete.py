@@ -1,20 +1,29 @@
-# 1. 너가 해야할일 :
-# compare 결과로 만들어진 요청서에, 신규 제품을 sku id 부여해서 (brand->productname->)  complete 결과로 만들어진 json에 추가.
-#
-# Youngjin Yang [9:12 PM]
-# check) 첫 compare 결과 default old.json column에 status 추가할지말지 고민해보기!
-#
-# Youngjin Yang [9:37 PM]
-# +)
-# compare.py에 0 0 대신
-# 이해할수있는, 유의미한 문장 출력!
+import json
+from datetime import datetime
+import sys
+import os
+sys.path.append("../modules")
+import io_module
+import sku_naming
+import local_module
+import pprint
 
+def main():
+    brand = sys.argv[1]
+    now = datetime.now()
+    new_complete = local_module.load_json("new", brand, "compare")
+    old_complete = local_module.load_json("new", brand, "complete")
+    new_skuid_list = []
+    for new_info in new_complete:
+        new_skuid_list.append(new_info['skuid'])
 
-# sku naming 에 대한 dictionary를 브랜드 별로 만들어주자
-# brand  , product name , volume, type, color
-# sku id 목록 저장해놓은거 불러오고.
-sku_id_dict = load_json(sku_id_json)
+    for old_info in old_complete:
+        if old_info['skuid'] not in new_skuid_list:
+            new_complete.append(old_info)
 
-# 여기에 brand 없으면? 브랜드 sku id 추가 , 뒤에껀 000000 000 부터 시작
-#
-sku_id_dict['brand'] =
+#    io_module.upload_json(result_json, brand, "complete")
+    local_module.save_json(new_complete, brand, "complete")
+    print("---- complete 및 결과물 저장완료 -----------")
+
+if __name__ == "__main__":
+    main()

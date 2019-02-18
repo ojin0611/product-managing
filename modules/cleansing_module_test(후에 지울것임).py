@@ -1,13 +1,17 @@
+#%%
 import json
 import re
 
 global ref
 
+#%%
 # 크롤링되지 않은 칼럼이 존재할 수 있음
 def cleanseColumns1(jsonString):
     columnList = jsonString.keys()
     if 'category' not in columnList:
         jsonString = dict(jsonString, **{'category':'#'})
+    #if 'url' not in columnList:
+    #    jsonString = dict(jsonString, **{'url':'#'})
     if 'color' not in columnList:
         jsonString = dict(jsonString, **{'color':'#'})
     if 'type' not in columnList:
@@ -20,6 +24,7 @@ def cleanseColumns1(jsonString):
         jsonString = dict(jsonString, **{'originalPrice':'#'})
     return jsonString
 
+#%%
 # 브랜드명 클렌징 + 취급안하는 브랜드 제거 + skuid의 브랜드명 약어 부여
 def cleanseBrand(jsonString):
     
@@ -45,6 +50,7 @@ def cleanseBrand(jsonString):
     
         return result
 
+#%%
 # 각 내용 순서도 중요!
 def cleanseName(jsonString):
     
@@ -161,7 +167,7 @@ def cleanseName(jsonString):
     
     return result
 
-
+#%%
 def cleanseVolume(jsonString):
     
     volume = jsonString.get('volume')
@@ -293,3 +299,9 @@ def cleanseColumns2(jsonString):
     return jsonString
 
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'en_name'
+#%%
+sample = {'name':'[HERA X BLINDNESS] 홀리데이 루즈홀릭 리퀴드 슬로우 매트','volume':'6 g x 3 ea', 'brand':'clio','category':'카테고리','type':'#'}
+sample = cleanseColumns1(sample)
+s=cleanseBrand(sample)
+s=cleanseName(s)
+cleanseVolume(s)
