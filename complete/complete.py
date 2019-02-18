@@ -16,8 +16,8 @@ def main():
     try:
         old_complete = io_module.get_json("new", brand, "complete")
     except:
-        old_complete = {"name": "#", "url": "#", "image": "#", "color": "#", "category": "#", "salePrice": "#",
-                       "originalPrice": "#", "brand": "#", "volume": "#", "type": "#", "skuid": "#"}
+        old_complete = [{"name": "#", "url": "#", "image": "#", "color": "#", "category": "#", "salePrice": "#",
+                       "originalPrice": "#", "brand": "#", "volume": "#", "type": "#", "skuid": "#"}]
 
     new_skuid_list = [new_info['skuid'] for new_info in new_compare]
     new_complete = new_compare + [old_info for old_info in old_complete if old_info['skuid'] not in new_skuid_list]
