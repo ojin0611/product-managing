@@ -44,33 +44,30 @@ def sku_naming(jsonstring):
         cvt = (brand, product['name'], product['color'], product['volume'], product['type'])
         # 등록요청인 경우
         if product['info_status'] == "등록요청":
-            if brand not in sku_brand_dict.keys():
-                pass
+            brand_id = product['skuid']
+            if name not in sku_name_dict.keys():
+                name_id = int(sorted(sku_name_dict.values())[-1]) + 1
+                name_id = str(name_id).zfill(6)
+                sku_name_dict[name] = name_id
+                cvt_id = str("001")
+                sku_cvt_dict[cvt] = cvt_id
             else:
-                brand_id = sku_brand_dict[brand]
-                if name not in sku_name_dict.keys():
-                    name_id = int(sorted(sku_name_dict.values())[-1]) + 1
-                    name_id = (6 - len(str(int(name_id)))) * '0' + str(name_id)
-                    sku_name_dict[name] = name_id
-                    cvt_id = str("001")
-                    sku_cvt_dict[cvt] = "001"
-                else:
-                    name_id = sku_name_dict[name]
-                    if cvt not in sku_cvt_dict.keys():
-                        x = [sku_cvt_dict.get(cvt_key) for cvt_key in sku_cvt_dict.keys() if cvt_key[0] == cvt[0] and cvt_key[1] == cvt[1]]
-                        cvt_id = int(sorted(x)[-1]) + 1
-                        cvt_id = str(cvt_id).zfill(6)
-                        sku_cvt_dict[cvt] = cvt_id
+                name_id = sku_name_dict[name]
+                if cvt not in sku_cvt_dict.keys():
+                    x = [sku_cvt_dict.get(cvt_key) for cvt_key in sku_cvt_dict.keys() if cvt_key[0] == cvt[0] and cvt_key[1] == cvt[1]]
+                    cvt_id = int(sorted(x)[-1]) + 1
+                    cvt_id = str(cvt_id).zfill(3)
+                    sku_cvt_dict[cvt] = cvt_id
 
             product['skuid'] = brand_id + name_id + cvt_id
             print("new_skuid_created : " + product['skuid'])
 
         elif product['info_status'] == "갱신요청":
-            if sku_brand_dict.get(brand):
-                product['skuid'] = str(sku_brand_dict.get(brand)) + str(sku_name_dict.get(name)) + str(sku_cvt_dict.get(cvt))
+            if sku_brand_dict.get(name):
+                product['skuid'] = product['skuid'] + str(sku_name_dict.get(name)) + str(sku_cvt_dict.get(cvt))
             else:
-                if product['skuid'] == "dummy":
-                    product.clear()
+                product.clear()
+
     with open('sku_brand_dict.pickle', 'wb') as f:
         pickle.dump(sku_brand_dict, f, pickle.HIGHEST_PROTOCOL)
 

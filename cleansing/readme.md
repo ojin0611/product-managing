@@ -13,5 +13,4 @@
 - data/brand/cleansing/new.json에 저장
 - data/cleansing/brandReference.json 취급하는 브랜드 목록
 
-결과 : cleansing values
-
+최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'

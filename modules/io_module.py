@@ -71,8 +71,8 @@ def upload_json(jsonstring, brand, activity):
         s3_rename.Object(bucket_name,new_file).delete()
     except ClientError: # crawling 1st time!
         print('--- '+brand+' crawling 1st time!')
-        empty_json = [{"name": "", "url": "", "image": "", "color": "", "category": "", "salePrice": "",
-                       "originalPrice": "", "brand": "", "volume": "", "type": "", "skuid": "dummy"}]
+        empty_json = [{"name": "#", "url": "#", "image": "#", "color": "#", "category": "#", "salePrice": "#",
+                       "originalPrice": "#", "brand": "#", "volume": "#", "type": "#", "skuid": "dummy"}]
         empty_output = json.dumps(empty_json, ensure_ascii=False, indent='\t')
         s3.put_object(Body=empty_output, Bucket=bucket_name, Key=old_file)
         
