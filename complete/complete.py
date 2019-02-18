@@ -21,8 +21,8 @@ def main():
         if old_info['skuid'] not in new_skuid_list:
             new_complete.append(old_info)
 
-#    io_module.upload_json(result_json, brand, "complete")
-    local_module.save_json(new_complete, brand, "complete")
+    io_module.upload_json(new_complete, brand, "complete")
+    # local_module.save_json(new_complete, brand, "complete")
     print("---- complete 및 결과물 저장완료 -----------")
 
 if __name__ == "__main__":
