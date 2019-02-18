@@ -11,10 +11,10 @@ import pprint
 def main():
     brand = sys.argv[1]
 
-    new_compare = local_module.load_json("new", brand, "compare")
+    new_compare = io_module.get_json("new", brand, "compare")
 
     try:
-        old_complete = local_module.load_json("new", brand, "complete")
+        old_complete = io_module.get_json("new", brand, "complete")
     except:
         old_complete = {"name": "#", "url": "#", "image": "#", "color": "#", "category": "#", "salePrice": "#",
                        "originalPrice": "#", "brand": "#", "volume": "#", "type": "#", "skuid": "#"}
