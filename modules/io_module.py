@@ -28,7 +28,6 @@ def get_json(load_filename, brand, activity):
         s3_text = s3_object['Body'].read().decode()
         json_object = json.loads(s3_text)
     
-    print(type(json_object))
     return json_object
 
 def upload_json(jsonstring, brand, activity):
@@ -57,9 +56,7 @@ def upload_json(jsonstring, brand, activity):
 
     output = json.dumps(jsonstring, ensure_ascii=False, indent='\t')
 
-    print('--- ]]'
-          ''
-          '\save key : s3/'+new_file+' ---')
+    print('--- save key : s3/'+new_file+' ---')
     print('--- save key : s3/'+old_file+' ---')
 
 

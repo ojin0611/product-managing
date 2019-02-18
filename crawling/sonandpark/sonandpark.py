@@ -68,7 +68,7 @@ def getItem():
     item['salePrice']=salePrice
     item['originalPrice']=originalPrice
     item['brand']=brand
-    item['url']=driver.current_url
+    item['url']=url
     
     items=[]
     colors = soup.find('select',{'id':'product_option_id1'})
@@ -110,9 +110,10 @@ driver.get(url_products)
 itemList = getItemList()
 
 result = []
-for item in itemList:
+for i, item in enumerate(itemList):
     driver.get(item)
     result += getItem()
+    print(i)
 
 
 
