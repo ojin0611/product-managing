@@ -13,10 +13,10 @@ def main():
     now = datetime.now()
     request_time = '%s-%s-%s / %s:%s' % (now.year, now.month, now.day, now.hour, now.minute)
 
-#    new_cleansing = io_module.get_json("new", brand, "cleansing")
-#    old_cleansing = io_module.get_json("old", brand, "cleansing")
-    new_cleansing = local_module.load_json("new", brand, "cleansing")
-    old_cleansing = local_module.load_json("old", brand, "cleansing")
+    new_cleansing = io_module.get_json("new", brand, "cleansing")
+    old_cleansing = io_module.get_json("old", brand, "cleansing")
+#    new_cleansing = local_module.load_json("new", brand, "cleansing")
+#    old_cleansing = local_module.load_json("old", brand, "cleansing")
 
     # --> old와 new data 비교 => name, color, volume, type 같으면 renew
     # --> 다르면 old 에 있는지 new에 있는지 확인 : old_only -> discon, new_only -> newpos
