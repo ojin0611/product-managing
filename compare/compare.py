@@ -17,15 +17,11 @@ def main():
 #    old_cleansing = io_module.get_json("old", brand, "cleansing")
     new_cleansing = local_module.load_json("new", brand, "cleansing")
     old_cleansing = local_module.load_json("old", brand, "cleansing")
-    #sku_attributes = ['brand', 'name', 'color', 'volume', 'type']
-
-    #renew_attributes = ['url', 'image', 'salePrice', 'originalPrice']
 
     # --> old와 new data 비교 => name, color, volume, type 같으면 renew
     # --> 다르면 old 에 있는지 new에 있는지 확인 : old_only -> discon, new_only -> newpos
     # 갱신되야 하는 것
     renew = []
-    before_renew = []
     # 단종된 것
     discon = []
     # 새로 등록 된 것
@@ -41,7 +37,6 @@ def main():
                     new_dict['sale_status'] = "#"
                     new_dict['confirm_time'] = "*"
                     renew.append(new_dict)
-                    print("갱신요청,단종")
                     break
                 else:
                     new_dict['info_status'] = "등록요청"
@@ -70,11 +65,12 @@ def main():
     result_json = renew + new_pos + discon
     # just for check
     # print(result_json)
-    result_json = sku_naming.sku_naming(result_json)
-#    io_module.upload_json(result_json, brand, "compare")
-    local_module.save_json(result_json, brand, "compare")
+    sku_tagged_json = sku_naming.sku_naming(result_json)
+#    io_module.upload_json(sku_tagged_json, brand, "compare")
+    local_module.save_json(sku_tagged_json, brand, "compare")
     print("---- compare 및 결과물 저장완료 -----------")
-    local_module.save_json(result_json, brand, "complete")
+    #   io_module.upload_json(sku_tagged_json, brand, "complete")
+    local_module.save_json(sku_tagged_json, brand, "complete")
 
 
 if __name__ == "__main__":
