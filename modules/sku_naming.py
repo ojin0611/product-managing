@@ -23,12 +23,12 @@ import pprint
 
 def sku_naming(jsonstring):
 
-    with open('sku_brand_dict.pickle', 'rb') as f:
-        sku_brand_dict = pickle.load(f)
-    with open('sku_name_dict.pickle', 'rb') as f:
-        sku_name_dict = pickle.load(f)
-    with open('sku_name_dict.pickle', 'rb') as f:
-        sku_cvt_dict = pickle.load(f)
+#    with open('sku_brand_dict.pickle', 'rb') as f:
+#        sku_brand_dict = pickle.load(f)
+#    with open('sku_name_dict.pickle', 'rb') as f:
+#        sku_name_dict = pickle.load(f)
+#    with open('sku_name_dict.pickle', 'rb') as f:
+#        sku_cvt_dict = pickle.load(f)
 
     sku_brand_dict = {'clio': "clio"}
     sku_name_dict = {('clio', ''): str(000000)}
