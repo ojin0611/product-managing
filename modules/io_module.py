@@ -72,7 +72,7 @@ def upload_json(jsonstring, brand, activity):
     except ClientError: # crawling 1st time!
         print('--- '+brand+' crawling 1st time!')
         empty_json = [{"name": "#", "url": "#", "image": "#", "color": "#", "category": "#", "salePrice": "#",
-                       "originalPrice": "#", "brand": "#", "volume": "#", "type": "#", "skuid": "dummy"}]
+                       "originalPrice": "#", "brand": "#", "volume": "#", "type": "#", "skuid": "#"}]
         empty_output = json.dumps(empty_json, ensure_ascii=False, indent='\t')
         s3.put_object(Body=empty_output, Bucket=bucket_name, Key=old_file)
         
