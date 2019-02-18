@@ -8,8 +8,6 @@ def cleanseColumns1(jsonString):
     columnList = jsonString.keys()
     if 'category' not in columnList:
         jsonString = dict(jsonString, **{'category':'#'})
-    #if 'url' not in columnList:
-    #    jsonString = dict(jsonString, **{'url':'#'})
     if 'color' not in columnList:
         jsonString = dict(jsonString, **{'color':'#'})
     if 'type' not in columnList:
