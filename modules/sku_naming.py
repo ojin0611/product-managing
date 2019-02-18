@@ -14,25 +14,25 @@ from botocore.errorfactory import ClientError
 
 def sku_naming(jsonstring):
 
-   s3 = boto3.client('s3')
-   bucket_name = 'cosmee-product-data'
-   s3_path = 'sku_dict'
+    '''
+    s3 = boto3.client('s3')
+    bucket_name = 'cosmee-product-data'
+    s3_path = 'sku_dict'
 
-   sku_brand_path = s3_path + 'sku_brand_dict.pickle'
-   sku_name_path = s3_path + 'sku_name_dict.pickle'
-   sku_cvt_path = s3_path + 'sku_name_dict.pickle'
+    sku_brand_path = s3_path + 'sku_brand_dict.pickle'
+    sku_name_path = s3_path + 'sku_name_dict.pickle'
+    sku_cvt_path = s3_path + 'sku_name_dict.pickle'
+    '''
 
-#    with open('sku_brand_dict.pickle', 'rb') as f:
-#        sku_brand_dict = pickle.load(f)
-#    with open('sku_name_dict.pickle', 'rb') as f:
-#        sku_name_dict = pickle.load(f)
-#    with open('sku_name_dict.pickle', 'rb') as f:
-#        sku_cvt_dict = pickle.load(f)
-
+    with open('sku_brand_dict.pickle', 'rb') as f:
+        sku_brand_dict = pickle.load(f)
+    with open('sku_name_dict.pickle', 'rb') as f:
+        sku_name_dict = pickle.load(f)
+    with open('sku_name_dict.pickle', 'rb') as f:
+        sku_cvt_dict = pickle.load(f)
     sku_brand_dict = {'clio': "clio"}
     sku_name_dict = {('clio', ''): str(000000)}
     sku_cvt_dict = {('clio', '', '', '', ''): str(000)}
-
     for product in jsonstring:
         brand = product['brand']
         name = (brand, product['name'])

@@ -17,6 +17,16 @@ def writeJSON(jsonString, output_name='data.json'):
     with open(output_name,'w',encoding='UTF-8') as file:
         file.write(jsonString)
 
+def getItemList(categoryURL):
+    fp = urlopen(categoryURL)
+    html = fp.read().decode("utf8")
+    fp.close()
+    soup = bs(html,'html.parser')
+
+    items = soup.find('div',{'class':'product_cat product_cat_first'})
+    items = items.find_all('a')
+    items = list(set(items))
+    return items
 
 
 def getItem(itemURL): 
@@ -92,14 +102,8 @@ result = []
 for categories in category_big:
     list_category = categories.find_all('li')
     for category in list_category:
-        url_category = category.a['href'] # get url of category
-        driver.get(url_home + url_category)
-        
-        html = driver.page_source
-        soup = bs(html,'html.parser')
-        items = soup.find('div',{'class':'product_cat product_cat_first'})
-        items = items.find_all('a')
-        items = list(set(items))
+        categoryURL = category.a['href'] # get url of category
+        items = getItemList(categoryURL)
         print('item 개수 :', len(items))
         for i, item in enumerate(items):
             print(i+1)
