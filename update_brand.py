@@ -24,6 +24,11 @@ def main():
     print('$',cmd)
     os.system(cmd)
 
+    cmd = "cd complete" + cmd_style + python_version + "complete.py "+ brand
+    print('$',cmd)
+    os.system(cmd)
+
+
 if __name__ == "__main__":
     main()
 

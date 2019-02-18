@@ -65,12 +65,13 @@ def main():
     result_json = renew + new_pos + discon
     # just for check
     # print(result_json)
-    sku_tagged_json = sku_naming.sku_naming(result_json)
-#    io_module.upload_json(sku_tagged_json, brand, "compare")
-    local_module.save_json(sku_tagged_json, brand, "compare")
+
+    result_json = sku_naming.sku_naming(result_json)
+    io_module.upload_json(result_json, brand, "compare")
+#    local_module.save_json(result_json, brand, "compare")
     print("---- compare 및 결과물 저장완료 -----------")
-    #   io_module.upload_json(sku_tagged_json, brand, "complete")
-    local_module.save_json(sku_tagged_json, brand, "complete")
+#    local_module.save_json(result_json, brand, "complete")
+#    io_module.upload_json(result_json, brand, "complete")
 
 
 if __name__ == "__main__":
