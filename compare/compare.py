@@ -6,7 +6,6 @@ sys.path.append("../modules")
 import io_module
 import sku_naming
 import local_module
-import pprint
 
 def main():
     brand = sys.argv[1]
