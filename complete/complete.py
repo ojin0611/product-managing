@@ -12,11 +12,15 @@ def main():
     brand = sys.argv[1]
 
     new_compare = local_module.load_json("new", brand, "compare")
-    old_complete = local_module.load_json("new", brand, "complete")
+
+    try:
+        old_complete = local_module.load_json("new", brand, "complete")
+    except:
+        old_complete = {"name": "#", "url": "#", "image": "#", "color": "#", "category": "#", "salePrice": "#",
+                       "originalPrice": "#", "brand": "#", "volume": "#", "type": "#", "skuid": "#"}
 
     new_skuid_list = [new_info['skuid'] for new_info in new_compare]
     new_complete = new_compare + [old_info for old_info in old_complete if old_info['skuid'] not in new_skuid_list]
-    for new
     #   io_module.upload_json(new_complete, brand, "complete")
     local_module.save_json(new_complete, brand, "complete")
     print("---- complete 및 결과물 저장완료 -----------")
