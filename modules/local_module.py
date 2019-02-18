@@ -23,8 +23,14 @@ def save_json(jsonstring, brand, activity):
     # brand : 브랜드명
     # activity : crawling / cleansing / compare 중 선택.
     now = datetime.now()
-    file_time = '%sy-%sm-%sd-%sh' % (now.year, now.month, now.day, now.hour)
-
+    year = str(now.year)
+    month = str(now.month)
+    day = str(now.day)
+    hour = str(now.hour)
+    minute = str(now.minute)
+    second = str(now.second)
+    file_time = '%s-%s-%s-%s-%s-%s' % (year.zfill(4), month.zfill(2), day.zfill(2),
+                                       hour.zfill(2), minute.zfill(2), second.zfill(2))
     output_path = '../data/' + brand + '/' + activity + '/'
     if not os.path.exists(output_path):
         os.makedirs(output_path)
@@ -44,7 +50,7 @@ def save_json(jsonstring, brand, activity):
         os.rename(new_file, old_file)
     else:
         empty_json = [{"name": "", "url": "", "image": "", "color": "", "category": "",
-                       "salePrice": "", "originalPrice": "", "brand": "", "volume": "", "type": ""}]
+                       "salePrice": "", "originalPrice": "", "brand": "", "volume": "", "type": "", "skuid": "dummy"}]
         empty_output = json.dumps(empty_json, ensure_ascii=False, indent='\t')
         with open(old_file, 'w', encoding='UTF-8') as file:
             file.write(empty_output)

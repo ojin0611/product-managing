@@ -5,6 +5,7 @@ import os
 import boto3
 from botocore.errorfactory import ClientError
 
+
 def get_json(load_filename, brand, activity):
     # load_filename : new / old
     # brand : name of brand
@@ -44,7 +45,14 @@ def upload_json(jsonstring, brand, activity):
 
     history_path = s3_path + 'history/'
     now = datetime.now()
-    file_time = '%s-%s-%s-%s-%s-%s' % (now.year, now.month, now.day, now.hour, now.minute, now.second)
+    year = str(now.year)
+    month = str(now.month)
+    day = str(now.day)
+    hour = str(now.hour)
+    minute = str(now.minute)
+    second = str(now.second)
+    file_time = '%s-%s-%s-%s-%s-%s' % (year.zfill(4), month.zfill(2), day.zfill(2),
+                                       hour.zfill(2), minute.zfill(2), second.zfill(2))
     history_file = history_path + file_time + ".json"
 
     output = json.dumps(jsonstring, ensure_ascii=False, indent='\t')
@@ -66,7 +74,8 @@ def upload_json(jsonstring, brand, activity):
         s3_rename.Object(bucket_name,new_file).delete()
     except ClientError: # crawling 1st time!
         print('--- '+brand+' crawling 1st time!')
-        empty_json = [{"name": "", "url": "", "image": "", "color": "", "category": "", "salePrice": "", "originalPrice": "", "brand": "", "volume": "", "type": ""}]
+        empty_json = [{"name": "", "url": "", "image": "", "color": "", "category": "", "salePrice": "",
+                       "originalPrice": "", "brand": "", "volume": "", "type": "", "skuid": "dummy"}]
         empty_output = json.dumps(empty_json, ensure_ascii=False, indent='\t')
         s3.put_object(Body=empty_output, Bucket=bucket_name, Key=old_file)
         
