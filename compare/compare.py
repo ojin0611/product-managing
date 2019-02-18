@@ -14,9 +14,7 @@ def main():
     request_time = '%s-%s-%s / %s:%s' % (now.year, now.month, now.day, now.hour, now.minute)
 
     new_cleansing = io_module.get_json("new", brand, "cleansing")
-    pprint.pprint(new_cleansing)
     old_cleansing = io_module.get_json("old", brand, "cleansing")
-    pprint.pprint(old_cleansing)
 #    new_cleansing = local_module.load_json("new", brand, "cleansing")
 #    old_cleansing = local_module.load_json("old", brand, "cleansing")
 
