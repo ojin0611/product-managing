@@ -1,13 +1,17 @@
+#%%
 import json
 import re
 
 global ref
 
+#%%
 # 크롤링되지 않은 칼럼이 존재할 수 있음
 def cleanseColumns1(jsonString):
     columnList = jsonString.keys()
     if 'category' not in columnList:
         jsonString = dict(jsonString, **{'category':'#'})
+    #if 'url' not in columnList:
+    #    jsonString = dict(jsonString, **{'url':'#'})
     if 'color' not in columnList:
         jsonString = dict(jsonString, **{'color':'#'})
     if 'type' not in columnList:
@@ -20,10 +24,11 @@ def cleanseColumns1(jsonString):
         jsonString = dict(jsonString, **{'originalPrice':'#'})
     return jsonString
 
+#%%
 # 브랜드명 클렌징 + 취급안하는 브랜드 제거 + skuid의 브랜드명 약어 부여
 def cleanseBrand(jsonString):
     
-    with open('C:/dev/product-managing/cleansing/brandReference.json', encoding="UTF-8") as json_data: 
+    with open('./brandReference.json', encoding="UTF-8") as json_data: 
         ref = json.load(json_data)
   
     brand = jsonString.get('brand')
@@ -45,6 +50,7 @@ def cleanseBrand(jsonString):
     
         return result
 
+#%%
 # 각 내용 순서도 중요!
 def cleanseName(jsonString):
     
@@ -64,38 +70,6 @@ def cleanseName(jsonString):
             p = re.compile(r'spf\s?(\d+)\s?([+]*)', re.I)
             name = p.sub(r'SPF\1\2', name)
             
-    # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
-    p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|(최대3개구매가능)|온라인 단독|온라인|online|사은품 : 샤워볼|기획세트|기획 세트|기획', re.I)
-    name = p.sub(' ', name)
-    p = re.compile(r'리미티드|[[]리미티드[]]|★리미티드★|한정|한정판|행사|event|이벤트|1+1|1 + 1|☆|추천|!|@|^|new\s|[[]new[]]|_|-', re.I)
-    # * () [] / , .  _ 제외 특수기호 ? \W
-    name = p.sub(' ', name)
-    
-    # 제품이름에 volume 포함 경우
-    p = re.compile(r'\d+(\s)?(ml|mg|mm|g|oz|매입|개입|매|개|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|mm|g|oz|매입|개입|매|개|each|ea|pcs)?', re.I)
-    if p.search(name) and volume == '#':
-        m = p.search(name)
-        volume = m.group()
-    name = p.sub(' ', name)
-    # \d+(\s)?ml(\s)?[*](\s)?\d+매
-    # \d+(\s)?ml[^+]
-    # \d+(\s)?mg|\d+(\s)?g|\d+(\s)?oz|\d+(\s)?매|\d+(\s)?매입|\d+(\s)?ea|\d+(\s)?each
-    
-    # 제품이름에 type (대용량/리필) 포함 경우
-    p = re.compile(r'대용량|소용량|리필 포함|리필용|본품+리필구성|본품+리필|리필|(대용량)|(리필)')
-    if p.search(name) and types == '#':
-        m = p.search(name)
-        types = m.group()
-    name = p.sub(' ', name)
-    
-    # 제품이름에 _+옵션 경우
-    #p = re.compile(r'_(.+)\s?')
-    #if p.search(name) and types == '#':
-    #    m = p.search(name)
-    #    types = m.group()
-    #name = p.sub(' ', name)
-        
-    
     # 세트 여부 구별 -> 세트로 구분되지 않은 상품 존재할 수 있음
     p = re.compile('set|세트', re.I)  # 컬렉션 / 박스 / 0종 / 키트 / 듀오 / 트리오 -> 세트 상품이 아닐 가능성 있음. 대부분이 세트로 걸러지긴 함-> 세트 표기가 더 나은지
     if p.search(name):
@@ -117,30 +91,77 @@ def cleanseName(jsonString):
     else:
         sale_status = '*'
     name = p.sub(' ', name)
+
+    
+    # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
+    p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|(최대3개구매가능)|온라인 단독|온라인|online|사은품 : 샤워볼|기획세트|기획 세트|기획', re.I)
+    name = p.sub(' ', name)
+    p = re.compile(r'리미티드|★리미티드★|[[]리미티드[]]|한정|한정판|행사|event|이벤트|1[+]1|1 [+] 1|☆|추천|!|@|^|new\s|[[]new[]]|_|-', re.I)
+    # * () [] / , .  _ 제외 특수기호 ? \W
+    name = p.sub(' ', name)
+    
+    # 제품이름에 volume 포함 경우
+    p = re.compile(r'(.*)[(]([^)]*(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)')
+    if p.search(name) and volume == '#':
+        volume = p.sub(r'\2', name)
+        name = p.sub(r'\1 \3', name)
+    '''
+    p = re.compile(r'\d+(\s)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I)
+    if p.search(name) and volume == '#':
+        volumes = p.findall(name)
+        volume = ' '.join(volumes)
+    name = p.sub(' ', name)
+    '''
+    
+    p = re.compile(r'\d+(\s)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I)
+    if p.search(name) and volume == '#':
+        m = p.search(name)
+        volume = m.group()
+    name = p.sub(' ', name)
+    # \d+(\s)?ml(\s)?[*](\s)?\d+매
+    # \d+(\s)?ml[^+]
+    # \d+(\s)?mg|\d+(\s)?g|\d+(\s)?oz|\d+(\s)?매|\d+(\s)?매입|\d+(\s)?ea|\d+(\s)?each
+    
+    
+    # 제품이름에 type (대용량/리필) 포함 경우
+    p = re.compile(r'대용량|소용량|리필 포함|리필용|본품+리필구성|본품+리필|리필|(대용량)|(리필)')
+    if p.search(name) and types == '#':
+        m = p.search(name)
+        types = m.group()
+    name = p.sub(' ', name)
+    
+    # 제품이름에 _+옵션 경우
+    '''
+    p = re.compile(r'_(.+)\s?')
+    if p.search(name) and types == '#':
+        m = p.search(name)
+        types = m.group()
+    name = p.sub(' ', name)
+    '''
         
     
     
     
     # 한글명과 영문명 분리
     p = re.compile(r'(.*[가-힣].*?)\s([^가-힣][a-zA-Z].*)+$')
-    p2 = re.compile('spf', re.I) # SPF00+ PA+ 부분을 영문명으로 인식하지 않도록
+    p2 = re.compile('spf|pa', re.I) # SPF00+ PA+ 부분을 영문명으로 인식하지 않도록
     if p.search(name):
         en = p.sub(r'\2', name) 
         if p2.search(en):
-            en_name = '*'
+            eng_name = '*'
         else:
-            en_name = en 
-            name = p.sub(r'\1', name)  # 이 부분을 en_name 지정하는 윗줄보다 먼저 쓰면 안됨 
+            eng_name = en 
+            name = p.sub(r'\1', name)  # 이 부분을 eng_name 지정하는 윗줄보다 먼저 쓰면 안됨 
     else:
-        en_name = '*'
+        eng_name = '*'
     
-    # RMK 스펀지(UV) RMK SPONGE(UV) -> name = RMK 스펀지, en_name = (UV) RMK SPONGE(UV) 이런 경우 해결
-    if en_name != '*':
-        enlist = en_name.split()
+    # RMK 스펀지(UV) RMK SPONGE(UV) -> name = RMK 스펀지, eng_name = (UV) RMK SPONGE(UV) 이런 경우 해결
+    if eng_name != '*':
+        enlist = eng_name.split()
         if len(enlist) > len(set(enlist)):
             i = len(enlist) - len(set(enlist))
             name = name + ' ' + enlist[i-1]
-            en_name = ' '.join(enlist[i:])
+            eng_name = ' '.join(enlist[i:])
     
     # 괄호들 제거
     #p = re.compile(r'[(]([^)]*)[)]|[[]([^]]*)[]]|[<]([^>]*)[>]|[{]([^>]*)[}]') # (), [], <>, {}
@@ -152,40 +173,73 @@ def cleanseName(jsonString):
     p = re.compile(r'\s+')
     name = p.sub(' ', name)
     name = name.strip() # 앞뒤 공백 제거
-    en_name = p.sub(' ', en_name)
-    en_name = en_name.strip()
+    eng_name = p.sub(' ', eng_name)
+    eng_name = eng_name.strip()
 
 
     # sale_status칼럼: 세일상품, 할인, 세일상품/할인 -> 3가지 값
-    result =  dict(jsonString, **{'name': name, 'volume': volume, 'type': types, 'sale_status': sale_status, 'en_name': en_name})
+    result =  dict(jsonString, **{'name': name, 'volume': volume, 'type': types, 'sale_status': sale_status, 'eng_name': eng_name})
     
     return result
 
-
+#%%
 def cleanseVolume(jsonString):
     
     volume = jsonString.get('volume')
     
-    # 1. 영문 소문자 표기
+    # 영문 소문자 표기
     volume = str(volume).lower()
     
-    # 2. 용량과 단위 사이 띄어쓰기 없음
+    # 용량x개수 표기 경우 용량*개수로 변경
+    p = re.compile('x', re.I)
+    volume = p.sub('*', volume)
+
+    # 2가지 이상의 제품이 +로 분류된 경우
+    p = re.compile(r'[+]')
+    if p.search(volume):
+        volumes = volume.split('+')
+        newvolumes = []
+        for separatedvolume in volumes:
+            #p = re.compile(r'([가-힣]+).*?\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))')
+            p = re.compile(r'([가-힣]+.*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))')
+            if p.search(separatedvolume):
+                separatedvolume = p.sub(r'\2\3(\1)', separatedvolume)
+            newvolumes.append(separatedvolume)
+        volume = ', '.join(newvolumes)
+    # 2가지 이상의 제품이 ,로 분류된 경우
+    p = re.compile(r'[,]')
+    if p.search(volume):
+        volumes = volume.split('+')
+        newvolumes = []
+        for separatedvolume in volumes:
+            p = re.compile(r'([가-힣]+).*?\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))')
+            if p.search(separatedvolume):
+                separatedvolume = p.sub(r'\2\3(\1)', separatedvolume)
+            newvolumes.append(separatedvolume)
+        volume = ', '.join(newvolumes)
+
+    # bottle/spray/pat 등 용량 앞에 수식어 붙는 경우 수식어 유지 + 단위가 pieces 같은 영어일 경우
+    p = re.compile('pieces|piece|pcs', re.I)
+    volume = p.sub('개', volume)
+
+    # 용량과 단위 사이 띄어쓰기 없음
     p = re.compile(r'(\d)\s+([가-힣a-zA-Z])')
     volume = p.sub(r'\1\2', volume)
 
-    #3. 용량 여러개 경우 / 로 구분
-    p = re.compile(r'([가-힣a-zA-Z])\s*(\d.)')
+    # 용량 여러개 경우 / 로 구분
+    #p = re.compile(r'([가-힣a-zA-Z])\s*(\d.)')
+    #volume = p.sub(r'\1/\2', volume)
+
+    p = re.compile(r'(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)\s*(\d.)')
     volume = p.sub(r'\1/\2', volume)
+
+    # 용량*개수 경우 뒷 단위 제거
+    p1 = re.compile(r'\s?[*]\s?(\d+).*[가-힣a-zA-Z]')
+    volume = p1.sub(r'*\1', volume)
+    #p2 = re.compile(r'([x].\d+).*[가-힣a-zA-Z]', re.I)
+    #volume = p2.sub(r'\1', volume)
     
-    #4. 용량*개수 경우 뒷 단위 제거 / 용량x개수로 표기된 경우도 존재!
-    p1 = re.compile(r'([*].\d+).*[가-힣a-zA-Z]')
-    volume = p1.sub(r'\1', volume)
-    p2 = re.compile(r'([x].\d+).*[가-힣a-zA-Z]', re.I)
-    volume = p2.sub(r'\1', volume)
     
-    #5. bottle/spray/pat 등 용량 앞에 수식어 붙는 경우 수식어 유지 + 단위가 pieces 같은 영어일 경우
-    p = re.compile('pieces|piece|pcs', re.I)
-    volume = p.sub('개', volume)
 
     #6 제품과 용량 모두 2가지 이상인 경우 [용량, 용량] or [용량(종류), 용량(종류)]   
 
@@ -221,7 +275,7 @@ def cleanseColor(jsonString):
     p = re.compile('([a-zA-Z]+.*?)([가-힣]+)')
     color = p.sub(r'\2 \1', color)
     
-    # 괄호 안 부가설명 있을 경우
+    # 괄호 안 부가설명 있을 경우 (품절, 가격변동)
     
     # 한 칸 이상의 공백은 제거
     p = re.compile(r'\s+')
@@ -292,4 +346,23 @@ def cleanseColumns2(jsonString):
    
     return jsonString
 
-# 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'en_name'
+# 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
+
+#%%
+sample = {'name':'해피바스 마이크로2.5딥스크럽스틱폼 75g(18)','volume':'100ml + 14매', 'brand':'clio','category':'카테고리','type':'#'}
+sample = cleanseColumns1(sample)
+s=cleanseBrand(sample)
+s=cleanseName(s)
+cleanseVolume(s)
+
+#%%
+# 제품이름에 volume 포함 경우
+def test(name):
+    p = re.compile(r'\d+(\s)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I)
+    if p.search(name):
+        volumes = p.findall(name)
+
+        #volume = ' '.join(volumes)
+    #name = p.sub(' ', name)
+    return volumes #{'name':name, 'volume':volume}
+test('로맨틱 체리블러섬 퍼퓸 바디워시 기획(체리 900g 2입 + 체리 120g)')
