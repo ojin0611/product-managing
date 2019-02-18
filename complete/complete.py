@@ -10,18 +10,15 @@ import pprint
 
 def main():
     brand = sys.argv[1]
-    now = datetime.now()
+
     new_compare = local_module.load_json("new", brand, "compare")
     old_complete = local_module.load_json("new", brand, "complete")
+
     new_skuid_list = [new_info['skuid'] for new_info in new_compare]
     new_complete = new_compare + [old_info for old_info in old_complete if old_info['skuid'] not in new_skuid_list]
-
-    for old_info in old_complete:
-        if old_info['skuid'] not in new_skuid_list:
-            new_complete.append(old_info)
-
-    io_module.upload_json(new_complete, brand, "complete")
-    # local_module.save_json(new_complete, brand, "complete")
+    for new
+    #   io_module.upload_json(new_complete, brand, "complete")
+    local_module.save_json(new_complete, brand, "complete")
     print("---- complete 및 결과물 저장완료 -----------")
 
 if __name__ == "__main__":

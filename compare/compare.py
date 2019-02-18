@@ -14,7 +14,9 @@ def main():
     request_time = '%s-%s-%s / %s:%s' % (now.year, now.month, now.day, now.hour, now.minute)
 
     new_cleansing = io_module.get_json("new", brand, "cleansing")
+    pprint.pprint(new_cleansing)
     old_cleansing = io_module.get_json("old", brand, "cleansing")
+    pprint.pprint(old_cleansing)
 #    new_cleansing = local_module.load_json("new", brand, "cleansing")
 #    old_cleansing = local_module.load_json("old", brand, "cleansing")
 
@@ -51,7 +53,6 @@ def main():
         if old_dict not in new_cleansing:
             for new_dict in new_cleansing:
                 if new_dict['brand'] == old_dict['brand'] and new_dict['name'] == old_dict['name'] and new_dict['color'] == old_dict['color'] and new_dict['volume'] == old_dict['volume'] and new_dict['type'] == old_dict['type']:
-                    before_renew.append(new_dict) # just for check
                     pass
                 else:
                     old_dict['info_status'] = "갱신요청"
@@ -63,16 +64,10 @@ def main():
                     break
 
     result_json = renew + new_pos + discon
-    # just for check
-    # print(result_json)
 
     result_json = sku_naming.sku_naming(result_json)
-#    io_module.upload_json(result_json, brand, "compare")
-    local_module.save_json(result_json, brand, "compare")
+    io_module.upload_json(result_json, brand, "compare")
     print("---- compare 및 결과물 저장완료 -----------")
-#    local_module.save_json(result_json, brand, "complete")
-#    io_module.upload_json(result_json, brand, "complete")
-
 
 if __name__ == "__main__":
     main()
