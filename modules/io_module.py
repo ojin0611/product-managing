@@ -48,7 +48,9 @@ def upload_json(jsonstring, brand, activity):
 
     output = json.dumps(jsonstring, ensure_ascii=False, indent='\t')
 
-    print('--- save key : s3/'+new_file+' ---')
+    print('--- ]]'
+          ''
+          '\save key : s3/'+new_file+' ---')
     print('--- save key : s3/'+old_file+' ---')
 
 
