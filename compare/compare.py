@@ -67,8 +67,8 @@ def main():
     # print(result_json)
 
     result_json = sku_naming.sku_naming(result_json)
-    io_module.upload_json(result_json, brand, "compare")
-#    local_module.save_json(result_json, brand, "compare")
+#    io_module.upload_json(result_json, brand, "compare")
+    local_module.save_json(result_json, brand, "compare")
     print("---- compare 및 결과물 저장완료 -----------")
 #    local_module.save_json(result_json, brand, "complete")
 #    io_module.upload_json(result_json, brand, "complete")
