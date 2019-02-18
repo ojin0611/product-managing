@@ -71,6 +71,7 @@ def sku_naming(jsonstring):
             else:
                 if product['skuid'] == "dummy":
                     product.clear()
+                    print("clear 완료" + product)
     with open('sku_brand_dict.pickle', 'wb') as f:
         pickle.dump(sku_brand_dict, f, pickle.HIGHEST_PROTOCOL)
 
