@@ -294,7 +294,7 @@ def cleanseName(jsonString):
     eng_name = p.sub(' ', eng_name)
     eng_name = eng_name.strip()
 
-    if eng_name is None or eng_name == '' or len(eng_name) < 4 or int(eng_name) == True:
+    if eng_name is None or eng_name == '' or len(eng_name) < 4:
         eng_name = '#'
 
     # sale_status칼럼: 세일상품, 할인, 한정, 품절-> 4가지
@@ -385,7 +385,9 @@ def cleanseColor(jsonString):
     sale_status = jsonString.get('sale_status')
     price = jsonString.get('originalPrice')
     volume = jsonString.get('volume')
- 
+    
+    color = str(color)
+
     #1-1 특수문자/수식어 하나하나 따로 제거할 경우..
     p = re.compile(r'[^(re)]new[^(al)]|추천|-|_|/|:|일반\s?판매|재고\s?[:]\s?\d*개|옵션가격|가격', re.I) # 제거하고 싶은 단어 추가  renewal 주의
     color = p.sub(' ', color) # space 한 칸 줘야 한글끼리, 영어끼리 띄어쓰기가 유지됨. 하지만 필요 이상의 공백이 생길 수 있으므로 한칸 이상 공백 제거하는 식 필요
@@ -489,6 +491,11 @@ def cleanseColor(jsonString):
 def cleanseType(jsonString):
     
     types = jsonString.get('type')
+    sale_status = jsonString.get('sale_status')
+    price = jsonString.get('originalPrice')
+    volume = jsonString.get('volume')
+    
+    types = str(types)
     
     #1-1 특수문자/수식어 하나하나 따로 제거할 경우..
     p = re.compile(r'[^(re)]new[^(al)]|추천|-|_|/|:|일반\s?판매|재고\s?[:]\s?\d*개|옵션가격|가격', re.I) # 제거하고 싶은 단어 추가  renewal 주의
@@ -636,3 +643,25 @@ data = list(filter(None, data))
 data = list(filter(lambda x:x.pop('delete', None), data))
 data
 '''
+#%%
+with open('C:/Users/TRILLIONAIRE/Downloads/api json,manual 모음/etudehouse.json', encoding="UTF-8") as json_data:
+    jsonString = json.load(json_data)
+crawled_data = jsonString
+cleansed_data = list(map(cleanseColumnNames, crawled_data))
+cleansed_data = list(map(cleanseColumns1, cleansed_data))
+cleansed_data = list(map(cleanseBrand, cleansed_data))
+cleansed_data = list(filter(None, cleansed_data))   # 취급하지 않는 브랜드의 경우 None값을 return -> filter
+cleansed_data = list(filter(lambda x:x.pop('delete', None), cleansed_data))  # 원하지 않는 칼럼 제거 
+cleansed_data = list(map(cleanseImage, cleansed_data))
+cleansed_data = list(map(cleanseName, cleansed_data))
+cleansed_data = list(map(cleanseVolume, cleansed_data))
+cleansed_data = list(map(cleanseColor, cleansed_data))
+cleansed_data = list(map(cleanseType, cleansed_data))
+cleansed_data = list(map(cleansePrice, cleansed_data))
+cleansed_data = list(map(cleanseColumns2, cleansed_data))
+cleansed_data
+
+#%%
+a = '123'
+if int(a) ==True:
+    print('b')
