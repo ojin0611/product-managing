@@ -12,7 +12,7 @@ def openChromedriver():
 
 def writeJSON(jsonString):
     brandname = os.getcwd().split('\\')[-1]
-    output_path = './'+brandname+'.json'
+    output_path = brandname+'.json'
     with open(output_path,'w',encoding='UTF-8') as file:
         file.write(jsonString)
 
