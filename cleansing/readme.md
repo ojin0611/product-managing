@@ -22,8 +22,10 @@
 ## cleansing_module.py
 - 각 파트의 순서가 중요!
 1. cleanseColumn1 : 클렌징해야 할 칼럼이 없을 경우 칼럼을 생성하고 default '#'값을 넣어준다.
+
 2. cleanseBrand : brandReference.json에 없는 취급하지 않는 브랜드 인 상품을 제거하고 skuid의 브랜드 약어 부분을 부여해 준다.
 -> 'brand', 'skuid' 를 update
+
 3. cleanseName :
 - 자외선 차단지수 형식 통일 [SPF00+ PA+]
 - 세트여부 구별 : 대소문자 구분없이 '세트', 'set' 포함시 sale_status = '세트상품' 추가
@@ -36,15 +38,17 @@
 - 한글명과 영문명 분리 : 한글이 끝나는 지점에서 분리한 후 분리된 영문명에 포함된 단어와 영문명의 길이를 고려해 잘 분리되었는지 확인
 - 남아있는 괄호들 제거
 - 공백은 한 칸씩만 남기기
--> 'name', 'volume' ,'type', 'sale_status'(세일상품, 할인, 세일상품/할인, #), 'eng_name' 를 update
+-> 'name', 'volume' ,'type', 'sale_status'(세트상품, 할인, 한정판매, 품절, 세트상품/할인, #), 'eng_name' 를 update
+
 4. cleanseVolume
 - 영문 소문자 표기
-- 용량*개수 또는 용량x개수 형식 통일 : 용량*개수(단위생략)
+- 용량 * 개수 또는 용량 x 개수 형식 통일 : 용량*개수 (단위생략)
 - 2가지 이상 제품의 용량이 표기된 경우 형식 통일 : + 또는 , 으로 split
 - 영어 단위를 한글 단위로 통일
 - 용량이 여러 개일 경우 / 로 구분해 주고 ml와 g을 먼저 표기해 준다.
 - 용량+단위 단위 사이 공백 제거
 -> 'volume' 을 update
+
 5. cleanseColor
 - 수식어와 특수문자 제거 : 발견할 때마다 추가해 준다.
 - 문자와 숫자는 띄어쓰기로 구분
@@ -53,10 +57,13 @@
 - 남아있는 괄호들 제거
 - 공백은 한 칸씩만 남기기
 -> 'color', 'salePrice', 'originalPrice' update
+
 6. cleanseType -> cleanseColor과 동일, 'type'을 update
+
 7. cleansePrice
 - 브랜드명이 tomford 인 경우 $기호 추가
 - 그 외 : 천단위 콤마표기 추가
 -> 'salePrice', 'originalPrice' 를 update
+
 8. cleanseColumn2
 - 'sale_status' 없다면 추가
