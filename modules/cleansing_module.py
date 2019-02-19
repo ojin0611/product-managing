@@ -128,6 +128,18 @@ def cleanseBrand(jsonString):
         return result
 
 #%%
+def cleanseImage(jsonString):
+    images = jsonString.get('image')
+    if type(images)!='list':
+        imageList=[]
+        images = images.split(',')
+        for image in images:
+            imageList.append(image)
+        image = imageList
+    result = dict(jsonString, **{'image' : image})
+    return result
+
+#%%
 # 각 내용 순서도 중요!
 def cleanseName(jsonString):
     
