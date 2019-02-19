@@ -25,6 +25,8 @@
 - 같은 브랜드의 상품에 대해, 마지막 name id 다음 번호를 부여.
 - cvt id 에는 001을 부여.
 - sku_dict 에 해당 상품과 id 값을 추가.
+
+* * *
 ### Output
 -  sku id column 에 값이 채워진 상품 데이터.
 -  새로운 상품에 대한 key, value 값이 추가된 sku_dict.pickle 을 S3에 업로드
