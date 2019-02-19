@@ -4,7 +4,7 @@ import sys
 import os
 import io_module
 import pickle
-
+from io import BytesIO
 import boto3
 from botocore.errorfactory import ClientError
 
@@ -15,36 +15,28 @@ from botocore.errorfactory import ClientError
 
 def sku_naming(jsonstring):
 
-    s3 = boto3.client('s3')
-    bucket_name = 'cosmee-product-data'
-    s3_path = 'sku_dict'
-
-    sku_name_file = 'sku_name_dict.pickle'
-    print('--- load key : s3/' + s3_path + sku_name_file + ' ---')
-    sku_cvt_file = 'sku_cvt_dict.pickle'
-    print('--- load key : s3/' + s3_path + sku_cvt_file + ' ---')
-    try:
-        sku_name_pickle = s3.get_object(Bucket=bucket_name, Key=s3_path + sku_name_file)
-        sku_name_dict = pickle.load(sku_name_pickle)
-        sku_cvt_pickle = s3.get_object(Bucket=bucket_name, Key=s3_path + sku_cvt_file)
-        sku_cvt_dict = pickle.load(sku_cvt_pickle)
-    except ClientError:
-        sku_name_dict = {('clio', ''): "000000"}
-        sku_cvt_dict = {('clio', '', '', '', ''): "000"}
+    sku_name_dict = io_module.get_pickle('sku_name_dict.pickle')
+    sku_cvt_dict = io_module.get_pickle('sku_cvt_dict.pickle')
 
     for product in jsonstring:
         brand = product['brand']
         name = (brand, product['name'])
         cvt = (brand, product['name'], product['color'], product['volume'], product['type'])
-        # 등록요청인 경우
-        if product['info_status'] == "등록요청":
+        # skuid가 있는 경우 == > 원래 있던 skuid를 사용함.:
+        if sku_cvt_dict.get(cvt):
+            product['skuid'] = product['skuid'] + str(sku_name_dict.get(name)) + str(sku_cvt_dict.get(cvt))
+
+        # skuid 없는 경우 == > skuid를 새로 생성해줌
+        else:
             brand_id = product['skuid']
             if name not in sku_name_dict.keys():
                 name_id = int(sorted(sku_name_dict.values())[-1]) + 1
                 name_id = str(name_id).zfill(6)
                 sku_name_dict[name] = name_id
-                cvt_id = str("001")
+                cvt_id = "001"
                 sku_cvt_dict[cvt] = cvt_id
+                product['skuid'] = brand_id + name_id + cvt_id
+
             else:
                 name_id = sku_name_dict[name]
                 if cvt not in sku_cvt_dict.keys():
@@ -52,15 +44,9 @@ def sku_naming(jsonstring):
                     cvt_id = int(sorted(x)[-1]) + 1
                     cvt_id = str(cvt_id).zfill(3)
                     sku_cvt_dict[cvt] = cvt_id
+                    product['skuid'] = brand_id + name_id + cvt_id
 
-            product['skuid'] = brand_id + name_id + cvt_id
-            print("new_skuid_created : " + product['skuid'])
-
-        elif product['info_status'] == "갱신요청":
-            if sku_name_dict.get(name):
-                product['skuid'] = product['skuid'] + str(sku_name_dict.get(name)) + str(sku_cvt_dict.get(cvt))
-
-    s3.put_object(Body=sku_name_dict, Bucket=bucket_name, Key=s3_path + sku_name_file)
-    s3.put_object(Body=sku_cvt_dict, Bucket=bucket_name, Key=s3_path + sku_cvt_file)
+    io_module.upload_pickle(sku_name_dict, 'sku_name_dict.pickle')
+    io_module.upload_pickle(sku_cvt_dict, 'sku_cvt_dict.pickle')
 
     return jsonstring

@@ -4,7 +4,8 @@ import sys
 import os
 import boto3
 from botocore.errorfactory import ClientError
-
+import pickle
+from io import BytesIO
 
 def get_json(load_filename, brand, activity):
     # load_filename : new / old
@@ -27,8 +28,7 @@ def get_json(load_filename, brand, activity):
         s3_object = s3.get_object(Bucket=bucket_name, Key=s3_path + filename)
         s3_text = s3_object['Body'].read().decode()
         json_object = json.loads(s3_text)
-    
-    print(type(json_object))
+
     return json_object
 
 def upload_json(jsonstring, brand, activity):
@@ -57,9 +57,7 @@ def upload_json(jsonstring, brand, activity):
 
     output = json.dumps(jsonstring, ensure_ascii=False, indent='\t')
 
-    print('--- ]]'
-          ''
-          '\save key : s3/'+new_file+' ---')
+    print('--- save key : s3/'+new_file+' ---')
     print('--- save key : s3/'+old_file+' ---')
 
 
@@ -81,3 +79,35 @@ def upload_json(jsonstring, brand, activity):
         
     s3.put_object(Body=output, Bucket=bucket_name, Key=new_file)
     s3.put_object(Body=output, Bucket=bucket_name, Key=history_file)
+
+
+def get_pickle(file_name):
+
+    s3 = boto3.client('s3')
+    bucket_name = 'cosmee-product-data'
+    s3_path = 'sku_dict/'
+
+    sku_name_file = 'sku_name_dict.pickle'
+    print('--- load key : s3/' + s3_path + sku_name_file + ' ---')
+
+    sku_cvt_file = 'sku_cvt_dict.pickle'
+    print('--- load key : s3/' + s3_path + sku_cvt_file + ' ---')
+
+    try:
+        sku_name_s3 = s3.get_object(Bucket=bucket_name, Key=s3_path + file_name)
+        result = pickle.load(BytesIO(sku_name_s3['Body'].read()))
+
+    except ClientError:
+        result = {('', '', '', '', ''): "000"}
+
+    return result
+
+
+def upload_pickle(data, file_name):
+
+    s3 = boto3.client('s3')
+    bucket_name = 'cosmee-product-data'
+    s3_path = 'sku_dict/'
+    pickle_data = pickle.dumps(data)
+    s3.put_object(Body=pickle_data, Bucket=bucket_name, Key=s3_path + file_name)
+    print('--- upload key : s3/' + s3_path + file_name + ' ---')
