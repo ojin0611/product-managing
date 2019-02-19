@@ -19,14 +19,13 @@ def sku_naming(jsonstring):
         else:
             brand_id = product['skuid']
             if cvt[1] not in [key[1] for key in sku_dict.keys()]:
-                print(cvt[1])
                 name_id = int(sorted([value[0] for value in sku_dict.values()])[-1]) + 1
                 name_id = str(name_id).zfill(6)
                 sku_dict[cvt] = (name_id, "001")
                 product['skuid'] = brand_id + name_id + "001"
             # name이 존재하는 경우, 기존의 name id 가져오고, cvt id 중 가장 큰 값에 + 1 해서 부여해줌.
             else:
-                # if cvt[1] in name_list:
+                #
                 name_id = ""
                 for key in sku_dict.keys():
                     if key[0] == cvt[0] and key[1] == cvt[1]:
