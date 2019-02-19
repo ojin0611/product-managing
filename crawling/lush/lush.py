@@ -5,7 +5,6 @@
 
 from bs4 import BeautifulSoup as bs 
 from selenium import webdriver
-from urllib.request import urlopen
 import json
 import platform
 import re
@@ -13,6 +12,7 @@ import time
 import copy
 import os
 
+from urllib.request import urlopen
 import sys
 sys.path.append('../../modules')
 from crawling_module import *
@@ -90,8 +90,7 @@ def getItem(itemURL):
     salePrice = getNumber(soup.find('strong',text = ' 판매가').parent.div.strong.get_text())
     originalPrice = salePrice
     
-    item = {'name':'#', 'url':'#', 'image':'#', 'color':'#', 'category':'#', 
-                   'salePrice':'#', 'originalPrice':'#', 'brand':'#','volume':'#'}
+    item = {'name':'#', 'url':'#', 'image':'#', 'color':'#', 'category':'#', 'salePrice':'#', 'originalPrice':'#', 'brand':'#','volume':'#','type':'#'}
 
     item['name']=name
     item['image']=imageList

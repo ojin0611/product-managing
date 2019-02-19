@@ -1,0 +1,22 @@
+{
+  "name": "thebodyshop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/request-promise-native": "^1.0.15"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node ./dist/thebodyshop.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

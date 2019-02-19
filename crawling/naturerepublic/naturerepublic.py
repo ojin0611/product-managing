@@ -137,7 +137,7 @@ for category in categoryList:
     print('크롤링된 개수:',len(itemList))
     if getNumber(totalItemNum) > len(thisItemList):
         print('더보기 버튼이 충분히 눌려지지 않았습니다.')
-        break
+        raise
 
 driver.close()
 itemList = list(set(itemList))
