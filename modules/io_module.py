@@ -8,7 +8,7 @@ import pickle
 from io import BytesIO
 import pprint
 
-def get_json(load_filename, brand, activity):
+def get_json(load_filename, brand, activity, bucket_name = 'cosmee-product-data'):
     # load_filename : new / old
     # brand : name of brand
     # activity : crawling / cleansing / compare
@@ -21,7 +21,6 @@ def get_json(load_filename, brand, activity):
 
     else:
         s3 = boto3.client('s3')
-        bucket_name = 'cosmee-product-data'
         s3_path = brand + '/' + activity + '/'
         filename = load_filename + '.json'
         print('--- load key : s3/'+s3_path+filename+' ---')
@@ -33,13 +32,12 @@ def get_json(load_filename, brand, activity):
     return json_object
 
 
-def upload_json(jsonstring, brand, activity):
+def upload_json(jsonstring, brand, activity, bucket_name = 'cosmee-product-data'):
 
     # jsonstring : json
     # brand : name of brand
     # activity : crawling / cleansing / compare
     s3 = boto3.client('s3')
-    bucket_name = 'cosmee-product-data'
     s3_path = brand + '/' + activity + '/'
     
     new_file = s3_path + 'new.json'

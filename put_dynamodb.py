@@ -23,13 +23,15 @@ def update(brand):
     compare_history = [key['Key'] for key in s3.list_objects(Bucket='cosmee-product-data')['Contents'] if key['Key'].startswith(brand + '/compare/history')]
 
     print(compare_history)
+    for key in compare_history:
+        filename = key.split('/')[-1][:-5]
+        products = io_module.get_json(filename, brand, 'compare/history')
+        print('--- put into AdminDB :',filename,'file ---')
 
-    products = io_module.get_json('new', brand, 'compare')
-
-    # Input Start
-    for product in products:
-        print(product['skuid'],product['name'])
-        table.put_item(Item=product)
+        # Input Start
+        for product in products:
+                # print(product['skuid'],product['name'])
+                table.put_item(Item=product)
 
 
 
