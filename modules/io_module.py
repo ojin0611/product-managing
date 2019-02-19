@@ -6,6 +6,7 @@ import boto3
 from botocore.errorfactory import ClientError
 import pickle
 from io import BytesIO
+import pprint
 
 def get_json(load_filename, brand, activity):
     # load_filename : new / old
@@ -99,7 +100,7 @@ def get_pickle(file_name):
         result = pickle.load(BytesIO(sku_name_s3['Body'].read()))
 
     except ClientError:
-        result = {('', '', '', '', ''): "000"}
+        result = {('', '', '', '', ''): ("000000", "000")}
 
     return result
 
@@ -112,3 +113,4 @@ def upload_pickle(data, file_name):
     pickle_data = pickle.dumps(data)
     s3.put_object(Body=pickle_data, Bucket=bucket_name, Key=s3_path + file_name)
     print('--- upload key : s3/' + s3_path + file_name + ' ---')
+    pprint.pprint(data)
