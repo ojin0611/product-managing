@@ -8,8 +8,43 @@ global ref
 
 
 #%%
-# 크롤링되지 않은 칼럼이 존재할 수 있음
+# 크롤링되지 않은 칼럼이 존재할 수 있음 + API로 가져온 브랜드의 데이터 칼럼 통일
 def cleanseColumns1(jsonString):
+    '''
+    brand = jsonString.get('brand')
+    apiBrandList = ['sulwhasoo', 'iope', '']
+
+    if jsonString.get('brandName') == True or jsonString.get('brand') == 'drjart' or :
+        colName = {
+        'beforeOnlineSalePrice':'originalPrice', 
+        'brandName':'brand', 
+        'category':'category', 
+        'colorname':'color',
+        'finalOnlinePrice':'salePrice',
+        'image':'image',
+        'mainName':'name',
+        'url':'url',
+        'volume':'volume',
+        'price' : 'originalPrice'
+        'option' : 'color'
+        'prodId': None,
+        'rootCategory': None,
+        'subCategory': None,
+        'subName': None,
+        'companyOfManufacturer': None,
+        'countryOfManufacturer': None,
+        'expirationDate': None,
+        'id': None,
+        'ingredient': None,
+        'specifications': None,
+        'functionalCosmetics': None,
+        }
+
+    jsonString = dict((colName[key], value) for (key, value) in jsonString.items())
+    jsonString = list(filter(None, jsonString))
+    jsonString
+    '''
+
     columnList = jsonString.keys()
     if 'category' not in columnList:
         jsonString = dict(jsonString, **{'category':'#'})
@@ -95,6 +130,9 @@ def cleanseName(jsonString):
     else:
         sale_status = '#'
     name = p.sub(' ', name)
+
+    # 한정판매/품절 여부 구별
+
 
     
     # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
@@ -291,7 +329,9 @@ def cleanseColor(jsonString):
         color = p.sub(r'\1 \3', color)
 
     # 가격변동
-    p = 
+    #p = 
+
+    # API에서 'option' -> 'color'로 바꾼경우 color에 type, volume 포함될 수 있다 (에스쁘아option = color, 아리따움option = type+volume, 훌리카 = color,type,'일반판매')
 
     # 괄호들 제거
     #p = re.compile(r'[(]([^)]*)[)]|[[]([^]]*)[]]|[<]([^>]*)[>]|[{]([^>]*)[}]') # (), [], <>, {}
@@ -329,6 +369,8 @@ def cleanseType(jsonString):
     types = p.sub(r'\2 \1', types)
     
     # 괄호 안 부가설명 있을 경우
+
+    # API에서 'option' -> 'type'으로 바꾼경우 타입에 용량 포함될 수 있다
     
     # 한 칸 이상의 공백은 제거
     p = re.compile(r'\s+')
@@ -371,7 +413,7 @@ def cleanseColumns2(jsonString):
     return jsonString
 
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
-
+'''
 #%%
 sample = {'name':'[클리오] [프리즘 라인과 찰떡궁합!]프로 플레이 프리즘 페이스 브러쉬 204','volume':'4g(1~6호), 3.8g(7~9호),3g(10~12호),3.5g(13~16호)','color':' 01N Très Clair', 'brand':'clio','category':'카테고리','type':'#'}
 sample = cleanseColumns1(sample)
@@ -379,4 +421,5 @@ s=cleanseBrand(sample)
 s=cleanseName(s)
 s=cleanseVolume(s)
 cleanseColor(s)
+'''
 
