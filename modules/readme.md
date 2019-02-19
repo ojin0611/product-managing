@@ -1,6 +1,7 @@
 # Sku naming
 기능 : SKU 단위로 고유 ID를 부여해줌.
-
+- sku id = brand id (알파벳 4글자) + name id (숫자 6자리) + cvt id (숫자 3자리)
+- ex) DRJA000000000
 * * *
 
 ## Input
@@ -8,19 +9,21 @@
 -  기존 sku_dict
     * sku_dict : dictionary, .pickle 형태로 s3에 보관
     * 상품의 brand, name, color, volume, type 을 key 값으로, name id, cvt id를 value 로 저장.
-    * 구조 : {('brand', 'name', 'color', 'volume', 'type') : ('name id', 'cvt id'), ...} 
+    * 구조 : {('brand', 'name', 'color', 'volume', 'type') : ('name id(6자리)', 'cvt id(3자리)'), ...} 
         * cvt = color, volume, type (sku를 구분하는 최소 단위)
 * * *
 
 ## Process
 ###  개별 상품 데이터(cleansing data)의 brand, name, color, volume, type 를, 
  기존 sku_dict와 비교
--
-#### 상품에 대한 기존 sku id가 cvt 단위까지 존재할 경우
-- 기존 sku id 그대로 부여.
-#### 상품에 대한 기존 sku id가 brand, name에 대해서만 존재할 경우
-- name color volume type 일치하지 않을 경우 -> 단종상품
-- name color volume type 일치 할 경우 -> pass
+---
+#### 상품에 대한 기존 sku id가 cvt id까지 존재할 경우
+- 기존 sku id(brand id + name id + cvt id) 부여.
+#### 상품에 대한 name id만 존재할 경우
+- name id 만 가져옴.
+- 같은 이름의 상품에 대해, 기존에 존재하는 마지막 cvt id 다음 번호를 부여.
+#### 상품에 대한 name id도 존재하지 않을 경우 
+
 
 * * *
 
