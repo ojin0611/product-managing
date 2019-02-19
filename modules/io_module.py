@@ -113,4 +113,3 @@ def upload_pickle(data, file_name):
     pickle_data = pickle.dumps(data)
     s3.put_object(Body=pickle_data, Bucket=bucket_name, Key=s3_path + file_name)
     print('--- upload key : s3/' + s3_path + file_name + ' ---')
-    pprint.pprint(data)
