@@ -102,7 +102,7 @@ result = []
 for categories in category_big:
     list_category = categories.find_all('li')
     for category in list_category:
-        categoryURL = category.a['href'] # get url of category
+        categoryURL = url_home + category.a['href'] # get url of category
         items = getItemList(categoryURL)
         print('item 개수 :', len(items))
         for i, item in enumerate(items):

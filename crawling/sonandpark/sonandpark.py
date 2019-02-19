@@ -12,7 +12,7 @@ import copy
 
 import sys
 sys.path.append('../../modules')
-from crawling_module import openChromedriver
+from crawling_module import *
 
 
 def getNumber(string):
@@ -93,10 +93,6 @@ def getItem():
     return items
 
 
-def writeJSON(jsonString, output_name='data.json'):
-    with open(output_name,'w',encoding='UTF-8') as file:
-        file.write(jsonString)
-
 driver = openChromedriver()
 '''
 path = 'chromedriver.exe' if (platform.system() == 'Windows') else '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver';
@@ -119,7 +115,7 @@ for i, item in enumerate(itemList):
 
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 
-writeJSON(output, output_name = 'sonandpark.json')
+writeJSON(output)
 
 
 
