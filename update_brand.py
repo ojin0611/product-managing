@@ -20,27 +20,29 @@ def main(brand):
         update(brand)
 
 def update(brand):
-    
-    # crawling
-    cmd = "cd crawling" + cmd_style +  python_version + "crawling.py "+ brand
-    print('$',cmd)
-    os.system(cmd)
+    try:
+        # crawling
+        cmd = "cd crawling" + cmd_style +  python_version + "crawling.py "+ brand
+        print('$',cmd)
+        os.system(cmd)
 
-    # cleansing
-    cmd = "cd cleansing" + cmd_style + python_version + "cleansing.py "+ brand
-    print('$',cmd)
-    os.system(cmd)
+        # cleansing
+        cmd = "cd cleansing" + cmd_style + python_version + "cleansing.py "+ brand
+        print('$',cmd)
+        os.system(cmd)
 
-    # compare
-    cmd = "cd compare" + cmd_style + python_version + "compare.py "+ brand
-    print('$',cmd)
-    os.system(cmd)
-    '''
-    # complete
-    cmd = "cd complete" + cmd_style + python_version + "complete.py "+ brand
-    print('$',cmd)
-    os.system(cmd)
-    '''
+        # compare
+        cmd = "cd compare" + cmd_style + python_version + "compare.py "+ brand
+        print('$',cmd)
+        os.system(cmd)
+        '''
+        # complete
+        cmd = "cd complete" + cmd_style + python_version + "complete.py "+ brand
+        print('$',cmd)
+        os.system(cmd)
+        '''
+    except:
+        pass
 
 
 if __name__ == "__main__":

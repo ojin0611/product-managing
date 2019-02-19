@@ -37,8 +37,8 @@ def update(brand):
 
     for key in compare_history:
         filename = key.split('/')[-1][:-5]
+        products = io_module.get_json(filename, brand, 'compare/history')
         if getUpdateTime(filename) > last_backup_time:
-            products = io_module.get_json(filename, brand, 'compare/history')
             print('--- put into AdminDB :',brand,filename,'file ---')
 
             # Input Start
