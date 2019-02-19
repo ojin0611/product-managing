@@ -64,6 +64,8 @@ def main():
 
         name = info.find('div',{'class':'tit'}).get_text().strip()
         if brandName in name: name = name[len(brandName)+2:].strip()
+        
+        if '클리오' in name: name = name[name.find('클리오')+3:].strip()
 
         image = soup.find('img',{'id':'overimage'})['src']
 
@@ -124,7 +126,7 @@ def main():
         try:
             itemList += getItemList()
             readNextPage()
-        except Exception as e:
+        except Exception:
             break
 
     driver.close()

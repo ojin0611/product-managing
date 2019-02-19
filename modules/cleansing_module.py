@@ -76,33 +76,33 @@ def cleanseName(jsonString):
     if p.search(name):
         sale_status = '세트상품'
     else:
-        sale_status = '*'
+        sale_status = '#'
     # 세트 이름에서 지워야하나?
     # name = p.sub(' ', name)
         
 
     # 할인 여부 구별 -> 할인으로 구분되지 않은 상품 존재할 수 있음
     p = re.compile('sale|할인|세일', re.I)
-    if p.search(name) and sale_status != '*':
+    if p.search(name) and sale_status != '#':
         sale_status += '/할인'
-    elif p.search(name) and sale_status == '*':
+    elif p.search(name) and sale_status == '#':
         sale_status = '할인'
-    elif sale_status != '*':
+    elif sale_status != '#':
         pass
     else:
-        sale_status = '*'
+        sale_status = '#'
     name = p.sub(' ', name)
 
     
     # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
     p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|(최대3개구매가능)|온라인 단독|온라인|online|사은품 : 샤워볼|기획세트|기획 세트|기획', re.I)
     name = p.sub(' ', name)
-    p = re.compile(r'리미티드|★리미티드★|[[]리미티드[]]|한정|한정판|행사|event|이벤트|1[+]1|1 [+] 1|☆|추천|!|@|^|new\s|[[]new[]]|_|-', re.I)
+    p = re.compile(r'리미티드|★리미티드★|[[]리미티드[]]|한정|한정판|행사|event|이벤트|[1+1]|[1 + 1]|★|☆|추천|@|^|new\s|[[]new[]]|new!|_|-|~|!', re.I)
     # * () [] / , .  _ 제외 특수기호 ? \W
     name = p.sub(' ', name)
     
     # 제품이름에 volume 포함 경우
-    p = re.compile(r'(.*)[(]([^)]*(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)')
+    p = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)')
     if p.search(name) and volume == '#':
         volume = p.sub(r'\2', name)
         name = p.sub(r'\1 \3', name)
@@ -114,7 +114,7 @@ def cleanseName(jsonString):
     name = p.sub(' ', name)
     '''
     
-    p = re.compile(r'\d+(\s)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I)
+    p = re.compile(r'\d+(\s)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I)
     if p.search(name) and volume == '#':
         m = p.search(name)
         volume = m.group()
@@ -140,26 +140,25 @@ def cleanseName(jsonString):
     name = p.sub(' ', name)
     '''
         
-    
-    
-    
     # 한글명과 영문명 분리
-    p = re.compile(r'(.*[가-힣].*?)\s?([^가-힣][a-zA-Z]*)+$')
-    p2 = re.compile('spf|pa', re.I) # SPF00+ PA+ 부분을 영문명으로 인식하지 않도록
-    if p.search(name):
+    p = re.compile(r'(.*[가-힣].*?)\s?([^가-힣][a-zA-Z]+)*')
+    p2 = re.compile(r'(.*[가-힣].*?)\s?([^가-힣][a-zA-Z]+)*[가-힣]')
+    p3 = re.compile('spf|pa', re.I) # SPF00+ PA+ 부분을 영문명으로 인식하지 않도록
+
+    if p.search(name) and p2.search(name) != True:
         en = p.sub(r'\2', name) 
-        if p2.search(en):
-            eng_name = '*'
+        if p3.search(en):
+            eng_name = '#'
         else:
             eng_name = en 
             name = p.sub(r'\1', name)  # 이 부분을 eng_name 지정하는 윗줄보다 먼저 쓰면 안됨 
     else:
-        eng_name = '*'
+        eng_name = '#'
     
     # RMK 스펀지(UV) RMK SPONGE(UV) -> name = RMK 스펀지, eng_name = (UV) RMK SPONGE(UV) 이런 경우 해결
-    if eng_name != '*':
+    if eng_name != '#':
         enlist = eng_name.split()
-        if len(enlist) > len(set(enlist)):
+        if len(enlist) > len(set(enlist)) and name.split()[-1]==enlist[0]:
             i = len(enlist) - len(set(enlist))
             name = name + ' ' + enlist[i-1]
             eng_name = ' '.join(enlist[i:])
@@ -177,6 +176,8 @@ def cleanseName(jsonString):
     eng_name = p.sub(' ', eng_name)
     eng_name = eng_name.strip()
 
+    if eng_name is None or eng_name == '':
+        eng_name = '#'
 
     # sale_status칼럼: 세일상품, 할인, 세일상품/할인 -> 3가지 값
     result =  dict(jsonString, **{'name': name, 'volume': volume, 'type': types, 'sale_status': sale_status, 'eng_name': eng_name})
@@ -347,14 +348,14 @@ def cleansePrice(jsonString):
 def cleanseColumns2(jsonString):
     columnList = jsonString.keys()
     if 'sale_status' not in columnList:
-        jsonString = dict(jsonString, **{'sale_status':'*'})
+        jsonString = dict(jsonString, **{'sale_status':'#'})
    
     return jsonString
 
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
 
 #%%
-sample = {'name':'[클리오] [텍스쳐도 용량도 UP!]킬커버 팟 컨실러','volume':'#', 'brand':'clio','category':'카테고리','type':'#'}
+sample = {'name':'[클리오] [턴라이너 트위스턴 Upgrade!!]NEW! 킬라스팅 슈퍼프루프 브러쉬 라이너','volume':'#', 'brand':'clio','category':'카테고리','type':'#'}
 sample = cleanseColumns1(sample)
 s=cleanseBrand(sample)
 s=cleanseName(s)

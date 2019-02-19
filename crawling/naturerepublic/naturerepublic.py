@@ -6,12 +6,11 @@ from bs4 import BeautifulSoup as bs              # 데이터파싱 라이브러�
 from selenium import webdriver
 from urllib.request import urlopen
 import json
-import platform
-import re
-import time
-import copy
+import platform, os, re, time, copy, sys
 from selenium.webdriver.support.ui import WebDriverWait
 
+sys.path.append('../../modules')
+from crawling_module import *
 
 def getNumber(string):
     numExtracter = re.compile('[0-9]+')
@@ -112,20 +111,9 @@ def getItem(itemURL):
     return items
 
 
-def writeJSON(jsonString):
-    brandname = os.getcwd().split('\\')[-1]
-    output_path = '../../data/'+brandname
-
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-        
-    output_path = output_path + '/new.json'
-    with open(output_path,'w',encoding='UTF-8') as file:
-        file.write(jsonString)
 
 
-path = 'chromedriver.exe' if (platform.system() == 'Windows') else '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver'
-driver = webdriver.Chrome(path)
+driver = openChromedriver()
 
 url_home = 'https://www.naturerepublic.com'
 url_products = 'https://www.naturerepublic.com/shop/goods_list.php?cid=000000000000000&depth=0'

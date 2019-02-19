@@ -13,6 +13,9 @@ import time
 import copy
 import os
 
+import sys
+sys.path.append('../../modules')
+from crawling_module import *
 
 
 
@@ -116,20 +119,8 @@ def getItem(itemURL):
     return items
 
 
-def writeJSON(jsonString):
-    brandname = os.getcwd().split('\\')[-1]
-    output_path = '../../data/'+brandname
 
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-        
-    output_path = output_path + '/new.json'
-    with open(output_path,'w',encoding='UTF-8') as file:
-        file.write(jsonString)
-
-
-path = 'chromedriver.exe' if (platform.system() == 'Windows') else '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver'
-driver = webdriver.Chrome(path)
+driver = openChromedriver()
 
 url_home = 'https://lush.co.kr'
 url_products = 'https://lush.co.kr/goods/goods_list.php?cateCd=001013'

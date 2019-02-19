@@ -12,7 +12,7 @@ import copy
 
 import sys
 sys.path.append('../../modules')
-from crawling_module import openChromedriver
+from crawling_module import *
 
 
 def getNumber(string):
@@ -68,7 +68,7 @@ def getItem():
     item['salePrice']=salePrice
     item['originalPrice']=originalPrice
     item['brand']=brand
-    item['url']=driver.current_url
+    item['url']=url
     
     items=[]
     colors = soup.find('select',{'id':'product_option_id1'})
@@ -93,10 +93,6 @@ def getItem():
     return items
 
 
-def writeJSON(jsonString, output_name='data.json'):
-    with open(output_name,'w',encoding='UTF-8') as file:
-        file.write(jsonString)
-
 driver = openChromedriver()
 '''
 path = 'chromedriver.exe' if (platform.system() == 'Windows') else '/Users/jg/Desktop/develop/DataTeam/DataProcessing/product/crawling/chromedriver';
@@ -110,15 +106,16 @@ driver.get(url_products)
 itemList = getItemList()
 
 result = []
-for item in itemList:
+for i, item in enumerate(itemList):
     driver.get(item)
     result += getItem()
+    print(i)
 
 
 
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 
-writeJSON(output, output_name = 'sonandpark.json')
+writeJSON(output)
 
 
 

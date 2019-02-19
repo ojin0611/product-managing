@@ -31,6 +31,7 @@ def get_json(load_filename, brand, activity):
 
     return json_object
 
+
 def upload_json(jsonstring, brand, activity):
 
     # jsonstring : json
