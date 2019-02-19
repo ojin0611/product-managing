@@ -414,9 +414,11 @@ def cleanseColor(jsonString):
         sale_status = '#'
     color = p.sub(' ', color)
 
-
-    p = re.compile(r'\D')
-    price = p.sub('', price)
+    if type(price) == type(1):
+        pass
+    else:
+        p = re.compile(r'\D')
+        price = p.sub('', price)
 
     # 가격변동 (+기호 있는 경우)
     p = re.compile(r'([+]\s?\d+)[,]?(\d+\s?)원?\s?[^가-힣]')
@@ -527,8 +529,11 @@ def cleanseType(jsonString):
     types = p.sub(' ', types)
 
 
-    p = re.compile(r'\D')
-    price = p.sub('', price)
+    if type(price) == type(1):
+        pass
+    else:
+        p = re.compile(r'\D')
+        price = p.sub('', price)
 
     # 가격변동 (+기호 있는 경우)
     p = re.compile(r'([+]\s?\d+)[,]?(\d+\s?)원?[^가-힣]')
@@ -637,7 +642,7 @@ def cleanseColumns2(jsonString):
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
 
 #%%
-sample = {'name':'[클리오]','volume':'#','originalPrice': '10000원','color':"23 내추럴베이지 +400원", 'brand':'clio','category':'카테고리','type':'#'}
+sample = {'name':'[클리오]','volume':'#','originalPrice': '10000원','color':"23 내추럴베이지 +40", 'brand':'clio','category':'카테고리','type':'#'}
 s = cleanseColumnNames(sample)
 s = cleanseColumns1(s)
 s=cleanseBrand(s)
