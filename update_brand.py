@@ -35,11 +35,12 @@ def update(brand):
     cmd = "cd compare" + cmd_style + python_version + "compare.py "+ brand
     print('$',cmd)
     os.system(cmd)
-
+    '''
     # complete
     cmd = "cd complete" + cmd_style + python_version + "complete.py "+ brand
     print('$',cmd)
     os.system(cmd)
+    '''
 
 
 if __name__ == "__main__":
