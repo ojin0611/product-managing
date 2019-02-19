@@ -71,7 +71,7 @@ def cleanseColumns1(jsonString):
 # 브랜드명 클렌징 + 취급안하는 브랜드 제거 + skuid의 브랜드명 약어 부여
 def cleanseBrand(jsonString):
     
-    with open('C:/dev/product-managing/cleansing/brandReference.json', encoding="UTF-8") as json_data: 
+    with open('./brandReference.json', encoding="UTF-8") as json_data: 
         ref = json.load(json_data)
   
     brand = jsonString.get('brand')
