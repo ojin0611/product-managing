@@ -63,6 +63,9 @@ def cleanseColumns1(jsonString):
         jsonString = dict(jsonString, **{'salePrice':'#'})
     if 'originalPrice' not in columnList:
         jsonString = dict(jsonString, **{'originalPrice':'#'})
+    # dummy 'delete'칼럼 추가 : 'delete' key가 하나도 없을 경우 후에 전체 데이터가 필터링됨
+    if 'delete' not in columnList:
+        jsonString = dict(jsonString, **{'delete':'#'})
 
     return jsonString
 
@@ -81,6 +84,7 @@ def cleanseBrand(jsonString):
     
     p = re.compile(r'\s+') #띄어쓰기 없음
     brand = re.sub(p, '',brand) 
+    brand = brand.upper()
 
     # 브랜드명이 한글명일 경우 (API) 영문명으로 바꿔줌
     if brand in korBrandList:
@@ -100,42 +104,17 @@ def cleanseBrand(jsonString):
     
         return result
 
-
-#%%
-# 브랜드명 클렌징 + 취급안하는 브랜드 제거 + skuid의 브랜드명 약어 부여
-def cleanseBrand(jsonString):
-    
-    with open('C:/dev/product-managing/cleansing/brandReference.json', encoding="UTF-8") as json_data: 
-        ref = json.load(json_data)
-  
-    brand = jsonString.get('brand')
-    brandList = list(ref.get('영문명').values()) # 취급 브랜드의 영문명 리스트
-    abbList = list(ref.get('약어').values()) # 브랜드 약어 리스트
-    
-    p = re.compile(r'\s+') #띄어쓰기 없음
-    brand = re.sub(p, '',brand) 
-    brand = brand.upper() #영문 대문자 표기
-    
-    if brand not in brandList:
-        return None
-    
-    # skuid 브랜드 약어 부분 부여
-    else:
-        idx = brandList.index(brand)
-        skuid = abbList[idx]
-        result = dict(jsonString, **{'brand': brand, 'skuid': skuid})
-    
-        return result
-
 #%%
 def cleanseImage(jsonString):
     images = jsonString.get('image')
-    if type(images)!='list':
+    if type(images) != type(['a']):
         imageList=[]
         images = images.split(',')
         for image in images:
             imageList.append(image)
         image = imageList
+    else:
+        image = images
     result = dict(jsonString, **{'image' : image})
     return result
 
@@ -171,7 +150,7 @@ def cleanseName(jsonString):
         
 
     # 할인 여부 구별 -> 할인으로 구분되지 않은 상품 존재할 수 있음
-    p = re.compile('sale|할인|세일', re.I)
+    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
     if p.search(name) and sale_status != '#':
         sale_status += '/할인'
     elif p.search(name) and sale_status == '#':
@@ -212,7 +191,7 @@ def cleanseName(jsonString):
     '''
 
     # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
-    p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대3개구매가능|온라인\s?단독|온라인|online|사은품 : 샤워볼|기획\s?세트|기획|컬러\s?추가|마지막\s?수량', re.I)
+    p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대3개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량', re.I)
     name = p.sub(' ', name)
     p = re.compile(r'리미티드|한정판|한정|행사|event|이벤트|1\s?[+]\s?1|2\s?[+]\s?1|[★]|[☆]|추천|[@]|^|[^(re)]new[^(al)]|new!|_|-|~|!', re.I)
     # * () [] / , .  _ 제외 특수기호 ? \W [리미티드] [new] renewal 주의
@@ -423,23 +402,43 @@ def cleanseColor(jsonString):
         sale_status = '#'
     color = p.sub(' ', color)
 
+    # 할인 여부 구별 -> 할인으로 구분되지 않은 상품 존재할 수 있음
+    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
+    if p.search(color) and sale_status != '#':
+        sale_status += '/할인'
+    elif p.search(color) and sale_status == '#':
+        sale_status = '할인'
+    elif sale_status != '#':
+        pass
+    else:
+        sale_status = '#'
+    color = p.sub(' ', color)
+
+
+    p = re.compile(r'\D')
+    price = p.sub('', price)
+
     # 가격변동 (+기호 있는 경우)
-    p = re.compile(r'([+]\s?\d+)[,]?(\d+\s?)원?')
+    p = re.compile(r'([+]\s?\d+)[,]?(\d+\s?)원?\s?[^가-힣]')
     if p.search(color):
+        colorCopy = color
         m = p.search(color)
         color = p.sub(' ', color)
         priceChange = m.group()
         priceChange = p.sub(r' \1\2 ', priceChange)
-        if price != '#' and priceChange:
+        if price != '#' and len(priceChange.strip()) > 3:
             price = str(price)
             price += (priceChange)
             p = re.compile(r'\s+')
             price = p.sub('', price)
             price = eval(price)
+        else:
+            color = colorCopy
 
     # 가격변동 (+ 아닌 경우)
-    p = re.compile(r'(\d+)[,]?(\d+\s?)원?[^호|개]')
+    p = re.compile(r'(\d+)[,]?(\d+\s?)원?\s?[^가-힣]')
     if p.search(color):
+        colorCopy = color
         m = p.search(color)
         color = p.sub(' ', color)
         if price == '#' :
@@ -447,7 +446,10 @@ def cleanseColor(jsonString):
             newPrice = p.sub(r' \1\2 ', newPrice)
             p = re.compile(r'\s+')
             newPrice = p.sub('', newPrice)
-            price = newPrice
+            if len(newPrice) > 2:
+                price = newPrice
+            else:
+                color = colorCopy
     
     # 컬러에 volume이 괄호 안에 포함된 경우
     p = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)')
@@ -494,7 +496,7 @@ def cleanseType(jsonString):
     sale_status = jsonString.get('sale_status')
     price = jsonString.get('originalPrice')
     volume = jsonString.get('volume')
-    
+
     types = str(types)
     
     #1-1 특수문자/수식어 하나하나 따로 제거할 경우..
@@ -524,8 +526,12 @@ def cleanseType(jsonString):
         sale_status = '#'
     types = p.sub(' ', types)
 
+
+    p = re.compile(r'\D')
+    price = p.sub('', price)
+
     # 가격변동 (+기호 있는 경우)
-    p = re.compile(r'([+]\s?\d+)[,]?(\d+\s?)원?')
+    p = re.compile(r'([+]\s?\d+)[,]?(\d+\s?)원?[^가-힣]')
     if p.search(types):
         m = p.search(types)
         types = p.sub(' ', types)
@@ -539,7 +545,7 @@ def cleanseType(jsonString):
             price = eval(price)
 
     # 가격변동 (+ 아닌 경우)
-    p = re.compile(r'(\d+)[,]?(\d+\s?)원?[^호|개]')
+    p = re.compile(r'(\d+)[,]?(\d+\s?)원?[^가-힣]')
     if p.search(types):
         m = p.search(types)
         types = p.sub(' ', types)
@@ -594,11 +600,14 @@ def cleanseType(jsonString):
 # 원화/달러/유료 표기
 # price는 무조건 numeric이라 가정
 
+#%%
 def cleansePrice(jsonString):
     brand = jsonString.get('brand')
     saleprice = jsonString.get('salePrice')
     originalprice = jsonString.get('originalPrice')
     
+
+
     # thousand separator
     if brand == 'tomford' or brand == 'TOMFORD':
         # 'tomford' 브랜드의 경우 달러 기호 포함
@@ -608,6 +617,9 @@ def cleansePrice(jsonString):
         saleprice = '$' + '{:,}'.format(int(saleprice))
         originalprice = '$' + '{:,}'.format(int(originalprice))
     elif saleprice != '#' and originalprice != '#':
+        p = re.compile(r'\D')
+        saleprice = p.sub('', saleprice)
+        originalprice = p.sub('', originalprice)
         saleprice = '{:,}'.format(int(saleprice))
         originalprice = '{:,}'.format(int(originalprice))
         
@@ -625,43 +637,13 @@ def cleanseColumns2(jsonString):
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
 
 #%%
-'''
-sample = {'name':'[클리오]','volume':'#','originalPrice': '#','color':'02호 차분한 피부[2개입] ( 옵션가격 : 14000원 / 재고 : 0개 ) (품절)', 'brand':'clio','category':'카테고리','type':'#'}
-s = cleanseColumns1(sample)
-#s=cleanseBrand(sample)
+sample = {'name':'[클리오]','volume':'#','originalPrice': '10000원','color':"23 내추럴베이지 +400원", 'brand':'clio','category':'카테고리','type':'#'}
+s = cleanseColumnNames(sample)
+s = cleanseColumns1(s)
+s=cleanseBrand(s)
 s=cleanseName(s)
 s=cleanseVolume(s)
-cleanseColor(s)
-
-#%%
-with open('C:/Users/TRILLIONAIRE/Downloads/api json,manual 모음/etudehouse.json', encoding="UTF-8") as json_data:
-    jsonString = json.load(json_data)
-data = list(map(api, jsonString))
-data = list(map(cleanseColumns1, data))
-data = list(map(cleanseBrand, data))
-data = list(filter(None, data))
-data = list(filter(lambda x:x.pop('delete', None), data))
-data
-'''
-#%%
-with open('C:/Users/TRILLIONAIRE/Downloads/api json,manual 모음/etudehouse.json', encoding="UTF-8") as json_data:
-    jsonString = json.load(json_data)
-crawled_data = jsonString
-cleansed_data = list(map(cleanseColumnNames, crawled_data))
-cleansed_data = list(map(cleanseColumns1, cleansed_data))
-cleansed_data = list(map(cleanseBrand, cleansed_data))
-cleansed_data = list(filter(None, cleansed_data))   # 취급하지 않는 브랜드의 경우 None값을 return -> filter
-cleansed_data = list(filter(lambda x:x.pop('delete', None), cleansed_data))  # 원하지 않는 칼럼 제거 
-cleansed_data = list(map(cleanseImage, cleansed_data))
-cleansed_data = list(map(cleanseName, cleansed_data))
-cleansed_data = list(map(cleanseVolume, cleansed_data))
-cleansed_data = list(map(cleanseColor, cleansed_data))
-cleansed_data = list(map(cleanseType, cleansed_data))
-cleansed_data = list(map(cleansePrice, cleansed_data))
-cleansed_data = list(map(cleanseColumns2, cleansed_data))
-cleansed_data
-
-#%%
-a = '123'
-if int(a) ==True:
-    print('b')
+s = cleanseColor(s)
+s = cleanseType(s)
+s = cleansePrice(s)
+s
