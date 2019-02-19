@@ -5,7 +5,7 @@ import re
 global ref
 
 #%%
-def api(jsonString):
+def cleanseColumnNames(jsonString):
     
     # color로투터 type, volume 분리하는 것이 더 편하기 때문에 'option'은 'color'로 변경
     colName = {
