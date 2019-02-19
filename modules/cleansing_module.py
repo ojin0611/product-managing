@@ -491,7 +491,7 @@ def cleanseType(jsonString):
     types = jsonString.get('type')
     
     #1-1 특수문자/수식어 하나하나 따로 제거할 경우..
-     p = re.compile(r'[^(re)]new[^(al)]|추천|-|_|/|:|일반\s?판매|재고\s?[:]\s?\d*개|옵션가격|가격', re.I) # 제거하고 싶은 단어 추가  renewal 주의
+    p = re.compile(r'[^(re)]new[^(al)]|추천|-|_|/|:|일반\s?판매|재고\s?[:]\s?\d*개|옵션가격|가격', re.I) # 제거하고 싶은 단어 추가  renewal 주의
     types = p.sub(' ', types) # space 한 칸 줘야 한글끼리, 영어끼리 띄어쓰기가 유지됨. 하지만 필요 이상의 공백이 생길 수 있으므로 한칸 이상 공백 제거하는 식 필요
     
     #2 문자와 숫자는 띄어쓰기로 구분
