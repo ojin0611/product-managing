@@ -1,4 +1,4 @@
-import boto3, decimal
+import boto3
 import json, sys, os
 sys.path.append('./modules')
 import io_module
@@ -19,9 +19,15 @@ def main(brand):
         update(brand)
 
 def update(brand):
-    products = io_module.get_json('new', brand, 'complete')
+    s3 = boto3.client('s3')  # again assumes boto.cfg setup, assume AWS S3
+    compare_history = [key['Key'] for key in s3.list_objects(Bucket='cosmee-product-data')['Contents'] if key['Key'].startswith(brand + '/compare/history')]
+
+    print(compare_history)
+
+    products = io_module.get_json('new', brand, 'compare')
+
     # Input Start
-    for i, product in enumerate(products):
+    for product in products:
         print(product['skuid'],product['name'])
         table.put_item(Item=product)
 
