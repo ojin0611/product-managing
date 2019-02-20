@@ -123,7 +123,8 @@ for c,category in enumerate(categoryList):
     driver.get(category)
     categoryName = categoryNameList[c]
     itemList = getItemList()
-    for itemURL in itemList:
+    for i, itemURL in enumerate(itemList):
+        print(i)
         result += getItem(categoryName, itemURL)
 
 

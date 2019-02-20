@@ -699,20 +699,6 @@
 		],
 		"salePrice": 23000,
 		"originalPrice": 23000,
-		"color": "11 일루전",
-		"type": "#",
-		"category": "홈 > CHEEK",
-		"brand": "bourjois",
-		"volume": "2.5g"
-	},
-	{
-		"name": "블러쉬",
-		"url": "http://bourjois-mall.com/product/detail.html?product_no=287&cate_no=25&display_group=1",
-		"image": [
-			"http://bourjois-mall.com/web/product/small/201501/287_shop1_459627.jpg"
-		],
-		"salePrice": 23000,
-		"originalPrice": 23000,
 		"color": "15 로즈 에끌라",
 		"type": "#",
 		"category": "홈 > CHEEK",
@@ -770,48 +756,6 @@
 		"salePrice": 23000,
 		"originalPrice": 23000,
 		"color": "34 로즈 도르",
-		"type": "#",
-		"category": "홈 > CHEEK",
-		"brand": "bourjois",
-		"volume": "2.5g"
-	},
-	{
-		"name": "블러쉬",
-		"url": "http://bourjois-mall.com/product/detail.html?product_no=287&cate_no=25&display_group=1",
-		"image": [
-			"http://bourjois-mall.com/web/product/small/201501/287_shop1_459627.jpg"
-		],
-		"salePrice": 23000,
-		"originalPrice": 23000,
-		"color": "37 로즈 폼폰",
-		"type": "#",
-		"category": "홈 > CHEEK",
-		"brand": "bourjois",
-		"volume": "2.5g"
-	},
-	{
-		"name": "블러쉬",
-		"url": "http://bourjois-mall.com/product/detail.html?product_no=287&cate_no=25&display_group=1",
-		"image": [
-			"http://bourjois-mall.com/web/product/small/201501/287_shop1_459627.jpg"
-		],
-		"salePrice": 23000,
-		"originalPrice": 23000,
-		"color": "38 벨루떼르 빼쉬",
-		"type": "#",
-		"category": "홈 > CHEEK",
-		"brand": "bourjois",
-		"volume": "2.5g"
-	},
-	{
-		"name": "블러쉬",
-		"url": "http://bourjois-mall.com/product/detail.html?product_no=287&cate_no=25&display_group=1",
-		"image": [
-			"http://bourjois-mall.com/web/product/small/201501/287_shop1_459627.jpg"
-		],
-		"salePrice": 23000,
-		"originalPrice": 23000,
-		"color": "39 만다린",
 		"type": "#",
 		"category": "홈 > CHEEK",
 		"brand": "bourjois",

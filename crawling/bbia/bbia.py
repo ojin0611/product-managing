@@ -59,7 +59,8 @@ def getCategoryItem(mcode='001',pageNumber=1):
         html = driver.page_source
         soup = bs(html,'html.parser')
         items = soup.find_all('div',{'class':'prd-thumb'})
-        for item in items:
+        for i, item in enumerate(items):
+            print(i)
             itemClass = {'name':'', 'url':'', 'image':[], 'color':'#', 'volume':'#','category':'#', 'salePrice':'#', 'originalPrice':'#', 'brand':'삐아', 'type':'#'}
             driver.get('http://www.bbia.co.kr/' + item.a['href'])
             html = driver.page_source
