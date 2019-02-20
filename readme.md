@@ -84,7 +84,10 @@ Default output format [None]: ENTER
 
 ### Linux 시간 변경
 - [리눅스 시간 UTC에서 KST로 변경하는 방법](https://ithub.tistory.com/227)
-
+```
+sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+date
+```
 * * *
 
 
