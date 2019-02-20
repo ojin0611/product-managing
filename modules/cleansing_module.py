@@ -207,7 +207,7 @@ def cleanseName(jsonString):
     # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
     p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대3개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량', re.I)
     name = p.sub(' ', name)
-    p = re.compile(r'리미티드|한정판|한정|행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|(?!=[^re])new(?!=[^al])|new!|_|(?!=pre)-|~|!', re.I)
+    p = re.compile(r'리미티드|한정판|한정|행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|[^re]new[^al]|new!|_|(?!=pre)-|~|!', re.I)
     #  [리미티드] [new] renewal 주의
     # 증정 -> ?
     name = p.sub(' ', name)
@@ -751,4 +751,3 @@ def cleanseColumns2(jsonString):
     return jsonString
 
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
-
