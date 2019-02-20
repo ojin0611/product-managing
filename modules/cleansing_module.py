@@ -193,8 +193,9 @@ def cleanseName(jsonString):
     # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
     p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대3개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량', re.I)
     name = p.sub(' ', name)
-    p = re.compile(r'리미티드|한정판|한정|행사|event|이벤트|1\s?[+]\s?1|2\s?[+]\s?1|[★]|[☆]|추천|[@]|^|[^(re)]new[^(al)]|new!|_|-|~|!', re.I)
-    # * () [] / , .  _ 제외 특수기호 ? \W [리미티드] [new] renewal 주의
+    p = re.compile(r'리미티드|한정판|한정|행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|[^(re)]new[^(al)]|new!|_|-|~|!', re.I)
+    #  [리미티드] [new] renewal 주의
+    # 증정 -> ?
     name = p.sub(' ', name)
     
     # 제품이름에 volume이 괄호 안에 포함된 경우
@@ -220,8 +221,8 @@ def cleanseName(jsonString):
     # \d+(\s)?mg|\d+(\s)?g|\d+(\s)?oz|\d+(\s)?매|\d+(\s)?매입|\d+(\s)?ea|\d+(\s)?each
     
     
-    # 제품이름에 type (대용량/리필) 포함 경우
-    p = re.compile(r'대용량|소용량|리필 포함|리필용|본품[+]리필구성|본품[+]리필|리필|[(]대용량[)]|[(]리필[)]|[(]소[)]|[(]중[)]|[(]대[)]')
+    # 제품이름에 type (대용량/리필/지성용/건성용/복합성) 포함 경우
+    p = re.compile(r'대용량|소용량|리필 포함|리필용|본품[+]리필구성|본품[+]리필|리필|[(]소[)]|[(]중[)]|[(]대[)]|지성용|건선용|복합성')
     if p.search(name) and types == '#':
         m = p.search(name)
         types = m.group()
@@ -239,7 +240,7 @@ def cleanseName(jsonString):
     # 한글명과 영문명 분리
     p = re.compile(r'(.*[가-힣].*?)\s?([^\d가-힣][a-zA-Z]+)*')
     p2 = re.compile(r'(.*[가-힣].*?)\s?([^가-힣][a-zA-Z]+)*[가-힣]')
-    p3 = re.compile('spf|pa|ad|uv|xp', re.I) # SPF00+ PA+ 부분 등을 영문명으로 인식하지 않도록
+    p3 = re.compile('spf|pa|ad|uv|xp|set', re.I) # SPF00+ PA+ 부분 등을 영문명으로 인식하지 않도록
 
     if p.search(name) and p2.search(name) != True:
         en = p.sub(r'\2', name) 
@@ -273,7 +274,8 @@ def cleanseName(jsonString):
     eng_name = p.sub(' ', eng_name)
     eng_name = eng_name.strip()
 
-    if eng_name is None or eng_name == '' or len(eng_name) < 4:
+    p = re.compile(r'\d')
+    if eng_name is None or eng_name == '' or len(eng_name) < 4 or p.match(eng_name):
         eng_name = '#'
 
     # sale_status칼럼: 세일상품, 할인, 한정, 품절-> 4가지
@@ -362,34 +364,44 @@ def cleanseColor(jsonString):
     
     color = jsonString.get('color')
     sale_status = jsonString.get('sale_status')
-    price = jsonString.get('originalPrice')
+    saleprice = jsonString.get('salePrice')
+    originalprice = jsonString.get('originalPrice')
     volume = jsonString.get('volume')
     
     color = str(color)
+    saleprice = str(saleprice)
+    originalprice = str(originalprice)
 
-    #1-1 특수문자/수식어 하나하나 따로 제거할 경우..
+    # 특수문자/수식어 제거
     p = re.compile(r'[^(re)]new[^(al)]|추천|-|_|/|:|일반\s?판매|재고\s?[:]\s?\d*개|옵션가격|가격', re.I) # 제거하고 싶은 단어 추가  renewal 주의
     color = p.sub(' ', color) # space 한 칸 줘야 한글끼리, 영어끼리 띄어쓰기가 유지됨. 하지만 필요 이상의 공백이 생길 수 있으므로 한칸 이상 공백 제거하는 식 필요
     
+    
+    # 문자와 숫자는 띄어쓰기로 구분  -> 'A01 레드' 경우 ? 
     '''
-    #2 문자와 숫자는 띄어쓰기로 구분  -> 'A01 레드' 경우 ? 
     p1 = re.compile(r'([가-힣a-zA-Z]+)(\S\d+)') # 문자+숫자 사이 띄어쓰기
     color = p1.sub(r'\1 \2', color)
-    p2 = re.compile(r'(\d+)(\S[가-힣a-zA-Z]+)') # 숫자+문자 사이 띄어쓰기
-    color = p2.sub(r'\1 \2', color)
     '''
-
-    #3 한글 영문 동시 기재시 한글을 앞으로
-    p = re.compile(r'([a-zA-Z]+.*?)([가-힣]+)', re.I)
-    if p.match(color):
-        color = p.sub(r'\2 \1', color)
+    #p2 = re.compile(r'(\d+)(\S[가-힣]+)') # 숫자+한글 사이 띄어쓰기
+    #color = p2.sub(r'\1 \2', color)
     
-    # 괄호 안 부가설명 있을 경우 (품절, 가격변동)
-    '''
-    p = re.compile(r'(.*)([(]\s?품\s?절\s?[)]|품절|품 절)(.*)')
+    
+    # 한글 영문 동시 기재시 한글을 앞으로
+    p = re.compile(r'([a-zA-Z]+.*?)([가-힣]+.*)', re.I)
+    if p.match(color):
+        engColor = p.sub(r'\1', color)
+        if len(engColor) > 3 :
+            newOrder = p.sub(r'\2 \1', color)
+            color = newOrder
+
+    
+    # 세트 여부 구별 -> 세트로 구분되지 않은 상품 존재할 수 있음
+    p = re.compile('set|세트', re.I)  # 컬렉션 / 박스 / 0종 / 키트 / 듀오 / 트리오 -> 세트 상품이 아닐 가능성 있음. 대부분이 세트로 걸러지긴 함-> 세트 표기가 더 나은지
     if p.search(color):
-        color = p.sub(r'\1 \3', color)
-    '''
+        sale_status = '세트상품'
+    else:
+        sale_status = '#'
+
     # 품절 경우
     p = re.compile(r'품\s?절|sold\s?out|sold', re.I)
     if p.search(color) and sale_status != '#':
@@ -402,7 +414,7 @@ def cleanseColor(jsonString):
         sale_status = '#'
     color = p.sub(' ', color)
 
-    # 할인 여부 구별 -> 할인으로 구분되지 않은 상품 존재할 수 있음
+    # 할인 여부 구별
     p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
     if p.search(color) and sale_status != '#':
         sale_status += '/할인'
@@ -413,47 +425,61 @@ def cleanseColor(jsonString):
     else:
         sale_status = '#'
     color = p.sub(' ', color)
-    '''
-    if type(price) == type(1):
-        pass
-    else:
-        p = re.compile(r'\D')
-        price = p.sub('', price)
-    '''
 
     # 가격변동 (+기호 있는 경우)
-    p = re.compile(r'([+]\s?\d+)[,]?(\d+\s?)원?\s?[^가-힣]')
+    p = re.compile(r'\D')
+    saleprice = p.sub('', saleprice)
+    originalprice = p.sub('', originalprice)
+    p = re.compile(r'([+]\s?\d+)[,]?(\d+)\D?원?')
+    p2 = re.compile(r'(\d+)[,]?(\d+)\D?원?')
+    p3 = re.compile('할인')
     if p.search(color):
         colorCopy = color
         m = p.search(color)
         color = p.sub(' ', color)
         priceChange = m.group()
-        priceChange = p.sub(r' \1\2 ', priceChange)
-        if price != '#' and len(priceChange.strip()) > 3:
-            price = str(price)
-            price += (priceChange)
-            p = re.compile(r'\s+')
-            price = p.sub('', price)
-            price = eval(price)
+        #p = re.compile(r'\D')
+        #priceChange = p.sub('', priceChange)
+        #priceChange = p.sub(r' \1\2 ', priceChange)
+        # 할인 중인 제품일 경우 saleprice 변경, +000 (최소 백원단위 증가 가정)
+        if p3.search(sale_status) is True and saleprice != '#' and len(priceChange.strip()) > 3 :
+            p = re.compile(r'\D')
+            priceChange = p.sub('', priceChange)
+            saleprice = saleprice + '+' + priceChange
+            saleprice = eval(saleprice)
+        # 할인 중인 제품이 아닐 경우 originalprice 변경, +000 (최소 백원단위 증가 가정)
+        if p3.search(sale_status) is None and originalprice != '#' and len(priceChange.strip()) > 3 :
+            p = re.compile(r'\D')
+            priceChange = p.sub('', priceChange)
+            originalprice = originalprice + '+' + priceChange
+            originalprice = eval(originalprice)
+        # 그 외는 가격변동 아님
         else:
             color = colorCopy
-
-    # 가격변동 (+ 아닌 경우)
-    p = re.compile(r'(\d+)[,]?(\d+\s?)원?\s?[^가-힣]')
-    if p.search(color):
+        
+    # 가격변동 (+기호 없는 경우)
+    elif p2.search(color):
         colorCopy = color
         m = p.search(color)
         color = p.sub(' ', color)
-        if price == '#' :
+        if p3.search(sale_status) and saleprice == '#' :
             newPrice = m.group()
             newPrice = p.sub(r' \1\2 ', newPrice)
             p = re.compile(r'\s+')
             newPrice = p.sub('', newPrice)
             if len(newPrice) > 2:
-                price = newPrice
+                saleprice = newPrice
             else:
                 color = colorCopy
-    
+        elif p3.search(sale_status) is None and originalprice == '#' :
+            newPrice = m.group()
+            newPrice = p.sub(r' \1\2 ', newPrice)
+            p = re.compile(r'\s+')
+            newPrice = p.sub('', newPrice)
+            if len(newPrice) > 2:
+                originalprice = newPrice
+            else:
+                color = colorCopy
     # 컬러에 volume이 괄호 안에 포함된 경우
     p = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)')
     if p.search(color) and volume == '#':
@@ -476,6 +502,10 @@ def cleanseColor(jsonString):
 
     # API에서 'option' -> 'color'로 바꾼경우 color에 type, volume 포함될 수 있다 (에스쁘아option = color, 아리따움option = type+volume, 훌리카 = color,type,'일반판매')
 
+    p = re.compile(r'리미티드|한정판|한정|행사|event|이벤트|1\s?[+]\s?1|2\s?[+]\s?1|[★]|[☆]|추천|증정품|증정|[@]|^|[^(re)]new[^(al)]|new!|_|-|~|!', re.I)
+    # * () [] / , .  _ 제외 특수기호 ? \W [리미티드] [new] renewal 주의
+    color = p.sub(' ', color)
+
     # 괄호들 제거
     #p = re.compile(r'[(]([^)]*)[)]|[[]([^]]*)[]]|[<]([^>]*)[>]|[{]([^>]*)[}]') # (), [], <>, {}
     p = re.compile(r'[[]|[]]|[(]|[)]|[<]|[>]|[{]|[}]')
@@ -488,7 +518,7 @@ def cleanseColor(jsonString):
     color = p.sub(' ', color)
     color = color.strip()
     
-    result =  dict(jsonString, **{'color': color, 'volume': volume, 'originalPrice' : price, 'sale_status' : sale_status}) # price (가격변동)
+    result =  dict(jsonString, **{'color': color, 'volume': volume, 'originalPrice' : originalprice, 'salePrice': saleprice, 'sale_status' : sale_status})
     
     return result
 
@@ -497,25 +527,23 @@ def cleanseType(jsonString):
     
     types = jsonString.get('type')
     sale_status = jsonString.get('sale_status')
-    price = jsonString.get('originalPrice')
+    saleprice = jsonString.get('salePrice')
+    originalprice = jsonString.get('originalPrice')
     volume = jsonString.get('volume')
 
     types = str(types)
+    saleprice = str(saleprice)
+    originalprice = str(originalprice)
     
-    #1-1 특수문자/수식어 하나하나 따로 제거할 경우..
+    # 특수문자/수식어 제거
     p = re.compile(r'[^(re)]new[^(al)]|추천|-|_|/|:|일반\s?판매|재고\s?[:]\s?\d*개|옵션가격|가격', re.I) # 제거하고 싶은 단어 추가  renewal 주의
     types = p.sub(' ', types) # space 한 칸 줘야 한글끼리, 영어끼리 띄어쓰기가 유지됨. 하지만 필요 이상의 공백이 생길 수 있으므로 한칸 이상 공백 제거하는 식 필요
     
-    #2 문자와 숫자는 띄어쓰기로 구분
+    # 문자와 숫자는 띄어쓰기로 구분
     p1 = re.compile(r'([가-힣a-zA-Z]+)(\S\d+)') # 문자+숫자 사이 띄어쓰기
     types = p1.sub(r'\1 \2', types)
     p2 = re.compile(r'(\d+)(\S[가-힣a-zA-Z]+)') # 숫자+문자 사이 띄어쓰기
     types = p2.sub(r'\1 \2', types)
-    '''
-    #3 한글 영문 동시 기재시 한글을 앞으로
-    p = re.compile('([a-zA-Z]+.*?)([가-힣]+)')
-    types = p.sub(r'\2 \1', types)
-    '''
 
     # 품절 경우
     p = re.compile(r'품\s?절|sold\s?out|sold', re.I)
@@ -529,39 +557,55 @@ def cleanseType(jsonString):
         sale_status = '#'
     types = p.sub(' ', types)
 
-
-    if type(price) == type(1):
-        pass
-    else:
-        p = re.compile(r'\D')
-        price = p.sub('', price)
-
-    # 가격변동 (+기호 있는 경우)
-    p = re.compile(r'([+]\s?\d+)[,]?(\d+\s?)원?[^가-힣]')
+    p = re.compile(r'([+]\s?\d+)[,]?(\d+)\D?원?\s?')
+    p2 = re.compile(r'(\d+)[,]?(\d+)\D?원?\s?')
+    p3 = re.compile('할인')
     if p.search(types):
+        typesCopy = types
         m = p.search(types)
         types = p.sub(' ', types)
         priceChange = m.group()
         priceChange = p.sub(r' \1\2 ', priceChange)
-        if price != '#' and priceChange:
-            price = str(price)
-            price += (priceChange)
+        # 할인 중인 제품일 경우 saleprice 변경, +000 (최소 백원단위 증가 가정)
+        if p3.search(sale_status) and saleprice != '#' and len(priceChange.strip()) > 3 :
+            saleprice = str(saleprice)
+            saleprice += str(priceChange)
             p = re.compile(r'\s+')
-            price = p.sub('', price)
-            price = eval(price)
-
-    # 가격변동 (+ 아닌 경우)
-    p = re.compile(r'(\d+)[,]?(\d+\s?)원?[^가-힣]')
-    if p.search(types):
+            saleprice = p.sub('', saleprice)
+            saleprice = eval(saleprice)
+        # 할인 중인 제품이 아닐 경우 originalprice 변경, +000 (최소 백원단위 증가 가정)
+        elif p3.search(sale_status) == False and originalprice != '#' and len(priceChange.strip()) > 3 :
+            originalprice = str(originalprice)
+            originalprice += str(originalChange)
+            p = re.compile(r'\s+')
+            originalprice = p.sub('', originalprice)
+            originalprice = eval(originalprice)
+        # 그 외는 가격변동 아님
+        else:
+            types = typesCopy
+    # 가격변동 (+기호 없는 경우)
+    elif p2.search(types):
+        typesCopy = types
         m = p.search(types)
         types = p.sub(' ', types)
-        if price == '#' :
+        if p3.search(sale_status) and saleprice == '#' :
             newPrice = m.group()
             newPrice = p.sub(r' \1\2 ', newPrice)
             p = re.compile(r'\s+')
             newPrice = p.sub('', newPrice)
-            price = newPrice
-    
+            if len(newPrice) > 2:
+                saleprice = newPrice
+            else:
+                types = typesCopy
+        elif p3.search(sale_status) == False and originalprice == '#' :
+            newPrice = m.group()
+            newPrice = p.sub(r' \1\2 ', newPrice)
+            p = re.compile(r'\s+')
+            newPrice = p.sub('', newPrice)
+            if len(newPrice) > 2:
+                originalprice = newPrice
+            else:
+                types = typesCopy
     # 타입에 volume이 괄호 안에 포함된 경우
     p = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)')
     if p.search(types) and volume == '#':
@@ -599,7 +643,7 @@ def cleanseType(jsonString):
     types = p.sub(' ', types)
     types = types.strip()
     
-    result =  dict(jsonString, **{'type': types})
+    result =  dict(jsonString, **{'type': types, 'volume': volume, 'originalPrice' : originalprice, 'salePrice': saleprice, 'sale_status' : sale_status})
     
     return result
 
@@ -612,8 +656,6 @@ def cleansePrice(jsonString):
     saleprice = jsonString.get('salePrice')
     originalprice = jsonString.get('originalPrice')
     
-
-
     # thousand separator
     if brand == 'tomford' or brand == 'TOMFORD':
         # 'tomford' 브랜드의 경우 달러 기호 포함
@@ -623,6 +665,14 @@ def cleansePrice(jsonString):
         saleprice = '$' + '{:,}'.format(int(saleprice))
         originalprice = '$' + '{:,}'.format(int(originalprice))
     elif saleprice != '#' and originalprice != '#':
+        saleprice = str(saleprice)
+        originalprice = str(originalprice)
+        p = re.compile(r'\D')
+        saleprice = p.sub('', saleprice)
+        originalprice = p.sub('', originalprice)
+        saleprice = '{:,}'.format(int(saleprice))
+        originalprice = '{:,}'.format(int(originalprice))
+        '''
         if type(originalprice) == type(1) and type(saleprice) == type(1) :
             saleprice = '{:,}'.format(int(saleprice))
             originalprice = '{:,}'.format(int(originalprice))
@@ -642,7 +692,7 @@ def cleansePrice(jsonString):
             originalprice = p.sub('', originalprice)
             saleprice = '{:,}'.format(int(saleprice))
             originalprice = '{:,}'.format(int(originalprice))
-        
+        '''
     result =  dict(jsonString, **{'salePrice': saleprice, 'originalPrice': originalprice})
     
     return result
@@ -657,14 +707,28 @@ def cleanseColumns2(jsonString):
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
 
 #%%
-sample = {'name':'[클리오]','volume':'#','originalPrice': 10000,'salePrice':'3000','color':"23 내추럴베이지 +4000원", 'brand':'clio','category':'카테고리','type':'#'}
+'''
+sample = {
+		"name": "라스트 오토 젤 아이라이너 ",
+		"url": "http://www.bbia.co.kr//shop/shopdetail.html?branduid=86260&xcode=007&mcode=001&scode=003&type=X&sort=manual&cur_code=007001&GfDT=bmx1W18%3D",
+		"image": [
+			"http://www.bbia.co.kr//shopimages/bbia/0070010000243.jpg?1528934756"
+		],
+		"color": "베이직 6종 (+45,000원)",
+		"category": "",
+		"salePrice": "9,000원",
+		"originalPrice": "9,000원",
+		"brand": "삐아"
+	}
 s = cleanseColumnNames(sample)
 s = cleanseColumns1(s)
-s=cleanseBrand(s)
-s = cleansePrice(s)
-s=cleanseName(s)
-s=cleanseVolume(s)
+s = cleanseBrand(s)
+# s = cleansePrice(s)
+s = cleanseName(s)
+s = cleanseVolume(s)
 s = cleanseColor(s)
 s = cleanseType(s)
 s = cleansePrice(s)
+s = cleanseColumns2(s)
 s
+'''
