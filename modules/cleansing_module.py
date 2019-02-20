@@ -456,13 +456,13 @@ def cleanseColor(jsonString):
         #priceChange = p.sub('', priceChange)
         #priceChange = p.sub(r' \1\2 ', priceChange)
         # 할인 중인 제품일 경우 saleprice 변경, +000 (최소 백원단위 증가 가정)
-        if p3.search(sale_status) is True and saleprice != '#' and len(priceChange.strip()) > 3 :
+        if p3.search(sale_status) is True and saleprice != '#' and len(priceChange.strip()) > 3 and priceChange[1] != '0':
             p = re.compile(r'\D')
             priceChange = p.sub('', priceChange)
             saleprice = saleprice + '+' + priceChange
             saleprice = eval(saleprice)
         # 할인 중인 제품이 아닐 경우 originalprice 변경, +000 (최소 백원단위 증가 가정)
-        if p3.search(sale_status) is None and originalprice != '#' and len(priceChange.strip()) > 3 :
+        if p3.search(sale_status) is None and originalprice != '#' and len(priceChange.strip()) > 3 and priceChange[1] != '0':
             p = re.compile(r'\D')
             priceChange = p.sub('', priceChange)
             originalprice = originalprice + '+' + priceChange
@@ -597,13 +597,13 @@ def cleanseType(jsonString):
         #priceChange = p.sub('', priceChange)
         #priceChange = p.sub(r' \1\2 ', priceChange)
         # 할인 중인 제품일 경우 saleprice 변경, +000 (최소 백원단위 증가 가정)
-        if p3.search(sale_status) is True and saleprice != '#' and len(priceChange.strip()) > 3 :
+        if p3.search(sale_status) is True and saleprice != '#' and len(priceChange.strip()) > 3 and priceChange[1] != '0':
             p = re.compile(r'\D')
             priceChange = p.sub('', priceChange)
             saleprice = saleprice + '+' + priceChange
             saleprice = eval(saleprice)
         # 할인 중인 제품이 아닐 경우 originalprice 변경, +000 (최소 백원단위 증가 가정)
-        if p3.search(sale_status) is None and originalprice != '#' and len(priceChange.strip()) > 3 :
+        if p3.search(sale_status) is None and originalprice != '#' and len(priceChange.strip()) > 3 and priceChange[1] != '0':
             p = re.compile(r'\D')
             priceChange = p.sub('', priceChange)
             originalprice = originalprice + '+' + priceChange
