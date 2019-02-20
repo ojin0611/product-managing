@@ -180,7 +180,7 @@ for c, category in enumerate(categoryList):
     
 #---------------------------------------------------------------------#
 print("--- %0.2f seconds ---" %(time.time() - start_time))
-
+driver.close()
 
 # In[10]:
 

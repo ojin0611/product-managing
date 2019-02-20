@@ -100,7 +100,7 @@ result += getCategoryItem('002',len(page2))
 
 
 # In[235]:
-
+driver.close()
 
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 writeJSON(output, output_name = 'bbia.json')

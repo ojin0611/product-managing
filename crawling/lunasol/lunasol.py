@@ -115,6 +115,7 @@ for categories in category_big:
             
         driver.get(url_product)
 
+driver.close()
 
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 

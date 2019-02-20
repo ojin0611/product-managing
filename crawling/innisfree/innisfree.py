@@ -171,7 +171,7 @@ for category in categories:
 #-------------------------------------------------------------#
 print("--- %s seconds ---" %(time.time() - start_time))
 
-
+driver.close()
 # In[10]:
 
 

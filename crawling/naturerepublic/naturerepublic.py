@@ -149,7 +149,7 @@ for i, item in enumerate(itemList):
 #-------------------------------------------------------------#
 print("--- %0.2f seconds ---" %(time.time() - start_time))
 
-
+driver.close()
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 
 writeJSON(output)

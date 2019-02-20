@@ -55,8 +55,10 @@ def crawlingStart(driver, url_home):
         html = driver.page_source
         soup = bs(html,'html.parser')
         url_items = soup.find_all('div',{'class':'thumb'})
-
-        for url_item in url_items:
+        url_items = list(set(url_items))
+        print('상품 개수 :',len(url_items)
+        for i, url_item in enumerate(url_items):
+            print(i)
             url = url_home + url_item.a['href']
             itemURL = url
 
@@ -130,7 +132,7 @@ driver.get(url_products)
 
 
 # In[10]:
-
+driver.close()
 
 output = json.dumps(result_json,ensure_ascii=False, indent='\t')
 

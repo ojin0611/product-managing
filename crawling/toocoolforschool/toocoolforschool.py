@@ -173,7 +173,7 @@ for category in categoryList:
 
 
 # In[11]:
-
+driver.close()
 
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 

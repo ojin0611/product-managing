@@ -141,7 +141,7 @@ for c,category in enumerate(categoryList):
         driver.get(item)
         result += getItem(cName)
 
-
+driver.close()
 # In[10]:
 
 

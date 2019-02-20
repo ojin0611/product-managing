@@ -136,7 +136,7 @@ result += getItems(accessory,'악세서리')
 
 # In[10]:
 
-
+driver.close()
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 
 writeJSON(output, output_name = 'woodbury.json')

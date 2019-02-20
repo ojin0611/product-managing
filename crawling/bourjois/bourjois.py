@@ -158,13 +158,13 @@ for category in categoryList:
             readNextPage()
         except:
             break
-    for itemURL in itemList:
+    for i, itemURL in enumerate(itemList):
         result += getItem(itemURL)
 
 
 # In[10]:
 
-
+driver.close()
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 
 writeJSON(output, output_name = 'bourjois.json')

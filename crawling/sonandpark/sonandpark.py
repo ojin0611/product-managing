@@ -111,7 +111,7 @@ for i, item in enumerate(itemList):
     result += getItem()
     print(i)
 
-
+driver.close()
 
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 

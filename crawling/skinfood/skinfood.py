@@ -181,7 +181,7 @@ for i, item in enumerate(itemList):
 #-------------------------------------------------------------#
 print("--- %0.2f seconds ---" %(time.time() - start_time))
 
-
+driver.close()
 # In[15]:
 
 

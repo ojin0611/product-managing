@@ -128,7 +128,7 @@ for c,category in enumerate(categoryList):
         result += getItem(categoryName, itemURL)
 
 
-
+driver.close()
 
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 
