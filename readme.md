@@ -33,6 +33,18 @@ $ python update_brand.py <brand>
 - sudo yum install git
 - 정리 링크 : https://medium.com/sunhyoups-story/ec2-git-ac275a4e789c
 
+### python3
+- sudo yum install python36
+
+### pip3
+- curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+- python3 get-pip.py --user
+- 이후 모듈 설치 : pip3 install modulename --user
+
+### Google Chrome (+chromedriver) + selenium
+- [한 방에 정리!] (https://medium.com/@praneeth.jm/running-chromedriver-and-selenium-in-python-on-an-aws-ec2-instance-2fb4ad633bb5)
+
+
 ### Node.js / npm
 - Port 설정 : 인스턴스 > 보안 그룹 생성(또는 변경) > Custon TCP Rule  / PORT 3000
 - 설치방법 링크 : https://gist.github.com/nrollr/325e9bc4c35a0523d290b38cfa3c5142
@@ -58,18 +70,7 @@ sudo ln -s /usr/local/lib/node /usr/lib/node
 sudo ln -s /usr/local/bin/npm /usr/bin/npm
 ```
 
-### python3
-- sudo yum install python36
-
-### pip3
-- curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
-- python3 get-pip.py --user
-- 이후 모듈 설치 : pip3 install modulename --user
-
-### Google Chrome (+chromedriver) + selenium
-- [한 방에 정리!] (https://medium.com/@praneeth.jm/running-chromedriver-and-selenium-in-python-on-an-aws-ec2-instance-2fb4ad633bb5)
-
-### AWS CLI 설치 
+### AWS CLI 설치 (EC2에는 install 돼있습니다.)
 - [pip install](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/install-windows.html#awscli-install-windows-path) 
 - [AWS Guide](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-chap-tutorial.html)
 
