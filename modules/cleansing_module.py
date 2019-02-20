@@ -207,7 +207,7 @@ def cleanseName(jsonString):
     # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
     p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대3개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량', re.I)
     name = p.sub(' ', name)
-    p = re.compile(r'리미티드|한정판|한정|행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|[^(re)]new[^(al)]|new!|_|-|~|!', re.I)
+    p = re.compile(r'리미티드|한정판|한정|행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|[^re]new[^al]|new!|_|(?!=pre)-|~|!', re.I)
     #  [리미티드] [new] renewal 주의
     # 증정 -> ?
     name = p.sub(' ', name)
@@ -252,11 +252,12 @@ def cleanseName(jsonString):
     '''
         
     # 한글명과 영문명 분리
-    p = re.compile(r'(.*[가-힣].*?)\s?([^\d가-힣][a-zA-Z]+)*')
-    p2 = re.compile(r'(.*[가-힣].*?)\s?([^가-힣][a-zA-Z]+)*[가-힣]')
-    p3 = re.compile('spf|pa|ad|uv|xp|set', re.I) # SPF00+ PA+ 부분 등을 영문명으로 인식하지 않도록
-
-    if p.search(name) and p2.search(name) != True:
+    p = re.compile(r'(.*[가-힣].*?)\s?([^\d가-힣]*[a-zA-Z]+)*')
+    p2 = re.compile(r'(.*[가-힣].*?)\s?([^가-힣]*[a-zA-Z]+)*[^가-힣]')
+    #p2 = re.compile(r'(.*[가-힣].*?)\s?([^가-힣][a-zA-Z]+)*[가-힣]')
+    p3 = re.compile('spf|pa|[^a-zA-Z]ad[^a-zA-Z]|uv|xp|set', re.I) # SPF00+ PA+ 부분 등을 영문명으로 인식하지 않도록
+    #p2.search(name) is None and p.search(name)
+    if p.search(name) and p2.search(name) :
         en = p.sub(r'\2', name) 
         if p3.search(en):
             eng_name = '#'
@@ -346,7 +347,6 @@ def cleanseVolume(jsonString):
     # 용량 여러개 경우 / 로 구분
     #p = re.compile(r'([가-힣a-zA-Z])\s*(\d.)')
     #volume = p.sub(r'\1/\2', volume)
-
     p = re.compile(r'(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)\s*(\d.)')
     volume = p.sub(r'\1/\2', volume)
 
@@ -744,53 +744,10 @@ def cleansePrice(jsonString):
     return result
 
 def cleanseColumns2(jsonString):
-    color = jsonString.get('color')
     columnList = jsonString.keys()
     if 'sale_status' not in columnList:
         jsonString = dict(jsonString, **{'sale_status':'#'})
-    if color is '':
-        jsonString = dict(jsonString, **{'color':'#'})
-   
+
     return jsonString
 
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
-
-#%%
-
-sample = {"brandName":"헤라","mainName":"인스턴트 클렌징 티슈","subName":"인스턴트 클렌징 티슈 30매 150G","volume":"no volume"}
-s = cleanseColumnNames(sample)
-s = cleanseColumns1(s)
-s = cleanseBrand(s)
-# s = cleansePrice(s)
-#s = list(filter(None, s))   # 취급하지 않는 브랜드의 경우 None값을 return -> filter
-#s = list(filter(lambda x:x.pop('delete', None), s))
-s = cleanseName(s)
-
-s = cleanseColor(s)
-s = cleanseType(s)
-s = cleanseVolume(s)
-s = cleansePrice(s)
-s = cleanseColumns2(s)
-s
-
-#%%
-with open('C:/Users/TRILLIONAIRE/Downloads/api json,manual 모음/amore.json', encoding="UTF-8") as json_data:
-    crawled_data = json.load(json_data)
-cleansed_data = list(map(cleanseColumnNames, crawled_data))
-cleansed_data = list(map(cleanseColumns1, cleansed_data))
-cleansed_data = list(map(cleanseBrand, cleansed_data))
-cleansed_data = list(filter(None, cleansed_data))   # 취급하지 않는 브랜드의 경우 None값을 return -> filter
-cleansed_data = list(filter(lambda x:x.pop('delete', None), cleansed_data))  # 원하지 않는 칼럼 제거 
-#cleansed_data = list(map(cleansePrice, cleansed_data))
-cleansed_data = list(map(cleanseImage, cleansed_data))
-cleansed_data = list(map(cleanseName, cleansed_data))
-cleansed_data = list(map(cleanseVolume, cleansed_data))
-cleansed_data = list(map(cleanseColor, cleansed_data))
-cleansed_data = list(map(cleanseType, cleansed_data))
-cleansed_data = list(map(cleansePrice, cleansed_data))
-cleansed_data = list(map(cleanseColumns2, cleansed_data))
-jsondata = json.dumps(cleansed_data, ensure_ascii=False, indent='\t')
-
-#%%
-with open('C:/Users/TRILLIONAIRE/Documents/sample.json', 'w', encoding = 'UTF-8') as file:
-    file.write(jsondata)
