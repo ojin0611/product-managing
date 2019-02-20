@@ -18,6 +18,8 @@ def main():
     for item in response['Items']:
         json_list.append(item)
 
+    print(len(json_list))
+
     io_module.upload_json(json_list, 'AdminDB', 'backup', bucket_name = 'cosmee-admindb')
 
 
