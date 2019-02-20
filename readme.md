@@ -45,10 +45,10 @@ sudo yum update -y
 sudo yum install -y gcc gcc-c++ make openssl-devel
 
 /tmp
-curl -O https://nodejs.org/dist/v10.15.1/node-v10.15.1.tar.gz // maybe too new
-tar -xvf node-v10.15.1.tar.gz && rm node-v10.15.1.tar.gz
+curl -O https://nodejs.org/dist/v9.9.0/node-v9.9.0.tar.gz
+tar -xvf node-v9.9.0.tar.gz && rm node-v9.9.0.tar.gz
 
-cd node-v10.15.1
+cd node-v9.9.0
 ./configure
 make
 sudo make install
