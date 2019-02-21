@@ -117,11 +117,15 @@ def getItemDetailByUrl(urlList):
     return result_json
 
 
+print('system : Linux')
+'''
 if (platform.system() == 'Linux'):
     print('system : Linux')
     driver = webdriver.Chrome(executable_path='/usr/bin/chromedriver')
 else:
     driver = openChromedriver()
+'''
+driver = openChromedriver()
 url_home = 'http://tonystreet.com/'
 driver.get(url_home)
 
@@ -130,6 +134,7 @@ html = driver.page_source
 soup = bs(html,'html.parser')
 
 if soup.find('a',{'class':'btn_popup_close'}) is not None:
+    print('popup close!')
     driver.find_element_by_class_name('btn_popup_close').click()
 
 
