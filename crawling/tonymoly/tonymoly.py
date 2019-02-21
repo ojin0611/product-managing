@@ -20,47 +20,9 @@ import sys
 sys.path.append('../../modules')
 from crawling_module import *
 
-# In[114]:
-
-if (platform.system() == 'Linux'):
-    driver = webdriver.Chrome(executable_path='/usr/bin/chromedriver')
-else:
-    driver = openChromedriver()
-url_home = 'http://tonystreet.com/'
-driver.get(url_home)
-
-
-# In[115]:
-
-
 def writeJSON(jsonString, output_name='data.json'):
     with open(output_name,'w',encoding='UTF-8') as file:
         file.write(jsonString)
-
-
-# In[124]:
-
-
-html = driver.page_source
-soup = bs(html,'html.parser')
-
-if soup.find('a',{'class':'btn_popup_close'}) is not None:
-    driver.find_element_by_class_name('btn_popup_close').click()
-
-
-# In[125]:
-
-
-driver.find_element_by_xpath("//div[@class='gnb group']//a[@class='btn-menu']").click()
-
-
-# In[56]:
-
-
-urlList=[]
-
-
-# In[6]:
 
 
 def getUrlList(urlList):
@@ -80,8 +42,7 @@ def getUrlList(urlList):
         checkTagName = nextPage.find_element_by_tag_name('a')
         while checkTagName is not None and checkTagName.get_attribute("href") != "javascript:;":
             #로드 완료 체크
-            WebDriverWait(driver, 20
-            ).until(EC.element_to_be_clickable((By.XPATH, "//li[@class='paging_next']")))
+            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//li[@class='paging_next']")))
 
             #상품 긁기
             products = driver.find_elements_by_xpath("//ul[@class='product-list']//div[@class='prod-box']//input[@name='i_sProductcd']")
@@ -91,13 +52,11 @@ def getUrlList(urlList):
 
             #다음 상품으로 건너가기
             nextPage.click()
-            WebDriverWait(driver, 30
-            ).until_not(EC.presence_of_element_located((By.XPATH, "//*[@id='loader']")))
+            WebDriverWait(driver, 30).until_not(EC.presence_of_element_located((By.XPATH, "//*[@id='loader']")))
             nextPage = driver.find_element_by_xpath("//li[@class='paging_next']")
             checkTagName = nextPage.find_element_by_tag_name('a')
         #로드 완료 체크
-        WebDriverWait(driver, 20
-        ).until(EC.element_to_be_clickable((By.XPATH, "//li[@class='paging_next']")));
+        WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//li[@class='paging_next']")))
 
         #상품 긁기
         products = driver.find_elements_by_xpath("//ul[@class='product-list']//div[@class='prod-box']//input[@name='i_sProductcd']")
@@ -110,24 +69,6 @@ def getUrlList(urlList):
         categoryList = driver.find_elements_by_xpath("//*[@class='tit-gnb ctgr1_pc']")
     return urlList
 
-    
-    
-
-
-# In[7]:
-
-
-getUrlList(urlList)
-
-
-# In[8]:
-
-
-urlList = list(set(urlList))
-print(len(urlList))
-
-
-# In[9]:
 
 
 def getItemDetailByUrl(urlList):
@@ -176,13 +117,39 @@ def getItemDetailByUrl(urlList):
     return result_json
 
 
-# In[10]:
+if (platform.system() == 'Linux'):
+    print('system : Linux')
+    driver = webdriver.Chrome(executable_path='/usr/bin/chromedriver')
+else:
+    driver = openChromedriver()
+url_home = 'http://tonystreet.com/'
+driver.get(url_home)
+
+
+html = driver.page_source
+soup = bs(html,'html.parser')
+
+if soup.find('a',{'class':'btn_popup_close'}) is not None:
+    driver.find_element_by_class_name('btn_popup_close').click()
+
+
+
+driver.find_element_by_xpath("//div[@class='gnb group']//a[@class='btn-menu']").click()
+
+
+
+urlList=[]
+print('check 95')
+getUrlList(urlList)
+print('urlList :', urlList)
+urlList = list(set(urlList))
+print(len(urlList))
+
 
 
 result_json = getItemDetailByUrl(urlList)
 
 
-# In[105]:
 driver.close()
 
 output = json.dumps(result_json,ensure_ascii=False, indent='\t')
