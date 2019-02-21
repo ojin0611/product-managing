@@ -22,7 +22,10 @@ from crawling_module import *
 
 # In[114]:
 
-driver = webdriver.Chrome(executable_path='/path/to/driver/chromedriver')
+if (platform.system() == 'Linux'):
+    driver = webdriver.Chrome(executable_path='/usr/bin/chromedriver')
+else:
+    driver = openChromedriver()
 url_home = 'http://tonystreet.com/'
 driver.get(url_home)
 
