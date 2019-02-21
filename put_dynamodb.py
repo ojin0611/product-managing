@@ -43,8 +43,11 @@ def update(brand):
 
             # Input Start
             for product in products:
-                # print(product['skuid'],product['name'])
-                table.put_item(Item=product)
+                try:
+                    # print(product['skuid'],product['name'])
+                    table.put_item(Item=product)
+                except:
+                    pass
         else:
             pass
 

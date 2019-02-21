@@ -26,6 +26,9 @@ $ python update_brand.py <brand>
 ## compare
 [자세히 보기](./compare)
 
+## modules
+[자세히 보기](./modules)
+
 * * *
 
 ## Requirements

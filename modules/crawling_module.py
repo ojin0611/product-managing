@@ -5,6 +5,7 @@ from datetime import datetime
 def openChromedriver():
     options = webdriver.chrome.options.Options()
     options.headless = True
+    options.add_argument("--window-size=1920,1080")
     driver = webdriver.Chrome(options=options)
     # driver = webdriver.Chrome(chrome_options=options)
 
