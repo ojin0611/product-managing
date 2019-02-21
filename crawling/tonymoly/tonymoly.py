@@ -119,8 +119,8 @@ def getItemDetailByUrl(urlList):
 
 print('system :',platform.system())
 if (platform.system() == 'Linux'):
-    print('system : Linux')
     driver = webdriver.Chrome('/usr/bin/chromedriver')
+    print('chromedriver open')
 else:
     driver = openChromedriver()
 '''
