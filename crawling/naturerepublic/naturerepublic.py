@@ -131,13 +131,7 @@ for category in categoryList:
     clickSeeMoreButton()
     thisItemList = getItemList()
     itemList += thisItemList
-    
-    totalItemNum = driver.find_element_by_class_name('sel_cat').text
-    print('상품 개수:',totalItemNum)
-    print('크롤링된 개수:',len(itemList))
-    if getNumber(totalItemNum) > len(thisItemList):
-        print('더보기 버튼이 충분히 눌려지지 않았습니다.')
-        raise
+    print('이 카테고리의 상품 개수:',len(thisItemList))
 
 driver.close()
 itemList = list(set(itemList))

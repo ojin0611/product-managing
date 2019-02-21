@@ -78,7 +78,6 @@ def getItem(categoryName, itemURL):
     fp.close()
     '''
     soup = bs(html, 'html.parser')
-    print(itemURL)
     name = soup.find('h3',{'class':'h_title'}).get_text().strip()
     images = soup.find('div',{'class':'prd_thm_wrap preview_thumbs'}).find_all('img')
     imageList = [image['src'] for image in images]
@@ -121,7 +120,7 @@ def getItem(categoryName, itemURL):
             items.append(item_copy)
     else:
         items.append(item)
-    print(item['name'])
+
     return items
 
 
