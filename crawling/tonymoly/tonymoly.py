@@ -117,22 +117,7 @@ def getItemDetailByUrl(urlList):
     return result_json
 
 
-print('system :',platform.system())
-if (platform.system() == 'Linux'):
-    options = webdriver.ChromeOptions()
-    options.add_argument('--disable-extensions')
-    options.add_argument('--headless')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--no-sandbox')
-    driver = webdriver.Chrome(chrome_options=options)
-    '''
-    driver = webdriver.Chrome('/usr/bin/chromedriver')
-    '''
-else:
-    driver = openChromedriver()
-'''
 driver = openChromedriver()
-'''
 url_home = 'http://tonystreet.com/'
 driver.get(url_home)
 
@@ -151,8 +136,7 @@ driver.find_element_by_xpath("//div[@class='gnb group']//a[@class='btn-menu']").
 
 
 urlList=[]
-print('check 95')
-getUrlList(urlList)
+urlList = getUrlList(urlList)
 print('urlList :', urlList)
 urlList = list(set(urlList))
 print(len(urlList))
