@@ -81,17 +81,11 @@ def upload_json(jsonstring, brand, activity, bucket_name = 'cosmee-product-data'
     s3.put_object(Body=output, Bucket=bucket_name, Key=history_file)
 
 
-def get_pickle(file_name):
+def get_pickle(file_name, brand):
 
     s3 = boto3.client('s3')
     bucket_name = 'cosmee-product-data'
-    s3_path = 'sku_dict/'
-
-    sku_name_file = 'sku_name_dict.pickle'
-    print('--- load key : s3/' + s3_path + sku_name_file + ' ---')
-
-    sku_cvt_file = 'sku_cvt_dict.pickle'
-    print('--- load key : s3/' + s3_path + sku_cvt_file + ' ---')
+    s3_path = brand + '/' + "sku_dict" + '/'
 
     try:
         sku_name_s3 = s3.get_object(Bucket=bucket_name, Key=s3_path + file_name)
@@ -99,15 +93,16 @@ def get_pickle(file_name):
 
     except ClientError:
         result = {('', '', '', '', ''): ("000000", "000")}
-
+    print('--- load key : s3/' + s3_path + file_name + ' ---')
     return result
 
 
-def upload_pickle(data, file_name):
+def upload_pickle(data, file_name, brand):
 
     s3 = boto3.client('s3')
     bucket_name = 'cosmee-product-data'
-    s3_path = 'sku_dict/'
+    s3_path = brand + '/' + "sku_dict" + '/'
     pickle_data = pickle.dumps(data)
     s3.put_object(Body=pickle_data, Bucket=bucket_name, Key=s3_path + file_name)
     print('--- upload key : s3/' + s3_path + file_name + ' ---')
+
