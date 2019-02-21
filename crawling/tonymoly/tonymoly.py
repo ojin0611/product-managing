@@ -117,8 +117,7 @@ def getItemDetailByUrl(urlList):
     return result_json
 
 
-print('system : Linux')
-'''
+print('system :',platform.system())
 if (platform.system() == 'Linux'):
     print('system : Linux')
     driver = webdriver.Chrome(executable_path='/usr/bin/chromedriver')
@@ -126,6 +125,7 @@ else:
     driver = openChromedriver()
 '''
 driver = openChromedriver()
+'''
 url_home = 'http://tonystreet.com/'
 driver.get(url_home)
 
