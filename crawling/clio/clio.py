@@ -126,10 +126,10 @@ def main():
         try:
             itemList += getItemList()
             readNextPage()
-        except Exception:
+        except:
             break
 
-    driver.close()
+    # driver.close()
     itemList = list(set(itemList))
     print('상품 개수 :', len(itemList))
     result=[]
