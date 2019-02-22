@@ -45,6 +45,8 @@ items = soup.find_all('div',{'class':'list_top'})
 
 base_url = 'https://www.e-giverny.com'
 result_json = []
+items = list(set(items))
+print("상품 개수 :",len(items))
 for idx, item in enumerate(items):
     print(idx)
     itemClass = {'name':'#', 'url':'#', 'image':[], 'color':'#', 'category':'#', 'volume':'#', 'type':'#', 'salePrice':'#', 'originalPrice':'#', 'brand':'지베르니'}
