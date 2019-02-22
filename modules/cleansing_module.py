@@ -59,7 +59,6 @@ def cleanseColumnNames(jsonString):
     jsonString = dict((colName[key], value) for (key, value) in jsonString.items())
     return jsonString
 
-#%%
 # 필요 칼럼이 없을 경우 default값 가진 칼럼 추가해 줌
 def cleanseColumns(jsonString):
     
@@ -122,16 +121,11 @@ def cleanseBrand(jsonString):
 
 # 'image'가 리스트 형태가 아닐 경우 리스트로 변경
 def cleanseImage(jsonString):
-    images = jsonString.get('image')
-    if type(images) != type(['list']): 
-        imageList=[]
-        images = images.split(',')
-        for image in images:
-            imageList.append(image)
-        image = imageList
-    else:
-        image = images
+    image = jsonString.get('image')
+    if isinstance(image, str()):
+        image = image.split(',')
     result = dict(jsonString, **{'image' : image})
+    print(image)
     return result
 
 def createSaleStatus(jsonString):
@@ -141,12 +135,6 @@ def createSaleStatus(jsonString):
     volume = jsonString.get('volume')
     color = jsonString.get('color')
     types = jsonString.get('types')
-    
-def cleanseName(jsonString):
-    # 각 내용 순서도 중요!
-    name = jsonString.get('name')
-    volume = jsonString.get('volume')
-    types = jsonString.get('type')
 
     valueList = [name, volume, color, types]
 
@@ -359,32 +347,6 @@ def cleanseColor(jsonString):
         if len(engColor) > 3 :
             newOrder = EngKor_pattern.sub(r'\2 \1', color)
             color = newOrder
-    
-    # 세트 여부 구별
-    p = re.compile('set|세트', re.I)
-    setPattern = re.compile('세트상품')  
-    if p.search(color) and setPattern.search(sale_status) is None and sale_status != '#':
-        sale_status += '/세트상품'
-    elif p.search(color) and sale_status == '#' :
-        sale_status = '세트상품'
-
-    # 품절 경우
-    p = re.compile(r'품\s?절|sold\s?out|sold', re.I)
-    soldoutPattern = re.compile('품절')
-    if p.search(color) and soldoutPattern.search(sale_status) is None and sale_status != '#':
-        sale_status += '/품절'
-    elif p.search(color) and sale_status == '#':
-        sale_status = '품절'
-    color = p.sub(' ', color)
-
-    # 할인 여부 구별
-    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
-    discountPattern = re.compile('할인')
-    if p.search(color) and discountPattern.search(sale_status) is None and sale_status != '#':
-        sale_status += '/할인'
-    elif p.search(color) and sale_status == '#':
-        sale_status = '할인'
-    color = p.sub(' ', color)
 
     # 가격변동
     nonDigit = re.compile(r'\D') # 숫자가 아닌 문자는 가격에서 제거
@@ -484,32 +446,6 @@ def cleanseType(jsonString):
     numWord = re.compile(r'(\d+)(\S[가-힣a-zA-Z]+)') # 숫자+문자 사이 띄어쓰기
     types = numWord.sub(r'\1 \2', types)
 
-    # 세트 여부
-    p = re.compile('set|세트', re.I)
-    setPattern = re.compile('세트상품')
-    if p.search(types) and setPattern.search(sale_status) is None and sale_status != '#':
-        sale_status += '/세트상품'
-    elif p.search(types) and sale_status == '#' :
-        sale_status = '세트상품'
-
-    # 품절 경우
-    p = re.compile(r'품\s?절|sold\s?out|sold', re.I)
-    soldoutPattern = re.compile('품절')
-    if p.search(types) and soldoutPattern.search(sale_status) is None and sale_status != '#':
-        sale_status += '/품절'
-    elif p.search(types) and sale_status == '#':
-        sale_status = '품절'
-    types = p.sub(' ', types)
-
-    # 할인 여부 구별
-    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
-    discountPattern = re.compile('할인')
-    if p.search(types) and discountPattern.search(sale_status) is None and sale_status != '#':
-        sale_status += '/할인'
-    elif p.search(types) and sale_status == '#':
-        sale_status = '할인'
-    types = p.sub(' ', types)
-
     # 가격변동
     nonDigit = re.compile(r'\D') # 숫자가 아닌 문자는 가격에서 제거
     saleprice = nonDigit.sub('', saleprice) 
@@ -562,9 +498,19 @@ def cleanseType(jsonString):
                 originalprice = newPrice
             else:
                 types = typesCopy
+        '''
+            sale != origin, 할인x , origin = sale
+        할인인지 아닌지 /
+        할인한다의 기준은 name, color, volume, type 할인이라고 적혀있는 경우 => 할인
+        color에 가격변동이 있다면 => sale price(판매가)에 가격변동 반영
+        고민 필요
+        original + 가격변동, sale + 가격변동  =>
+        '''
+                
+
+
 
     # 타입에 volume이 괄호 안에 포함된 경우 이름에서 제거하고 volume으로 분리
-
     if includingVolume1.search(types) and volume == '#': # volume이 이미 존재한다면 타입에서 제거하지 않고 volume으로 분리하지도 않음
         volume = includingVolume1.sub(r'\2', types)
         types = includingVolume1.sub(r'\1 \3', types)
@@ -605,7 +551,7 @@ def cleansePrice(jsonString):
     brand = jsonString.get('brand')
     saleprice = jsonString.get('salePrice')
     originalprice = jsonString.get('originalPrice')
-
+    
     if brand == 'TOMFORD': # 'tomford' 브랜드의 경우 달러 기호 포함
         nonDigit = re.compile(r'\D') # 숫자 아닌 문자 제거
         saleprice = nonDigit.sub('', saleprice)
@@ -626,7 +572,7 @@ def cleansePrice(jsonString):
         else:
             originalprice = '#'
         
-    result = dict(jsonString, **{'salePrice': saleprice, 'originalPrice': originalprice})
+    result =  dict(jsonString, **{'salePrice': saleprice, 'originalPrice': originalprice})
 
     return result
 
