@@ -130,9 +130,7 @@ def createSaleStatus(jsonString):
     color = jsonString.get('color')
     types = jsonString.get('types')
 
-    valueList = [name, volume, ]
-
-    for value in 
+    valueList = [name, volume, color, types]
 
     # 세트 여부 구별
     p = re.compile('set|세트', re.I)
@@ -318,7 +316,7 @@ def cleanseName(jsonString):
         name = p.sub(' ', name)
         eng_name = p.sub(' ', eng_name)
 
-    # 불필요 공백 제거(name, eng_name)
+    # 불필요 공백 제거(name, eng_name)햣
     p = re.compile(r'\s+')
     name = p.sub(' ', name)
     name = name.strip()
