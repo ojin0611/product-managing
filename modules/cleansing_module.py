@@ -129,7 +129,7 @@ def cleanseImage(jsonString):
     return result
 
 def createSaleStatus(jsonString):
-
+'''
     sale_status = jsonString.get('sale_status')
     name = jsonString.get('name')
     volume = jsonString.get('volume')
@@ -264,7 +264,7 @@ def createSaleStatus(jsonString):
 
 def findVolume(jsonString):
 
-    
+'''
 def cleanseName(jsonString):
     # 각 내용 순서도 중요!
     name = jsonString.get('name')
