@@ -126,7 +126,6 @@ def cleanseImage(jsonString):
     if isinstance(image, str):
         image = image.split(',')
     result = dict(jsonString, **{'image' : image})
-    print(image)
     return result
 
 def cleanseName(jsonString):
