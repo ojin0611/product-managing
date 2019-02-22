@@ -53,6 +53,7 @@ def getUrlList():
         html = driver.page_source
         soup = bs(html,'html.parser')
         products = driver.find_elements_by_xpath("//div[@class='product-image']//a[@class='thumb-link']")
+        print(len(products))
         for product in products:
             urlList.append(product.get_attribute("href"))
     return urlList
