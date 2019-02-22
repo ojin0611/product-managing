@@ -34,11 +34,17 @@ def getNumber(string):
 def getCategories():
     html = driver.page_source
     soup = bs(html,'html.parser')
+    categoryList = soup.find('ul',{'id':'cateTabArea'}).find_all('a')
+    print('카테고리 수 :',len(categoryList))
+    categoryTexts = [category.get_text().strip() for category in categoryList]
+    '''
     categories = driver.find_elements_by_xpath("//ul[@id='cateTabArea']/li/a")
     print('카테고리 수 :',len(categories))
     for c, category in enumerate(categories):
         categories[c]=category.text
     return categories
+    '''
+    return categoryTexts
 
 
 # In[4]:
