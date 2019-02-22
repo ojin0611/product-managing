@@ -33,8 +33,8 @@ def getNumber(string):
 
 def getCategories():
     html = driver.page_source
+    print(driver.current_url)
     soup = bs(html,'html.parser')
-    print(soup)
     categoryList = soup.find('ul',{'id':'cateTabArea'}).find_all('a')
     print('카테고리 수 :',len(categoryList))
     categoryTexts = [category.get_text().strip() for category in categoryList]
