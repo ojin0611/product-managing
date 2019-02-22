@@ -148,8 +148,8 @@ def writeJSON(jsonString, output_name='data.json'):
         file.write(jsonString)
 
 
-# In[8]:
 
+#%%
 driver = openChromedriver()
 
 url_home = 'http://www.innisfree.com'

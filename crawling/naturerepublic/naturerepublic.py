@@ -71,11 +71,7 @@ def getItem(itemURL):
     html = fp.read().decode("utf8")
     fp.close()
     soup = bs(html, 'html.parser')
-    try:
-        name = soup.find('div',{'class':'sub_tit_wrap tit_pro_view'}).h2.get_text().strip()
-    except:
-        print(itemURL)
-        raise
+    name = soup.find('div',{'class':'sub_tit_wrap tit_pro_view'}).h2.get_text().strip()
     imageList = soup.find('div',{'class':'thumb_img'})
     images = [image['rel'] for image in imageList.ul.find_all('img')]
 
@@ -150,8 +146,12 @@ driver.close()
 itemList = list(set(itemList))
 print('전체 상품 수 :',len(itemList))        
 for i, item in enumerate(itemList):
-    result += getItem(item)
     print('%d' %(i+1))
+    try:
+        result += getItem(item)
+    except:
+        pass
+        print('error url :',item)
 
 #-------------------------------------------------------------#
 print("--- %0.2f seconds ---" %(time.time() - start_time))
