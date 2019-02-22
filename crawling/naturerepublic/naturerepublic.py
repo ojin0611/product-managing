@@ -47,6 +47,7 @@ def clickSeeMoreButton():
         WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//a[@class='btn_more']")))
         '''
         seeMoreButton = driver.find_element_by_class_name('btn_more')
+        driver.execute_script('arguments[0].scrollIntoView(true);', seemore) # target이 보이도록 scroll하기
         seeMoreButton.click()
         time.sleep(3)
         html = driver.page_source
