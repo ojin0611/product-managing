@@ -20,7 +20,7 @@ def getNumber(string):
     
 
 
-def getCategoryList():
+def getCategoryList(driver):
     html = driver.page_source
     soup = bs(html, 'html.parser')
     categories = soup.find('ul',{'class':'menuCategory'}).find_all('a')
@@ -118,7 +118,7 @@ url_products = 'http://aprilskin.com/product/list.html?cate_no=48'
 driver.get(url_products)
 result=[]
 
-categoryList, categoryNameList = getCategoryList()
+categoryList, categoryNameList = getCategoryList(driver)
 for c,category in enumerate(categoryList):
     driver.get(category)
     categoryName = categoryNameList[c]
