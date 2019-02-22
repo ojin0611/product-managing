@@ -24,6 +24,7 @@ def update(brand):
     cmd = "cd crawling" + cmd_style +  python_version + "crawling.py "+ brand
     print('$',cmd)
     os.system(cmd)
+    '''
 
     # cleansing
     cmd = "cd cleansing" + cmd_style + python_version + "cleansing.py "+ brand
@@ -34,7 +35,6 @@ def update(brand):
     cmd = "cd compare" + cmd_style + python_version + "compare.py "+ brand
     print('$',cmd)
     os.system(cmd)
-    '''
     '''
 
 
