@@ -20,6 +20,7 @@ def main(brand):
         update(brand)
 
 def update(brand):
+    '''
     # crawling
     cmd = "cd crawling" + cmd_style +  python_version + "crawling.py "+ brand
     print('$',cmd)
@@ -35,7 +36,6 @@ def update(brand):
     cmd = "cd compare" + cmd_style + python_version + "compare.py "+ brand
     print('$',cmd)
     os.system(cmd)
-    '''
 
 
 if __name__ == "__main__":
