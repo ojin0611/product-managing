@@ -116,7 +116,6 @@ def cleanseImage(jsonString):
     else:
         image = images
     result = dict(jsonString, **{'image' : image})
-    print(image)
     return result
 
 def createSaleStatus(jsonString):
@@ -610,13 +609,19 @@ def cleansePrice(jsonString):
     elif saleprice != '#' and originalprice != '#': # 'tomford' 브랜드가 아니고 price가 default값이 아닌 경우
         saleprice = str(saleprice)
         originalprice = str(originalprice)
-        p = re.compile(r'\D') # 숫자 아닌 문자 제거 후
+        p = re.compile(r'\D')
         saleprice = p.sub('', saleprice)
         originalprice = p.sub('', originalprice)
-        saleprice = '{:,}'.format(int(saleprice)) # 천단위 콤마 표기 포맷
-        originalprice = '{:,}'.format(int(originalprice))
+        if saleprice:
+            saleprice = '{:,}'.format(int(saleprice)) # 천단위 콤마 표기 포맷
+        else:
+            saleprice = "#"
+        if originalprice:
+            originalprice = '{:,}'.format(int(originalprice))
+        else:
+            originalprice = "#"
         
-    result =  dict(jsonString, **{'salePrice': saleprice, 'originalPrice': originalprice})
+    result = dict(jsonString, **{'salePrice': saleprice, 'originalPrice': originalprice})
 
     return result
 
