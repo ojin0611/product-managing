@@ -93,7 +93,7 @@ def get_pickle(file_name, brand):
 
     except ClientError:
         result = {('', '', '', '', ''): ("000000", "000")}
-    print('--- load key : s3/' + s3_path + file_name + ' ---')
+    print('--- get key : s3/' + s3_path + file_name + ' ---')
     return result
 
 
