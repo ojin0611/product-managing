@@ -47,7 +47,9 @@ def clickSeeMoreButton():
         WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//a[@class='btn_more']")))
         '''
         seeMoreButton = driver.find_element_by_class_name('btn_more')
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
         seeMoreButton.click()
+        print('click success')
         time.sleep(3)
         html = driver.page_source
         soup = bs(html,'html.parser')
@@ -156,11 +158,6 @@ for i, item in enumerate(itemList):
 #-------------------------------------------------------------#
 print("--- %0.2f seconds ---" %(time.time() - start_time))
 
-driver.close()
 output = json.dumps(result,ensure_ascii=False, indent='\t')
 
 writeJSON(output)
-
-
-
-

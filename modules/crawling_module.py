@@ -5,10 +5,9 @@ from datetime import datetime
 def openChromedriver():
     options = webdriver.chrome.options.Options()
     options.headless = True
-    # options.add_argument("--window-size=1920,1080")
-    options.add_argument("--start-maximized")
+    options.add_argument("--window-size=1920,1080")
+    # options.add_argument("--start-maximized")
     driver = webdriver.Chrome(options=options)
-    # driver = webdriver.Chrome(chrome_options=options)
 
     return driver
 

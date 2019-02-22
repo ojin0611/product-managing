@@ -32,6 +32,7 @@ html = driver.page_source
 soup = bs(html,'html.parser')
 moreButton = soup.find('div',{'id':'more_btn'})
 while moreButton['style'] != 'display: none;':
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
     driver.find_element_by_id('more_btn').click()
     html = driver.page_source
     soup = bs(html,'html.parser')
@@ -44,7 +45,10 @@ items = soup.find_all('div',{'class':'list_top'})
 
 base_url = 'https://www.e-giverny.com'
 result_json = []
-for item in items:
+items = list(set(items))
+print("상품 개수 :",len(items))
+for idx, item in enumerate(items):
+    print(idx)
     itemClass = {'name':'#', 'url':'#', 'image':[], 'color':'#', 'category':'#', 'volume':'#', 'type':'#', 'salePrice':'#', 'originalPrice':'#', 'brand':'지베르니'}
     driver.get(base_url + item.a['href'])
     html = driver.page_source
