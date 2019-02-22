@@ -1,12 +1,10 @@
-#%%
 import json
 import re
 
 # 함수들 input(jsonString)의 형태 : {'key1':'value1', 'key2':'value2', ...}
-#%%
+
 # API로 가져온 데이터의 칼럼을 크롤링한 데이터 기준 칼럼과 통일시킴
 def cleanseColumnNames(jsonString):
-<<<<<<< HEAD
     
     colName = {
         'beforeOnlineSalePrice':'originalPrice', 
@@ -27,30 +25,6 @@ def cleanseColumnNames(jsonString):
         'price' : 'originalPrice',
         'option' : 'color',     # color로투터 type, volume 분리하는 것이 더 편하기 때문에 'option'은 'color'로 변경
         'originalName': 'delete',  # 불필요한 칼럼의 경우 이름을 'delete'로 변경 (cleansing.py에서 'delete'칼럼들 삭제)
-=======
-
-    # color로투터 type, volume 분리하는 것이 더 편하기 때문에 'option'은 'color'로 변경
-
-    colName = {
-        'beforeOnlineSalePrice': 'originalPrice',
-        'originalPrice': 'originalPrice',
-        'salePrice': 'salePrice',
-        'brand': 'brand',
-        'brandName': 'brand',
-        'category': 'category',
-        'color': 'color',
-        'colorname': 'color',
-        'finalOnlinePrice': 'salePrice',
-        'image': 'image',
-        'mainName': 'name',
-        'name': 'name',
-        'type': 'type',
-        'url': 'url',
-        'volume': 'volume',
-        'price': 'originalPrice',
-        'option': 'color',
-        'originalName': 'delete',
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
         'notes': 'delete',
         'prodId': 'delete',
         'rootCategory': 'delete',
@@ -70,15 +44,9 @@ def cleanseColumnNames(jsonString):
     return jsonString
 
 #%%
-<<<<<<< HEAD
 # 필요 칼럼이 없을 경우 default값 가진 칼럼 추가해 줌
 def cleanseColumns(jsonString):
     
-=======
-# 크롤링되지 않은 칼럼이 존재할 수 있음 + API로 가져온 브랜드의 데이터 칼럼 통일
-def cleanseColumns1(jsonString):
-    # crawling 되지 않을 경우 빈 칸 추가
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
     columnList = jsonString.keys()
     if 'category' not in columnList:
         jsonString = dict(jsonString, **{'category':'#'})
@@ -100,8 +68,6 @@ def cleanseColumns1(jsonString):
 
     return jsonString
 
-#%%
-<<<<<<< HEAD
 # 브랜드명 클렌징 + 취급하지 않는 브랜드의 데이터 제거 + skuid의 브랜드명 약어 부여
 def cleanseBrand(jsonString):
     
@@ -109,16 +75,6 @@ def cleanseBrand(jsonString):
     with open('./brandReference.json', encoding="UTF-8") as json_data: 
         reference = json.load(json_data)
   
-=======
-# 한글명 -> 영어로
-# 브랜드명 클렌징 + 취급안하는 브랜드 제거 + skuid의 브랜드명 약어 부여
-
-
-def cleanseBrand(jsonString):
-    with open('./brandReference.json', encoding="UTF-8") as json_data: 
-        ref = json.load(json_data)
-
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
     brand = jsonString.get('brand')
 
     # reference로부터 리스트 형태로 가져옴
@@ -126,15 +82,9 @@ def cleanseBrand(jsonString):
     korBrandList = list(reference.get('한글명').values()) # 취급 브랜드의 한글명 리스트
     abbList = list(reference.get('약어').values()) # 브랜드 약어 리스트
     
-<<<<<<< HEAD
     p = re.compile(r'\s+') #띄어쓰기 패턴
     brand = re.sub(p, '',brand) #띄어쓰기 패턴 제거
     brand = brand.upper() #브랜드명 대문자로 표기
-=======
-    p = re.compile(r'\s+') #띄어쓰기 없음
-    brand = re.sub(p, '', brand)
-    brand = brand.upper()
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
 
     # 브랜드명이 한글명일 경우 영문명으로 바꿔줌
     if brand in korBrandList:
@@ -154,8 +104,6 @@ def cleanseBrand(jsonString):
     
         return result
 
-#%%
-<<<<<<< HEAD
 # 'image'가 리스트 형태가 아닐 경우 리스트로 변경
 def cleanseImage(jsonString):
     images = jsonString.get('image')
@@ -167,13 +115,6 @@ def cleanseImage(jsonString):
         image = imageList
     else:
         image = images
-=======
-
-def cleanseImage(jsonString):
-    image = jsonString.get('image')
-    if isinstance(image, str):
-        image = [image]
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
     result = dict(jsonString, **{'image' : image})
     print(image)
     return result
@@ -185,58 +126,33 @@ def createSaleStatus(jsonString):
     volume = jsonString.get('volume')
     color = jsonString.get('color')
     types = jsonString.get('types')
-
-#%%
+    
 def cleanseName(jsonString):
     # 각 내용 순서도 중요!
     name = jsonString.get('name')
     volume = jsonString.get('volume')
     types = jsonString.get('type')
 
-<<<<<<< HEAD
     # 자외선차단지수 SPF00+ PA+ 형식으로 통일
     p = re.compile(r'spf', re.I) # ignorecase
     if p.search(name):
         p2 = re.compile(r'pa', re.I)
         if p2.search(name): #이름에 spf만 포함 경우
-=======
-    # SPF00+ PA+ 형식으로 통일
-    #p = re.compile(r'(.^spf)(\d)([+]*).*(pa)([+]$.)', re.I)
-    # name = p.sub(r'[SPF\2\3 PA\5]', name)
-    spf = re.compile(r'spf', re.I)
-    if spf.search(name):
-        pa = re.compile(r'pa', re.I)
-        if pa.search(name):
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
             p = re.compile(r'spf\s?(\d+)\s?([+]*)(.*)pa\s?([+]*)', re.I)
             name = p.sub(r'SPF\1\2 PA\4', name)
         else: #이름에 spf, pa 모두 포함 경우
             p = re.compile(r'spf\s?(\d+)\s?([+]*)', re.I)
             name = p.sub(r'SPF\1\2', name)
-<<<<<<< HEAD
             
     # 세트 여부 구별
     p = re.compile('set|세트', re.I) # 세트 패턴
-=======
-#%%
-    # 세트 여부 구별 -> 세트로 구분되지 않은 상품 존재할 수 있음
-    p = re.compile('set|세트', re.I)  # 컬렉션 / 박스 / 0종 / 키트 / 듀오 / 트리오 -> 세트 상품이 아닐 가능성 있음. 대부분이 세트로 걸러지긴 함-> 세트 표기가 더 나은지
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
     if p.search(name):
         sale_status = '세트상품'
     else:
         sale_status = '#'
-<<<<<<< HEAD
  
     # 할인 여부 구별 
     p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I) # 할인 패턴
-=======
-    # 세트 이름에서 지워야하나?
-    # name = p.sub(' ', name)
-
-    # 할인 여부 구별 -> 할인으로 구분되지 않은 상품 존재할 수 있음
-    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
     if p.search(name) and sale_status != '#':
         sale_status += '/할인'
     elif p.search(name) and sale_status == '#':
@@ -271,20 +187,8 @@ def cleanseName(jsonString):
         sale_status = '#'
     name = p.sub(' ', name)
 
-<<<<<<< HEAD
     # 불필요한 수식어와 특수기호 제거
     p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량', re.I) # 제거하고 싶은 단어 추가
-=======
-
-#%%
-    # 괄호 안 추출
-    '''
-    p = re.compile(r'[(]([^)]*)[)]|[[]([^]]*)[]]|[<]([^>]*)[>]|[{]([^>]*)[}]')
-    '''
-
-    # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
-    p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대3개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량', re.I)
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
     name = p.sub(' ', name)
     p = re.compile(r'행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|[^(re)]new[^(al)]|new!|_|-|~|!', re.I) # renewal 주의
     name = p.sub(' ', name)
@@ -308,18 +212,12 @@ def cleanseName(jsonString):
         m = p.search(name)
         types = m.group()
     name = p.sub(' ', name)
-<<<<<<< HEAD
         
-=======
-    '''
-
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
     # 한글명과 영문명 분리
     p = re.compile(r'(.*[가-힣].*?)\s?([^\d가-힣][a-zA-Z]+)*') # 한글명+영문명 패턴
     p2 = re.compile(r'(.*[가-힣].*?)\s?([^가-힣][a-zA-Z]+)*[가-힣]') # 한글명+영문명 패턴이 아닌 경우
     p3 = re.compile('spf|pa|ad|uv|xp|set', re.I) # SPF00+ PA+ 부분 등을 영문명으로 인식하지 않도록. 이 패턴을 가진다면 영문명이 아님
 
-<<<<<<< HEAD
     if p.search(name) and p2.search(name) != True: # 한글명+영문명 패턴인 경우 영문명 분리
         en = p.sub(r'\2', name) 
         if p3.search(en):
@@ -331,20 +229,6 @@ def cleanseName(jsonString):
         eng_name = '#'
     
     if eng_name != '#': # 한글명+영문명 분리시 한글명 끝부분에 영어가 있는 경우
-=======
-    if p.search(name) and p2.search(name) != True:
-        en = p.sub(r'\2', name)
-        if p3.search(en):
-            eng_name = '#'
-        else:
-            eng_name = en
-            name = p.sub(r' \1 ', name)  # 이 부분을 eng_name 지정하는 윗줄보다 먼저 쓰면 안됨
-    else:
-        eng_name = '#'
-
-    # RMK 스펀지(UV) RMK SPONGE(UV) -> name = RMK 스펀지, eng_name = (UV) RMK SPONGE(UV) 이런 경우 해결
-    if eng_name != '#':
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
         enlist = eng_name.split()
         if len(enlist) > len(set(enlist)) and name.split()[-1]==enlist[0]: # 영문명에 중복된 단어가 있고 한글명의 마지막 단어가 영문명의 첫 단어와 일치할 경우 -> 한글명/영문명 잘못 분리된 것
             i = len(enlist) - len(set(enlist)) # 영문명에 잘못 들어간 한글명 부분의 단어 개수만큼
@@ -373,8 +257,7 @@ def cleanseName(jsonString):
     result =  dict(jsonString, **{'name': name, 'volume': volume, 'type': types, 'sale_status': sale_status, 'eng_name': eng_name}) # sale_status : 세일상품, 할인, 한정, 품절, # -> 4가지 여부 추가됨
     
     return result
-
-#%%
+    
 def cleanseVolume(jsonString):
     
     volume = jsonString.get('volume')
@@ -430,14 +313,10 @@ def cleanseVolume(jsonString):
     p = re.compile(r'(\d+\s?oz)(.*?)(\d+\s?(ml|g))', re.I) # oz가 ml, g 보다 먼저 발견될 경우
     if p.search(volume):
         volume = p.sub(r'\3\2\1', volume)
-<<<<<<< HEAD
     
     # 불필요 공백 제거
     p = re.compile(r'\s+')
     volume = p.sub(' ', volume)
-=======
-    # git, aws
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
     volume = volume.strip()
 
     # 클렌징 과정에서 volume이 통째로 다른 항목으로 분류되었을 경우 default값 부여
@@ -448,7 +327,6 @@ def cleanseVolume(jsonString):
     
     return result
 
-#%%
 def cleanseColor(jsonString):
     
     color = jsonString.get('color')
@@ -586,7 +464,6 @@ def cleanseColor(jsonString):
     
     return result
 
-#%%
 def cleanseType(jsonString):
     
     types = jsonString.get('type')
@@ -717,7 +594,7 @@ def cleanseType(jsonString):
     result =  dict(jsonString, **{'type': types, 'volume': volume, 'originalPrice' : originalprice, 'salePrice': saleprice, 'sale_status' : sale_status})
     
     return result
-#%%
+
 # 달러표시 및 천단위 콤마 표기
 def cleansePrice(jsonString):
     brand = jsonString.get('brand')
@@ -743,15 +620,5 @@ def cleansePrice(jsonString):
 
     return result
 
-<<<<<<< HEAD
-=======
-def cleanseColumns2(jsonString):
-    columnList = jsonString.keys()
-    if 'sale_status' not in columnList:
-        jsonString = dict(jsonString, **{'sale_status':'#'})
-
-    return jsonString
-
->>>>>>> 538d02ad08571294b39f14ca6b870f42fed0dd87
 # 최종 데이터 칼럼 13개: 'brand', 'name', 'category', 'image', 'url', 'color', 'type', 'volume', 'salePrice', 'orignialPrice', 'skuid', 'sale_status', 'eng_name'
 
