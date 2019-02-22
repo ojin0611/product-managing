@@ -32,6 +32,7 @@ html = driver.page_source
 soup = bs(html,'html.parser')
 moreButton = soup.find('div',{'id':'more_btn'})
 while moreButton['style'] != 'display: none;':
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
     driver.find_element_by_id('more_btn').click()
     html = driver.page_source
     soup = bs(html,'html.parser')
