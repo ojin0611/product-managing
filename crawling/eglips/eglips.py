@@ -56,7 +56,7 @@ def crawlingStart(driver, url_home):
         soup = bs(html,'html.parser')
         url_items = soup.find_all('div',{'class':'thumb'})
         url_items = list(set(url_items))
-        print('상품 개수 :',len(url_items)
+        print('상품 개수 :',len(url_items))
         for i, url_item in enumerate(url_items):
             print(i)
             url = url_home + url_item.a['href']

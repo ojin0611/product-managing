@@ -5,9 +5,9 @@ import io_module
 # sku id 목록 저장해놓은거 불러오고.
 
 
-def sku_naming(jsonstring):
+def sku_naming(jsonstring, brand):
 
-    sku_dict = io_module.get_pickle('sku_dict.pickle')
+    sku_dict = io_module.get_pickle('sku_dict.pickle', brand)
 
     for product in jsonstring:
         cvt = (product['brand'], product['name'], product['color'], product['volume'], product['type'])
@@ -38,6 +38,6 @@ def sku_naming(jsonstring):
                 sku_dict[cvt] = (name_id, cvt_id)
                 product['skuid'] = brand_id + name_id + cvt_id
 
-    io_module.upload_pickle(sku_dict, 'sku_dict.pickle')
+    io_module.upload_pickle(sku_dict, 'sku_dict.pickle', brand)
 
     return jsonstring

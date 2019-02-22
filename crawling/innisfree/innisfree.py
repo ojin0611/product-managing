@@ -31,8 +31,7 @@ def getNumber(string):
 # In[3]:
 
 
-def getCategories(driver):
-    driver.get(url_products)    # click main page
+def getCategories():
     html = driver.page_source
     soup = bs(html,'html.parser')
     categories = driver.find_elements_by_xpath("//ul[@class='tabArea']/li/a")
@@ -144,7 +143,8 @@ driver = openChromedriver()
 url_home = 'http://www.innisfree.com'
 url_products = 'http://www.innisfree.com/kr/ko/ShopProductMap.do'
 driver.get(url_products)
-categories = getCategories(driver)
+categories = getCategories()
+print(categories)
 
 
 # In[9]:

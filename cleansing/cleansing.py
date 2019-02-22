@@ -27,7 +27,7 @@ def main():
     cleansed_data = list(map(cleanseType, cleansed_data))
     cleansed_data = list(map(cleansePrice, cleansed_data))
     cleansed_data = list(map(cleanseColumns2, cleansed_data))
-    output = sku_naming.sku_naming(cleansed_data)
+    output = sku_naming.sku_naming(cleansed_data, brand)
     # save output as json
     io_module.upload_json(output, brand, "cleansing")
 
