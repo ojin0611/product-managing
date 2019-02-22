@@ -78,8 +78,7 @@ def getItemDetailByUrl(urlList):
         html = driver.page_source
         soup = bs(html,'html.parser')
         # dictionary 생성
-        result = {'name':'', 'url':'', 'image':'', 'salePrice':'', 'originalPrice':'', 'color':'', 
-                   'category':'', 'brand':'토니모리','volume':''}
+        result = {'name':'#', 'url':'#', 'image':'#', 'salePrice':'#', 'originalPrice':'#', 'color':'#', 'type':'#', 'category':'#', 'brand':'토니모리','volume':'#'}
         result['name'] = soup.find('section',{'class':'prd-info-wrap dtl_prd_info_wrap'}).find('h3',{'class':'prod-name'}).get_text()
         result['url'] = driver.current_url
         images = soup.find('div',{'class':'slick-slide slick-current slick-active'}).find_all('img')
