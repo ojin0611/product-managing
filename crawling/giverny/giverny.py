@@ -45,7 +45,8 @@ items = soup.find_all('div',{'class':'list_top'})
 
 base_url = 'https://www.e-giverny.com'
 result_json = []
-for item in items:
+for idx, item in enumerate(items):
+    print(idx)
     itemClass = {'name':'#', 'url':'#', 'image':[], 'color':'#', 'category':'#', 'volume':'#', 'type':'#', 'salePrice':'#', 'originalPrice':'#', 'brand':'지베르니'}
     driver.get(base_url + item.a['href'])
     html = driver.page_source
