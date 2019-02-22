@@ -2,22 +2,25 @@ import json
 import re
 
 # 함수들 input(jsonString)의 형태 : {'key1':'value1', 'key2':'value2', ...}
+'''
+made by hipster
+'''
 
-
-'''정규식 리스트
-space = re.compile(r'\s+') : 한 칸 이상의 공백
-digit = re.compile(r'\d') : 숫자
-mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|
+'''
+정규식 리스트
+    space = re.compile(r'\s+') : 한 칸 이상의 공백
+    digit = re.compile(r'\d') : 숫자
+    mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|
                     행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|[^(re)]new[^(al)]|new!|_|-|~|!
                     """, re.I|re.X)
-includingVolume1 = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)') : volume이 포함된 경우
-includingVolume2 = re.compile(r'\d+(\s)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I) : volume이 2개 이상 포함된 경우 (volume이 하나만 포함된 경우와 표기 형식이 다르기 때문에 따로 정규식 작성한 것)
-includingType = re.compile(r'대용량|소용량|리필 포함|리필용|본품[+]리필구성|본품[+]리필|리필|[(]소[)]|[(]중[)]|[(]대[)]|지성용|건선용|복합성') : type이 포함된 경우    
-brackets = re.compile(r'[[]|[]]|[(]|[)]|[<]|[>]|[{]|[}]') : 괄호
-volumeForm_comma = re.compile(r'([가-힣]+[^()].*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))') : comma로 분리된 volume
-volumeForm_plus = re.compile(r'([가-힣]+.*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))') : plus기호로 분리된 volume
-multiVolumes = re.compile(r'(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)\s*(\d.)') : 여러 개의 용량
-    '''
+    includingVolume1 = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)') : volume이 포함된 경우
+    includingVolume2 = re.compile(r'\d+(\s)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I) : volume이 2개 이상 포함된 경우 (volume이 하나만 포함된 경우와 표기 형식이 다르기 때문에 따로 정규식 작성한 것)
+    includingType = re.compile(r'대용량|소용량|리필 포함|리필용|본품[+]리필구성|본품[+]리필|리필|[(]소[)]|[(]중[)]|[(]대[)]|지성용|건선용|복합성') : type이 포함된 경우    
+    brackets = re.compile(r'[[]|[]]|[(]|[)]|[<]|[>]|[{]|[}]') : 괄호
+    volumeForm_comma = re.compile(r'([가-힣]+[^()].*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))') : comma로 분리된 volume
+    volumeForm_plus = re.compile(r'([가-힣]+.*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))') : plus기호로 분리된 volume
+    multiVolumes = re.compile(r'(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)\s*(\d.)') : 여러 개의 용량
+'''
 
 # API로 가져온 데이터의 칼럼을 크롤링한 데이터 기준 칼럼과 통일시킴
 def cleanseColumnNames(jsonString):
@@ -60,7 +63,7 @@ def cleanseColumnNames(jsonString):
     return jsonString
 
 # 필요 칼럼이 없을 경우 default값 가진 칼럼 추가해 줌
-def cleanseColumns(jsonString):
+def createColumns(jsonString):
     
     columnList = jsonString.keys()
     if 'category' not in columnList:
@@ -75,8 +78,6 @@ def cleanseColumns(jsonString):
         jsonString = dict(jsonString, **{'salePrice':'#'})
     if 'originalPrice' not in columnList:
         jsonString = dict(jsonString, **{'originalPrice':'#'})
-    # sale_status 추가해 줌
-    jsonString = dict(jsonString, **{'sale_status':'#'})
     # dummy 'delete'칼럼 추가 : 'delete' key가 하나도 없을 경우 cleansing.py에서 전체 데이터가 필터링되기 때문
     if 'delete' not in columnList:
         jsonString = dict(jsonString, **{'delete':'#'})
@@ -97,8 +98,8 @@ def cleanseBrand(jsonString):
     korBrandList = list(reference.get('한글명').values()) # 취급 브랜드의 한글명 리스트
     abbList = list(reference.get('약어').values()) # 브랜드 약어 리스트
     
-    p = re.compile(r'\s+') #띄어쓰기 패턴
-    brand = re.sub(p, '',brand) #띄어쓰기 패턴 제거
+    space = re.compile(r'\s+') #띄어쓰기 패턴
+    brand = re.sub(space, '',brand) #띄어쓰기 패턴 제거
     brand = brand.upper() #브랜드명 대문자로 표기
 
     # 브랜드명이 한글명일 경우 영문명으로 바꿔줌
@@ -122,50 +123,60 @@ def cleanseBrand(jsonString):
 # 'image'가 리스트 형태가 아닐 경우 리스트로 변경
 def cleanseImage(jsonString):
     image = jsonString.get('image')
-    if isinstance(image, str()):
+    if isinstance(image, str):
         image = image.split(',')
     result = dict(jsonString, **{'image' : image})
     print(image)
     return result
-
-def createSaleStatus(jsonString):
-
-    sale_status = jsonString.get('sale_status')
-    name = jsonString.get('name')
-    volume = jsonString.get('volume')
-    color = jsonString.get('color')
-    types = jsonString.get('types')
-
-    valueList = [name, volume, color, types]
-
-    saleStatusDict = {'setPattern' : '세트상품', 'soldoutPattern' : '품절', 'discountPattern': '할인', 'limitedPattern' : '한정'}
-
-    setPattern = re.compile('set|세트', re.I)
-    soldoutPattern = re.compile(r'품\s?절|sold\s?out|sold', re.I)
-    discountPattern = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
-    limitedPattern = re.compile(r'리미티드|한정판매|한정품|한정판|한정|limited', re.I)
-
-    p = saleStatusDict.key()
-    if p.search(value) and sale_status == '#':
-        sale_status = saleStatusDict.get(p)
-    else:
-         p.search(value) and sale_status != '#':
-        sale_status += ('/' + saleStatusDict.get(p))
-    
-    saleStatusList = sale_status.split('/')
-    saleStatusList = list(set(saleStatusList))
-    sale_status = '/'.join(saleStatusList)
-
-
-
-
-def findVolume(jsonString)
 
 def cleanseName(jsonString):
     # 각 내용 순서도 중요!
     name = jsonString.get('name')
     volume = jsonString.get('volume')
     types = jsonString.get('type')
+
+    # 세트 여부 -> Sale status 로 추가
+    p = re.compile('set|세트', re.I)  
+    if p.search(name):
+        sale_status = '세트상품'
+    else:
+        sale_status = '#'
+
+    # 할인 여부 구별 -> Sale status 로 추가
+    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
+    if p.search(name) and sale_status != '#':
+        sale_status += '/할인'
+    elif p.search(name) and sale_status == '#':
+        sale_status = '할인'
+    elif sale_status != '#':
+        pass
+    else:
+        sale_status = '#'
+    name = p.sub(' ', name)
+
+    # 한정판매여부 구별 -> Sale status 로 추가
+    p = re.compile('리미티드|한정판매|한정품|한정판|한정|limited', re.I)
+    if p.search(name) and sale_status != '#':
+        sale_status += '/한정판매'
+    elif p.search(name) and sale_status == '#':
+        sale_status = '한정판매'
+    elif sale_status != '#':
+        pass
+    else:
+        sale_status = '#'
+    name = p.sub(' ', name)
+
+    # 품절여부 구별 -> Sale status 로 추가
+    p = re.compile(r'품\s?절|sold\s?out|sold', re.I)
+    if p.search(name) and sale_status != '#':
+        sale_status += '/품절'
+    elif p.search(name) and sale_status == '#':
+        sale_status = '품절'
+    elif sale_status != '#':
+        pass
+    else:
+        sale_status = '#'
+    name = p.sub(' ', name)
 
     # 자외선차단지수 SPF00+ PA+ 형식으로 통일
     spf = re.compile(r'spf', re.I) # ignorecase
@@ -200,7 +211,7 @@ def cleanseName(jsonString):
     
     # 제품이름에 type (대용량/리필/지성용/건성용/복합성) 포함 경우 이름에서 제거하고 type으로 분리
     includingType = re.compile(r'대용량|소용량|리필 포함|리필용|본품[+]리필구성|본품[+]리필|리필|[(]소[)]|[(]중[)]|[(]대[)]|지성용|건선용|복합성')
-    if includingTyoe.search(name) and types == '#': # type 이미 존재한다면 이름에서 제거만 함
+    if includingType.search(name) and types == '#': # type 이미 존재한다면 이름에서 제거만 함
         typeFound = includingType.search(name)
         types = typeFound.group()
     name = includingType.sub(' ', name)
@@ -254,73 +265,6 @@ def cleanseName(jsonString):
     
     return result
     
-def cleanseVolume(jsonString):
-    
-    volume = jsonString.get('volume')
-
-    volume = str(volume).lower()
-    
-    # 용량x개수 표기 경우 용량*개수로 변경
-    x = re.compile('x', re.I)
-    volume = x.sub(r'*', volume)
-
-    # 2가지 이상의 제품 용량이 ,로 분리된 경우
-    comma = re.compile(r'[,]')
-    if comma.search(volume):
-        volumes = volume.split(',') # comma로 split
-        newvolumes = []
-        for separatedvolume in volumes:
-            volumeForm_comma = re.compile(r'([가-힣]+[^()].*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))') # 분리된 용량을 각각 형식에 맞게 클렌징
-            if volumeForm_comma.search(separatedvolume):
-                separatedvolume = volumeForm_comma.sub(r'\2\3(\1)', separatedvolume)
-            newvolumes.append(separatedvolume)
-        volume = ', '.join(newvolumes) # 클렌징된 용량을 다시 ,로 합침
-
-    # 2가지 이상의 제품 용량이 +로 분리된 경우
-    plus = re.compile(r'[+]')
-    if plus.search(volume):
-        volumes = volume.split('+') # +로 split
-        newvolumes = []
-        for separatedvolume in volumes:
-            volumeForm_plus = re.compile(r'([가-힣]+.*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))') # 분리된 용량을 각각 형식에 맞게 클렌징
-            if volumeForm_plus.search(separatedvolume):
-                separatedvolume = volumeForm_plus.sub(r'\2\3(\1)', separatedvolume)
-            newvolumes.append(separatedvolume)
-        volume = ', '.join(newvolumes) # 클렌징된 용량을 다시 ,로 합침
-    
-    # 단위가 pieces 같은 영어일 경우 한글로 대체
-    pieces = re.compile('pieces|piece|pcs', re.I)
-    volume = pieces.sub('개', volume)
-
-    # 용량과 단위 사이 띄어쓰기 없음
-    volumeNoSpace = re.compile(r'(\d)\s+([가-힣a-zA-Z])')
-    volume = VolumeNoSpace.sub(r'\1\2', volume)
-
-    # 용량 여러개 경우 / 로 구분
-    multiVolumes = re.compile(r'(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)\s*(\d.)') # 용량단위와 숫자 사이에 / 추가
-    volume = multiVolumes.sub(r'\1/\2', volume)
-
-    # 용량*개수 경우 뒷 단위 제거
-    setVolume = re.compile(r'\s?[*]\s?(\d+).*[가-힣a-zA-Z]')
-    volume = setVolume.sub(r'*\1', volume)
-
-    # 단위 여러개인 경우 ml과 g 우선 (oz 후순위)
-    unitOrder = re.compile(r'(\d+\s?oz)(.*?)(\d+\s?(ml|g))', re.I) # oz가 ml, g 보다 먼저 발견될 경우
-    if unitOrder.search(volume):
-        volume = unitOrder.sub(r'\3\2\1', volume)
-    
-    # 불필요 공백 제거
-    space = re.compile(r'\s+')
-    volume = space.sub(' ', volume)
-    volume = volume.strip()
-
-    # 클렌징 과정에서 volume이 통째로 다른 항목으로 분류되었을 경우 default값 부여
-    if volume == '':
-        volume = '#'
-    
-    result =  dict(jsonString, **{'volume': volume})
-    
-    return result
 
 def cleanseColor(jsonString):
     
@@ -333,6 +277,32 @@ def cleanseColor(jsonString):
     color = str(color)
     saleprice = str(saleprice)
     originalprice = str(originalprice)
+
+    # 세트 여부 구별  -> Sale status 로 추가
+    p = re.compile('set|세트', re.I)
+    setPattern = re.compile('세트상품')  
+    if p.search(color) and setPattern.search(sale_status) is None and sale_status != '#':
+        sale_status += '/세트상품'
+    elif p.search(color) and sale_status == '#' :
+        sale_status = '세트상품'
+
+    # 품절 경우  -> Sale status 로 추가
+    p = re.compile(r'품\s?절|sold\s?out|sold', re.I)
+    soldoutPattern = re.compile('품절')
+    if p.search(color) and soldoutPattern.search(sale_status) is None and sale_status != '#':
+        sale_status += '/품절'
+    elif p.search(color) and sale_status == '#':
+        sale_status = '품절'
+    color = p.sub(' ', color)
+
+    # 할인 여부 구별  -> Sale status 로 추가
+    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
+    discountPattern = re.compile('할인')
+    if p.search(color) and discountPattern.search(sale_status) is None and sale_status != '#':
+        sale_status += '/할인'
+    elif p.search(color) and sale_status == '#':
+        sale_status = '할인'
+    color = p.sub(' ', color)
 
     # 불필요한 수식어와 특수문자 제거
     mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|
@@ -396,6 +366,8 @@ def cleanseColor(jsonString):
             else:
                 color = colorCopy
 
+    includingVolume1 = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)')
+    includingVolume2 = re.compile(r'\d+(\s)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I) 
     # 컬러에 volume이 괄호 안에 포함된 경우 이름에서 제거하고 volume으로 분리
     if includingVolume1.search(color) and volume == '#': # volume이 이미 존재한다면 컬러에서 제거하지 않고 volume으로 분리하지도 않음
         volume = includingVolume1.sub(r'\2', color)
@@ -407,18 +379,17 @@ def cleanseColor(jsonString):
         volume = m.group()
     color = includingVolume2.sub(' ', color)  
 
-    # 불필요한 수식어와 특수기호 제거
-    color = mod.sub(' ', color)
-
     # 괄호들 제거
+    brackets = re.compile(r'[[]|[]]|[(]|[)]|[<]|[>]|[{]|[}]')
     color = brackets.sub(' ', color)
 
     # 불필요 공백 제거
+    space = re.compile(r'\s+')
     color = space.sub(' ', color)
     color = color.strip()
 
     # 클렌징 과정에서 color가 통째로 다른 항목으로 분류되었을 경우 default값 부여
-    if color == '':
+    if not color :
         color = '#'
     
     result =  dict(jsonString, **{'color': color, 'volume': volume, 'originalPrice' : originalprice, 'salePrice': saleprice, 'sale_status' : sale_status})
@@ -436,8 +407,37 @@ def cleanseType(jsonString):
     types = str(types)
     saleprice = str(saleprice)
     originalprice = str(originalprice)
+
+    # 세트 여부 구별 -> Sale status 로 추가
+    p = re.compile('set|세트', re.I)
+    setPattern = re.compile('세트상품')  
+    if p.search(types) and setPattern.search(sale_status) is None and sale_status != '#':
+        sale_status += '/세트상품'
+    elif p.search(types) and sale_status == '#' :
+        sale_status = '세트상품'
+
+    # 품절 경우  -> Sale status 로 추가
+    p = re.compile(r'품\s?절|sold\s?out|sold', re.I)
+    soldoutPattern = re.compile('품절')
+    if p.search(types) and soldoutPattern.search(sale_status) is None and sale_status != '#':
+        sale_status += '/품절'
+    elif p.search(types) and sale_status == '#':
+        sale_status = '품절'
+    types = p.sub(' ', types)
+
+    # 할인 여부 구별  -> Sale status 로 추가
+    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)
+    discountPattern = re.compile('할인')
+    if p.search(types) and discountPattern.search(sale_status) is None and sale_status != '#':
+        sale_status += '/할인'
+    elif p.search(types) and sale_status == '#':
+        sale_status = '할인'
+    types = p.sub(' ', types)
     
     # 불필요한 수식어와 특수문자 제거
+    mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|
+                    행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|[^(re)]new[^(al)]|new!|_|-|~|!
+                    """, re.I|re.X)
     types = mod.sub(' ', types) 
 
     # 문자와 숫자는 띄어쓰기로 구분
@@ -490,10 +490,10 @@ def cleanseType(jsonString):
             newPrice = priceChange2.sub(r' \1\2 ', newPrice)
             newPrice = space.sub('', newPrice)
             '''
-        001 버건디 + 200 오렌지
-        현재 데이터에서는 이 가정이 성립함
-        -> 추가 크롤링 => + 1000 오렌지
-        '''
+            001 버건디 + 200 오렌지
+            현재 데이터에서는 이 가정이 성립함
+            -> 추가 크롤링 => + 1000 오렌지
+            '''
             if len(newPrice) > 2: # 000 (최소 백원단위로 증가 가정, 백원 미만 증가 경우 가격변동으로 잘못 분류된 것으로 판단)
                 originalprice = newPrice
             else:
@@ -508,13 +508,14 @@ def cleanseType(jsonString):
         '''
                 
 
-
+    includingVolume1 = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)') 
+    includingVolume2 = re.compile(r'\d+(\s)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I) 
 
     # 타입에 volume이 괄호 안에 포함된 경우 이름에서 제거하고 volume으로 분리
     if includingVolume1.search(types) and volume == '#': # volume이 이미 존재한다면 타입에서 제거하지 않고 volume으로 분리하지도 않음
         volume = includingVolume1.sub(r'\2', types)
         types = includingVolume1.sub(r'\1 \3', types)
-                '''
+    '''
     만약, volume에 값이 있는데
     type에서 위의 패턴들이 search된다면
     이거는 다른 의미라고 가정(volume 뜻이 아니라고 가정)
@@ -531,20 +532,93 @@ def cleanseType(jsonString):
     types = includingVolume2.sub(' ', types)  
 
     # 괄호들 제거
+    brackets = re.compile(r'[[]|[]]|[(]|[)]|[<]|[>]|[{]|[}]')
     if brackets.search(types):
         types = brackets.sub(' ', types)
 
     # 불필요한 공백은 제거
+    space = re.compile(r'\s+') 
     types = space.sub(' ', types)
     types = types.strip()
     
     # 클렌징 과정에서 type이 통째로 다른 항목으로 분류되었을 경우 default값 부여
-    if types == '':
+    if not types:
         types = '#'
 
     result =  dict(jsonString, **{'type': types, 'volume': volume, 'originalPrice' : originalprice, 'salePrice': saleprice, 'sale_status' : sale_status})
     
     return result
+
+
+def cleanseVolume(jsonString):
+    
+    volume = jsonString.get('volume')
+
+    volume = str(volume).lower()
+    
+    # 용량x개수 표기 경우 용량*개수로 변경
+    x = re.compile('x', re.I)
+    volume = x.sub(r'*', volume)
+
+    # 2가지 이상의 제품 용량이 ,로 분리된 경우
+    comma = re.compile(r'[,]')
+    if comma.search(volume):
+        volumes = volume.split(',') # comma로 split
+        newvolumes = []
+        for separatedvolume in volumes:
+            volumeForm_comma = re.compile(r'([가-힣]+[^()].*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))') # 분리된 용량을 각각 형식에 맞게 클렌징
+            if volumeForm_comma.search(separatedvolume):
+                separatedvolume = volumeForm_comma.sub(r'\2\3(\1)', separatedvolume)
+            newvolumes.append(separatedvolume)
+        volume = ', '.join(newvolumes) # 클렌징된 용량을 다시 ,로 합침
+
+    # 2가지 이상의 제품 용량이 +로 분리된 경우
+    plus = re.compile(r'[+]')
+    if plus.search(volume):
+        volumes = volume.split('+') # +로 split
+        newvolumes = []
+        for separatedvolume in volumes:
+            volumeForm_plus = re.compile(r'([가-힣]+.*?)\s?(\d+)\s?((ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs))') # 분리된 용량을 각각 형식에 맞게 클렌징
+            if volumeForm_plus.search(separatedvolume):
+                separatedvolume = volumeForm_plus.sub(r'\2\3(\1)', separatedvolume)
+            newvolumes.append(separatedvolume)
+        volume = ', '.join(newvolumes) # 클렌징된 용량을 다시 ,로 합침
+    
+    # 단위가 pieces 같은 영어일 경우 한글로 대체
+    pieces = re.compile('pieces|piece|pcs', re.I)
+    volume = pieces.sub('개', volume)
+
+    # 용량과 단위 사이 띄어쓰기 없음
+    volumeNoSpace = re.compile(r'(\d)\s+([가-힣a-zA-Z])')
+    volume = volumeNoSpace.sub(r'\1\2', volume)
+
+    # 용량 여러개 경우 / 로 구분
+    multiVolumes = re.compile(r'(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)\s*(\d.)') # 용량단위와 숫자 사이에 / 추가
+    volume = multiVolumes.sub(r'\1/\2', volume)
+
+    # 용량*개수 경우 뒷 단위 제거
+    setVolume = re.compile(r'\s?[*]\s?(\d+).*[가-힣a-zA-Z]')
+    volume = setVolume.sub(r'*\1', volume)
+
+    # 단위 여러개인 경우 ml과 g 우선 (oz 후순위)
+    unitOrder = re.compile(r'(\d+\s?oz)(.*?)(\d+\s?(ml|g))', re.I) # oz가 ml, g 보다 먼저 발견될 경우
+    if unitOrder.search(volume):
+        volume = unitOrder.sub(r'\3\2\1', volume)
+    
+    # 불필요 공백 제거
+    space = re.compile(r'\s+')
+    volume = space.sub(' ', volume)
+    volume = volume.strip()
+
+    # 클렌징 과정에서 volume이 통째로 다른 항목으로 분류되었을 경우 default값 부여
+    if not volume:
+        volume = '#'
+    
+    result =  dict(jsonString, **{'volume': volume})
+    
+    return result
+
+
 
 # 달러표시 및 천단위 콤마 표기
 def cleansePrice(jsonString):
@@ -552,9 +626,9 @@ def cleansePrice(jsonString):
     saleprice = jsonString.get('salePrice')
     originalprice = jsonString.get('originalPrice')
     
+    nonDigit = re.compile(r'\D')
     if brand == 'TOMFORD': # 'tomford' 브랜드의 경우 달러 기호 포함
-        nonDigit = re.compile(r'\D') # 숫자 아닌 문자 제거
-        saleprice = nonDigit.sub('', saleprice)
+        saleprice = nonDigit.sub('', saleprice) # 숫자 아닌 문자 제거
         originalprice = nonDigit.sub('', originalprice)
         saleprice = '$' + '{:,}'.format(int(saleprice)) # 달러기호 추가 및 천단위 콤마 표기 포맷
         originalprice = '$' + '{:,}'.format(int(originalprice))
