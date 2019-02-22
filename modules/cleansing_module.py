@@ -112,7 +112,6 @@ def cleanseImage(jsonString):
     if isinstance(image, str):
         image = [image]
     result = dict(jsonString, **{'image' : image})
-    print(image)
     return result
 
 #%%
@@ -189,11 +188,14 @@ def cleanseName(jsonString):
     '''
 
     # 불필요한 수식어와 특수기호 제거 -> 별표사이사이에 있는 문구 삭제? ex)★~가 추천한 상품★   [리미티드] 추가하면 안됨.->리/미/티/드 다 제거
-    p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대3개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량', re.I)
-    name = p.sub(' ', name)
-    p = re.compile(r'리미티드|한정판|한정|행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|[^(re)]new[^(al)]|new!|_|-|~|!', re.I)
+    p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대3개구매가능|온라인\s?단독|온라인|online'
+                   r'|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획'
+                   r'|특가|컬러\s?추가|마지막\s?수량리미티드|한정판|한정|행사|event|이벤트|최대\s?\d*[%]'
+                   r'|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^'
+                   r'|[^(re)]new[^(al)]|new!|_|-|~|!', re.I)
+    p = re.compile(r'', re.I)
     #  [리미티드] [new] renewal 주의
-    # 증정 -> ?
+    # 증정 -> ?g
     name = p.sub(' ', name)
     
     # 제품이름에 volume이 괄호 안에 포함된 경우
@@ -201,6 +203,8 @@ def cleanseName(jsonString):
     if p.search(name) and volume == '#':
         volume = p.sub(r'\2', name)
         name = p.sub(r'\1 \3', name)
+        print(volume)
+        print(name)
     '''
     p = re.compile(r'\d+(\s)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|mm|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I)
     if p.search(name) and volume == '#':
@@ -227,6 +231,7 @@ def cleanseName(jsonString):
     name = p.sub(' ', name)
     
     # 제품이름에 _+옵션 경우
+
     '''
     p = re.compile(r'_(.+)\s?')
     if p.search(name) and types == '#':
@@ -460,7 +465,7 @@ def cleanseColor(jsonString):
         colorCopy = color
         m = p.search(color)
         color = p.sub(' ', color)
-        if p3.search(sale_status) and saleprice == '#' :
+        if p3.search(sale_status) and saleprice == '#':
             newPrice = m.group()
             newPrice = p.sub(r' \1\2 ', newPrice)
             p = re.compile(r'\s+')
@@ -469,7 +474,7 @@ def cleanseColor(jsonString):
                 saleprice = newPrice
             else:
                 color = colorCopy
-        elif p3.search(sale_status) is None and originalprice == '#' :
+        elif p3.search(sale_status) is None and originalprice == '#':
             newPrice = m.group()
             newPrice = p.sub(r' \1\2 ', newPrice)
             p = re.compile(r'\s+')
