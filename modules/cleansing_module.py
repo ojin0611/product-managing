@@ -419,7 +419,7 @@ def cleanseColor(jsonString):
     originalprice = str(originalprice)
 
     # 불필요한 수식어와 특수문자 제거
-    p = re.compile(r'[^(re)]new[^(al)]|추천|-|_|/|:|일반\s?판매|재고\s?[:]\s?\d*개|옵션가격|가격', re.I) # 제거하고 싶은 단어 추가  renewal 주의
+    p = re.compile(r'[^(re)]new[^(al)]|추천|-|_|/|:|일반\s?판매|재고\s?[:]\s?\d*개|옵션가격|가격', re.I) # 제거하고 싶은 단어 추가
     color = p.sub(' ', color)
     
     # 한글 영문 동시 기재시 한글을 앞으로
@@ -568,7 +568,7 @@ def cleanseType(jsonString):
 
     # 세트 여부
     p = re.compile('set|세트', re.I)
-    setPattern = re.compile('세트상품')  # 컬렉션 / 박스 / 0종 / 키트 / 듀오 / 트리오 -> 세트 상품이 아닐 가능성 있음. 대부분이 세트로 걸러지긴 함-> 세트 표기가 더 나은지
+    setPattern = re.compile('세트상품')
     if p.search(types) and setPattern.search(sale_status) is None and sale_status != '#':
         sale_status += '/세트상품'
     elif p.search(types) and sale_status == '#' :
