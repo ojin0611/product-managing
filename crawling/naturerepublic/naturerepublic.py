@@ -71,9 +71,11 @@ def getItem(itemURL):
     html = fp.read().decode("utf8")
     fp.close()
     soup = bs(html, 'html.parser')
-
-    name = soup.find('div',{'class':'sub_tit_wrap tit_pro_view'}).h2.get_text().strip()
-
+    try:
+        name = soup.find('div',{'class':'sub_tit_wrap tit_pro_view'}).h2.get_text().strip()
+    except:
+        print(itemURL)
+        raise
     imageList = soup.find('div',{'class':'thumb_img'})
     images = [image['rel'] for image in imageList.ul.find_all('img')]
 

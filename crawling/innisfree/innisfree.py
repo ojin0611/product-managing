@@ -34,7 +34,8 @@ def getNumber(string):
 def getCategories():
     html = driver.page_source
     soup = bs(html,'html.parser')
-    categories = driver.find_elements_by_xpath("//ul[@class='tabArea']/li/a")
+    categories = driver.find_elements_by_xpath("//ul[@id='cateTabArea']/li/a")
+    print('카테고리 수 :',len(categories))
     for c, category in enumerate(categories):
         categories[c]=category.text
     return categories
@@ -144,7 +145,6 @@ url_home = 'http://www.innisfree.com'
 url_products = 'http://www.innisfree.com/kr/ko/ShopProductMap.do'
 driver.get(url_products)
 categories = getCategories()
-print(categories)
 
 
 # In[9]:
