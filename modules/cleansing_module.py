@@ -106,9 +106,15 @@ def cleanseBrand(jsonString):
 
 # 'image'가 리스트 형태가 아닐 경우 리스트로 변경
 def cleanseImage(jsonString):
-    image = jsonString.get('image')
-    if isinstance(image, str()):
-        image = image.split(',')
+    images = jsonString.get('image')
+    if type(images) != type(['list']): 
+        imageList=[]
+        images = images.split(',')
+        for image in images:
+            imageList.append(image)
+        image = imageList
+    else:
+        image = images
     result = dict(jsonString, **{'image' : image})
     print(image)
     return result
@@ -120,51 +126,7 @@ def createSaleStatus(jsonString):
     volume = jsonString.get('volume')
     color = jsonString.get('color')
     types = jsonString.get('types')
-
-    # 세트 여부 구별
-    p = re.compile('set|세트', re.I)  # 세트 패턴
-    if p.search(name):
-        sale_status = '세트상품'
-    else:
-        sale_status = '#'
-
-    # 할인 여부 구별
-    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I)  # 할인 패턴
-    if p.search(name) and sale_status != '#':
-        sale_status += '/할인'
-    elif p.search(name) and sale_status == '#':
-        sale_status = '할인'
-    elif sale_status != '#':
-        pass
-    else:
-        sale_status = '#'
-    name = p.sub(' ', name)
-
-    # 한정판매여부 구별
-    p = re.compile(r'리미티드|한정판매|한정품|한정판|한정|limited', re.I)  # 한정판매 패턴
-    if p.search(name) and sale_status != '#':
-        sale_status += '/한정판매'
-    elif p.search(name) and sale_status == '#':
-        sale_status = '한정판매'
-    elif sale_status != '#':
-        pass
-    else:
-        sale_status = '#'
-    name = p.sub(' ', name)
-
-    # 품절여부 구별
-    p = re.compile(r'품\s?절|sold\s?out|sold', re.I)  # 품절 패턴
-    if p.search(name) and sale_status != '#':
-        sale_status += '/품절'
-    elif p.search(name) and sale_status == '#':
-        sale_status = '품절'
-    elif sale_status != '#':
-        pass
-    else:
-        sale_status = '#'
-    name = p.sub(' ', name)
-
-
+    
 def cleanseName(jsonString):
     # 각 내용 순서도 중요!
     name = jsonString.get('name')
@@ -182,6 +144,48 @@ def cleanseName(jsonString):
             p = re.compile(r'spf\s?(\d+)\s?([+]*)', re.I)
             name = p.sub(r'SPF\1\2', name)
             
+    # 세트 여부 구별
+    p = re.compile('set|세트', re.I) # 세트 패턴
+    if p.search(name):
+        sale_status = '세트상품'
+    else:
+        sale_status = '#'
+ 
+    # 할인 여부 구별 
+    p = re.compile(r'sale|할인|세일|\d+\s?[%]\s?off', re.I) # 할인 패턴
+    if p.search(name) and sale_status != '#':
+        sale_status += '/할인'
+    elif p.search(name) and sale_status == '#':
+        sale_status = '할인'
+    elif sale_status != '#':
+        pass
+    else:
+        sale_status = '#'
+    name = p.sub(' ', name)
+
+    # 한정판매여부 구별
+    p = re.compile(r'리미티드|한정판매|한정품|한정판|한정|limited', re.I) # 한정판매 패턴
+    if p.search(name) and sale_status != '#':
+        sale_status += '/한정판매'
+    elif p.search(name) and sale_status == '#':
+        sale_status = '한정판매'
+    elif sale_status != '#':
+        pass
+    else:
+        sale_status = '#'
+    name = p.sub(' ', name)
+
+    # 품절여부 구별
+    p = re.compile(r'품\s?절|sold\s?out|sold', re.I) # 품절 패턴
+    if p.search(name) and sale_status != '#':
+        sale_status += '/품절'
+    elif p.search(name) and sale_status == '#':
+        sale_status = '품절'
+    elif sale_status != '#':
+        pass
+    else:
+        sale_status = '#'
+    name = p.sub(' ', name)
 
     # 불필요한 수식어와 특수기호 제거
     p = re.compile(r'<br>|#디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?세트|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량', re.I) # 제거하고 싶은 단어 추가
@@ -550,24 +554,11 @@ def cleanseType(jsonString):
             else:
                 types = typesCopy
         # 할인 중인 제품이 아닐 경우 originalprice 변경
-        sale != origin, 할인x , origin = sale
-        '''
-        할인인지 아닌지 /
-        할인한다의 기준은 name, color, volume, type 할인이라고 적혀있는 경우 => 할인
-        color에 가격변동이 있다면 => sale price(판매가)에 가격변동 반영
-        고민 필요
-        original + 가격변동, sale + 가격변동  =>
-        '''
         elif p3.search(sale_status) is None and originalprice == '#' :
             newPrice = m.group()
             newPrice = p.sub(r' \1\2 ', newPrice)
             p = re.compile(r'\s+')
             newPrice = p.sub('', newPrice)
-        '''
-        001 버건디 + 200 오렌지
-        현재 데이터에서는 이 가정이 성립함
-        -> 추가 크롤링 => + 1000 오렌지
-        '''
             if len(newPrice) > 2: # 000 (최소 백원단위로 증가 가정, 백원 미만 증가 경우 가격변동으로 잘못 분류된 것으로 판단)
                 originalprice = newPrice
             else:
@@ -575,18 +566,10 @@ def cleanseType(jsonString):
 
     # 타입에 volume이 괄호 안에 포함된 경우 이름에서 제거하고 volume으로 분리
     p = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs).*)[)](.*)')
-    '''
-    만약, volume에 값이 있는데
-    type에서 위의 패턴들이 search된다면
-    이거는 다른 의미라고 가정(volume 뜻이 아니라고 가정)
-    100ml
-    대 사이즈(+500ml)
-    
-    '''
     if p.search(types) and volume == '#': # volume이 이미 존재한다면 타입에서 제거하지 않고 volume으로 분리하지도 않음
         volume = p.sub(r'\2', types)
         types = p.sub(r'\1 \3', types)
-
+   
     # 타입에 volume이 2개 이상 포함된 경우 이름에서 제거하고 volume으로 분리
     p = re.compile(r'\d+(\s)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|g|oz|매입|개입|매|개|입|each|ea|pcs)?', re.I)
     if p.search(types) and volume == '#': # volume이 이미 존재한다면 컬러에서 제거하지 않고 volume으로 분리하지도 않음
@@ -603,13 +586,13 @@ def cleanseType(jsonString):
     p = re.compile(r'\s+')
     types = p.sub(' ', types)
     types = types.strip()
-
+    
     # 클렌징 과정에서 type이 통째로 다른 항목으로 분류되었을 경우 default값 부여
     if types == '':
         types = '#'
 
     result =  dict(jsonString, **{'type': types, 'volume': volume, 'originalPrice' : originalprice, 'salePrice': saleprice, 'sale_status' : sale_status})
-
+    
     return result
 
 # 달러표시 및 천단위 콤마 표기

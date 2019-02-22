@@ -31,13 +31,25 @@ def getNumber(string):
 # In[3]:
 
 
-def getCategories():
-    html = driver.page_source
+def getCategories(url_products):
+    fp = urlopen(url_products)
+    html = fp.read().decode("utf8")
+    fp.close()
+
+#    html = driver.page_source
+#    print(driver.current_url)
     soup = bs(html,'html.parser')
-    categories = driver.find_elements_by_xpath("//ul[@class='tabArea']/li/a")
+    categoryList = soup.find('ul',{'id':'cateTabArea'}).find_all('a')
+    print('카테고리 수 :',len(categoryList))
+    categoryTexts = [category.get_text().strip() for category in categoryList]
+    '''
+    categories = driver.find_elements_by_xpath("//ul[@id='cateTabArea']/li/a")
+    print('카테고리 수 :',len(categories))
     for c, category in enumerate(categories):
         categories[c]=category.text
     return categories
+    '''
+    return categoryTexts
 
 
 # In[4]:
@@ -142,9 +154,8 @@ driver = openChromedriver()
 
 url_home = 'http://www.innisfree.com'
 url_products = 'http://www.innisfree.com/kr/ko/ShopProductMap.do'
-driver.get(url_products)
-categories = getCategories()
-print(categories)
+# driver.get(url_products)
+categories = getCategories(url_products)
 
 
 # In[9]:

@@ -46,8 +46,9 @@ def getItems(category, categoryname):
     prdCount = getPrdCount(driver)
     
     result_json = []
-    
+    print(categoryname)
     for i in range(total_len - prdCount, total_len):
+        
         result_dict = {'name':'#', 'url':'#', 'image':'#', 'color':'#', 'category':categoryname, 
                    'salePrice':'#', 'originalPrice':'#', 'brand':'woodbury','volume':'#'}
         productsImages = driver.find_elements_by_class_name('prdImg')
