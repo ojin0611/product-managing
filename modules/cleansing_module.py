@@ -130,7 +130,6 @@ def createSaleStatus(jsonString):
     color = jsonString.get('color')
     types = jsonString.get('types')
 
-
 #%%
 def cleanseName(jsonString):
     # 각 내용 순서도 중요!
