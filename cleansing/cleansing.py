@@ -16,6 +16,7 @@ def main():
     # clean the crawled_data 
     cleansed_data = list(map(cleanseColumnNames, crawled_data))
     cleansed_data = list(map(createColumns, cleansed_data))
+    cleansed_data = list(map(cleanseHtml, cleansed_data))
     cleansed_data = list(map(cleanseBrand, cleansed_data))
     cleansed_data = list(filter(None, cleansed_data))   # 취급하지 않는 브랜드의 경우 None값을 return -> filter
     cleansed_data = list(filter(lambda x:x.pop('delete', None), cleansed_data))  # 원하지 않는 칼럼 제거 

@@ -81,6 +81,7 @@ def createColumns(jsonString):
 
     return jsonString
 
+
 def cleanseHtml(jsonString):
     html = re.compile('<.*?>')
     keyList = list(jsonString.keys())
@@ -106,6 +107,7 @@ def cleanseBrand(jsonString):
     korBrandList = list(reference.get('한글명').values()) # 취급 브랜드의 한글명 리스트
     abbList = list(reference.get('약어').values()) # 브랜드 약어 리스트
     
+    space = re.compile(r'\s+')
     brand = re.sub(space, '',brand) #띄어쓰기 패턴 제거
     brand = brand.upper() #브랜드명 대문자로 표기
 
@@ -659,8 +661,14 @@ def cleansePrice(jsonString):
     if brand == 'TOMFORD': # 'tomford' 브랜드의 경우 달러 기호 포함
         saleprice = nonDigit.sub('', saleprice) # 숫자 아닌 문자 제거
         originalprice = nonDigit.sub('', originalprice)
-        saleprice = '$' + '{:,}'.format(int(saleprice)) # 달러기호 추가 및 천단위 콤마 표기 포맷
-        originalprice = '$' + '{:,}'.format(int(originalprice))
+        if saleprice:
+            saleprice = '$' + '{:,}'.format(int(saleprice)) # 달러기호 추가 및 천단위 콤마 표기 포맷
+        else:
+            saleprice = '#'
+        if originalprice:
+            originalprice = '$' + '{:,}'.format(int(originalprice))
+        else:
+            originalprice = '#'
     elif saleprice != '#' and originalprice != '#': # 'tomford' 브랜드가 아니고 price가 default값이 아닌 경우
         saleprice = str(saleprice)
         originalprice = str(originalprice) 
