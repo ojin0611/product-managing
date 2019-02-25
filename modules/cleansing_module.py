@@ -7,7 +7,7 @@ import re
 정규식 리스트
 space = re.compile(r'\s+') # 한 칸 이상의 공백
 digit = re.compile(r'\d') # 숫자
-mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|
+mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|[\n]|
                     행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|new[^(al)]|new!|_|-|~|!|net wt.
                     """, re.I|re.X) # 제거하고 싶은 문자 추가
 includingVolume1 = re.compile(r'(.*)[(]?([^)]*(ml|mg|g|oz|묶음|매입|개입|매[^트]|개|입|each|ea|pcs).*)[)]?(.*)') # volume이 포함된 경우
@@ -79,6 +79,16 @@ def createColumns(jsonString):
     if 'delete' not in columnList:
         jsonString = dict(jsonString, **{'delete':'#'})
 
+    return jsonString
+
+def cleanseHtml(jsonString):
+    html = re.compile('<.*?>')
+    keyList = list(jsonString.keys())
+    for key in keyList:
+        value = jsonString.get(key)
+        cleantext = re.sub(html, '', value)
+        cleantext = cleantext.rstrip()
+        jsonString = dict(jsonString, **{key : cleantext})
     return jsonString
 
 
@@ -187,7 +197,7 @@ def cleanseName(jsonString):
 
     # 불필요한 수식어와 특수기호 제거
     mod = re.compile(r"""
-    <br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|
+    <br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|[\n]|
     행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d+\s?[+]\s?\d+|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|new[^(al)]|new!|_|-|~|!|net wt.
     """, re.X|re.I) # 제거하고 싶은 문자 추가        
     name = mod.sub(' ', name)
@@ -377,7 +387,7 @@ def cleanseColor(jsonString):
             color = colorCopy
 
     # 불필요한 수식어와 특수문자 제거
-    mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|
+    mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|[\n]|
                     행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|new[^(al)]|new!|_|-|~|!|net wt.
                     """, re.I|re.X)
     color = mod.sub(' ', color)
@@ -459,7 +469,7 @@ def cleanseType(jsonString):
     types = limited.sub(' ', types)
     
     # 불필요한 수식어와 특수문자 제거
-    mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|
+    mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|[\n]|
                     행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|new[^(al)]|new!|_|-|~|!|net wt.
                     """, re.I|re.X)
     types = mod.sub(' ', types) 
@@ -519,6 +529,7 @@ def cleanseType(jsonString):
         else:
             types = typesCopy
                 
+    ## 타입에 volume 포함 경우
     includingVolume1 = re.compile(r'(.*)[(]([^)]*(ml|mg|g|oz|묶음|매입|개입|매[^트]|개|입|each|ea|pcs).*)[)](.*)') 
     includingVolume2 = re.compile(r'\d+(\s)?(ml|mg|g|oz|묶음|매입|개입|매[^트]|개|입|each|ea|pcs)(\s?[*|+|x]\s?\d+)?(ml|mg|g|oz|묶음|매입|개입|매[^트]|개|입|each|ea|pcs)?', re.I) 
     # 타입에 volume이 포함된 경우 타입에서 제거하고 volume으로 분리
@@ -564,7 +575,7 @@ def cleanseVolume(jsonString):
     volume = str(volume).lower()
 
     # 불필요한 수식어와 특수문자 제거
-    mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|
+    mod = re.compile(r"""<br>|[#]디렉터파이_추천!|★겟잇뷰티 1위!★|최대\d개구매가능|온라인\s?단독|온라인|online|사은품\s?:\s?샤워볼|기획\s?특가|기획|특가|컬러\s?추가|마지막\s?수량|[\n]|
                     행사|event|이벤트|최대\s?\d*[%]|본품\s?\d?\s?[+]\s?리필\s?\d?|\d\s?[+]\s?\d|[★]|[☆]|추천|증정품|리필\s?증정|[@]|^|new[^(al)]|new!|_|-|~|!|net wt.
                     """, re.I|re.X)
     volume = mod.sub(' ', volume)
