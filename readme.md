@@ -114,7 +114,8 @@ date
 
 ### crontab 사용
 - 크론탭 편집
-```crontab -e
+```
+crontab -e
 * * * * * cd /home/ec2-user/product-managing ; git pull ; python3 update_brand all
 ```
 분 시 일 월 요일
