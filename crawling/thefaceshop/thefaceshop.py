@@ -172,8 +172,9 @@ for category in categoryList:
         print(i)
         try:
             result += getItem(item)
-        except:
+        except Exception as e:
             print(item)
+            print('Error :',e)
 
 #-------------------------------------------------------------#
 print("--- %0.2f seconds ---" %(time.time() - start_time))
