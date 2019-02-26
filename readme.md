@@ -40,12 +40,30 @@ $ python update_brand.py <brand>
 - sudo yum install python36
 
 ### pip3
-- curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
-- python3 get-pip.py --user
-- 이후 모듈 설치 : pip3 install modulename --user
+```
+curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+python3 get-pip.py --user
+```
+이후 모듈 설치 : `pip3 install modulename --user`
 
-### Google Chrome (+chromedriver) + selenium
+### Google Chrome (+chromedriver)
 - [한 방에 정리!] (https://medium.com/@praneeth.jm/running-chromedriver-and-selenium-in-python-on-an-aws-ec2-instance-2fb4ad633bb5)
+
+- Install chromedriver
+```
+cd/tmp/
+wget https://chromedriver.storage.googleapis.com/2.37/chromedriver_linux64.zip
+unzip chromedriver_linux64.zip
+sudo mv chromedriver /usr/bin/chromedriver
+chromedriver --version
+```
+- Install Google Chrome
+```
+curl https://intoli.com/install-google-chrome.sh | bash
+sudo mv /usr/bin/google-chrome-stable /usr/bin/google-chrome
+google-chrome --version && which google-chrome
+```
+
 
 
 ### Node.js / npm
@@ -59,7 +77,7 @@ $ python update_brand.py <brand>
 sudo yum update -y
 sudo yum install -y gcc gcc-c++ make openssl-devel
 
-/tmp
+cd /tmp
 curl -O https://nodejs.org/dist/v9.9.0/node-v9.9.0.tar.gz
 tar -xvf node-v9.9.0.tar.gz && rm node-v9.9.0.tar.gz
 

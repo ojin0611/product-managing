@@ -119,6 +119,7 @@ def cleanseBrand(jsonString):
 
     # 취급하지 않는 브랜드의 상품에 대해 None 리턴 -> cleansing,py 에서 None값 필터링해 줄 것
     if brand not in brandList:
+        print(brand,'not in brand list!')
         return None
     # skuid의 브랜드 약어 부분 부여
     else:
