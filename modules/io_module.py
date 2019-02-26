@@ -81,20 +81,32 @@ def upload_json(jsonstring, brand, activity, bucket_name = 'cosmee-product-data'
     s3.put_object(Body=output, Bucket=bucket_name, Key=history_file)
 
 
+'''
+get_pickle : pickle 형태로 저장되어 있는 sku_dict 를 지정된 s3 경로에서 불러오는 함수. 
+'''
+
+
 def get_pickle(file_name, brand):
 
     s3 = boto3.client('s3')
     bucket_name = 'cosmee-product-data'
     s3_path = brand + '/' + "sku_dict" + '/'
 
+
     try:
-        sku_name_s3 = s3.get_object(Bucket=bucket_name, Key=s3_path + file_name)
-        result = pickle.load(BytesIO(sku_name_s3['Body'].read()))
+        s3_object = s3.get_object(Bucket=bucket_name, Key=s3_path + filename)
+        s3_text = s3_object['Body'].read().decode()
+        result = json.loads(s3_text)
 
     except ClientError:
-        result = {('', '', '', '', ''): ("000000", "000")}
-    print('--- get key : s3/' + s3_path + file_name + ' ---')
+        result = [{('', '', '', '', ''): ("000000", "000")}]
+    print('--- load key : s3/' + s3_path + file_name + ' ---')
     return result
+
+
+'''
+upload_pickle : sku_dict 를 지정된 s3 경로에 pickle 형태로 저장하는 함수.
+'''
 
 
 def upload_pickle(data, file_name, brand):
@@ -102,7 +114,7 @@ def upload_pickle(data, file_name, brand):
     s3 = boto3.client('s3')
     bucket_name = 'cosmee-product-data'
     s3_path = brand + '/' + "sku_dict" + '/'
-    pickle_data = pickle.dumps(data)
-    s3.put_object(Body=pickle_data, Bucket=bucket_name, Key=s3_path + file_name)
+    output = json.dumps(data, ensure_ascii=False, indent='\t')
+    s3.put_object(Body=output, Bucket=bucket_name, Key=s3_path + file_name)
     print('--- upload key : s3/' + s3_path + file_name + ' ---')
 
