@@ -18,9 +18,9 @@ sku_naming
 '''
 
 
-def sku_naming(jsonstring, brand):
+def sku_naming(jsonstring, brand_path):
 
-    sku_dict = io_module.get_pickle('sku_dict.json', brand)
+    sku_dict = io_module.get_pickle('sku_dict.json', brand_path)
 
     for product in jsonstring:
         brand = product['brand']
@@ -61,8 +61,7 @@ def sku_naming(jsonstring, brand):
                        "name_id": name_id, "cvt_id": cvt_id}
             sku_dict.append(new_sku)
             product['skuid'] = product['skuid'] + name_id + cvt_id
-        print(product['skuid'])
 
-    io_module.upload_pickle(sku_dict, 'sku_dict.json', brand)
+    io_module.upload_pickle(sku_dict, 'sku_dict.json', brand_path)
 
     return jsonstring
