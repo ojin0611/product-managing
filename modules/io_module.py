@@ -8,6 +8,7 @@ import pickle
 from io import BytesIO
 import pprint
 
+
 def get_json(load_filename, brand, activity, bucket_name = 'cosmee-product-data'):
     # load_filename : new / old
     # brand : name of brand
@@ -94,12 +95,13 @@ def get_pickle(file_name, brand):
 
 
     try:
-        s3_object = s3.get_object(Bucket=bucket_name, Key=s3_path + filename)
+        s3_object = s3.get_object(Bucket=bucket_name, Key=s3_path + file_name)
         s3_text = s3_object['Body'].read().decode()
         result = json.loads(s3_text)
 
     except ClientError:
-        result = [{('', '', '', '', ''): ("000000", "000")}]
+        result = [{"brand": "#", "name": "#", "color": "#","volume": "#", "type": "#",
+                   "name_id": "000000", "cvt_id": "000"}]
     print('--- load key : s3/' + s3_path + file_name + ' ---')
     return result
 
