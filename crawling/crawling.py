@@ -26,7 +26,7 @@ def main():
                 crawling_type = 'python'
                 break
         else:
-            crawling_type = None
+            crawling_type = None # npm도 아니고 python도 아닌 애들은 crawling_type이 없다.
     print('--- crawling type :',crawling_type,'---') 
 
 
@@ -45,6 +45,8 @@ def main():
         os.system(cmd)
 
     
+
+    # crawling type이 있다면, local에 저장된 크롤링 결과 파일을 s3에 업로드한다.
     if crawling_type is not None:
         crawled_data = io_module.get_json(brand, brand, 'local')
         io_module.upload_json(crawled_data, brand, 'crawling')

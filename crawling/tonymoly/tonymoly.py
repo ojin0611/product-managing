@@ -136,9 +136,8 @@ driver.find_element_by_xpath("//div[@class='gnb group']//a[@class='btn-menu']").
 
 urlList=[]
 urlList = getUrlList(urlList)
-print('urlList :', urlList)
 urlList = list(set(urlList))
-print(len(urlList))
+print('상품 개수 :', len(urlList))
 
 
 

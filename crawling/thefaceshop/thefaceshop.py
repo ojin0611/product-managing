@@ -170,7 +170,10 @@ for category in categoryList:
 
     for i, item in enumerate(itemList):
         print(i)
-        result += getItem(item)
+        try:
+            result += getItem(item)
+        except:
+            print(item)
 
 #-------------------------------------------------------------#
 print("--- %0.2f seconds ---" %(time.time() - start_time))

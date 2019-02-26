@@ -12,7 +12,7 @@ else:
 
 def main(brand):
     if brand=='all':
-        brandlist = next(os.walk('./crawling/'))[1]
+        brandlist = next(os.walk('./crawling/'))[1] # get crawling brand name list
         print(brandlist)
         for brand in brandlist:
             update(brand)
