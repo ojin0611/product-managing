@@ -134,9 +134,9 @@ def createSaleStatus(jsonString):
     name = jsonString.get('name')
     volume = jsonString.get('volume')
     color = jsonString.get('color')
-    types = jsonString.get('types')
+    type = jsonString.get('type')
 
-    valueList = [name, volume, color, types]
+    valueList = [name, volume, color, type]
 
     saleStatusDict = {'setPattern' : '세트상품', 'soldoutPattern' : '품절', 'discountPattern': '할인', 'limitedPattern' : '한정'}
 
@@ -148,8 +148,7 @@ def createSaleStatus(jsonString):
     p = saleStatusDict.key()
     if p.search(value) and sale_status == '#':
         sale_status = saleStatusDict.get(p)
-    else:
-         p.search(value) and sale_status != '#':
+    elif p.search(value) and sale_status != '#':
         sale_status += ('/' + saleStatusDict.get(p))
     
     saleStatusList = sale_status.split('/')
