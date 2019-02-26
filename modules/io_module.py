@@ -87,7 +87,7 @@ get_pickle : pickle 형태로 저장되어 있는 sku_dict 를 지정된 s3 경�
 '''
 
 
-def get_pickle(file_name, brand):
+def get_sku_json(file_name, brand):
 
     s3 = boto3.client('s3')
     bucket_name = 'cosmee-product-data'
@@ -111,7 +111,7 @@ upload_pickle : sku_dict 를 지정된 s3 경로에 pickle 형태로 저장하�
 '''
 
 
-def upload_pickle(data, file_name, brand):
+def upload_sku_json(data, file_name, brand):
 
     s3 = boto3.client('s3')
     bucket_name = 'cosmee-product-data'
