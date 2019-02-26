@@ -13,6 +13,7 @@ else:
 def main(brand):
     if brand=='all':
         brandlist = next(os.walk('./crawling/'))[1]
+        print(brandlist)
         for brand in brandlist:
             update(brand)
 
@@ -25,6 +26,7 @@ def update(brand):
     print('$',cmd)
     os.system(cmd)
     '''
+    '''
 
     # cleansing
     cmd = "cd cleansing" + cmd_style + python_version + "cleansing.py "+ brand
@@ -35,7 +37,6 @@ def update(brand):
     cmd = "cd compare" + cmd_style + python_version + "compare.py "+ brand
     print('$',cmd)
     os.system(cmd)
-    '''
 
 
 if __name__ == "__main__":

@@ -21,6 +21,7 @@ def main():
     print(len(json_list))
 
     io_module.upload_json(json_list, 'AdminDB', 'backup', bucket_name = 'cosmee-admindb')
+    print('--- Backup DB ---')
 
 
 if __name__ == "__main__":
