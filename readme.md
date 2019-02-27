@@ -34,7 +34,7 @@ $ python update_brand.py <brand>
 ## Requirements
 ### git
 - sudo yum install git
-- 정리 링크 : https://medium.com/sunhyoups-story/ec2-git-ac275a4e789c
+- [정리 링크](https://medium.com/sunhyoups-story/ec2-git-ac275a4e789c)
 
 ### python3
 - sudo yum install python36
@@ -47,7 +47,7 @@ python3 get-pip.py --user
 이후 모듈 설치 : `pip3 install modulename --user`
 
 ### Google Chrome (+chromedriver)
-- [한 방에 정리!] (https://medium.com/@praneeth.jm/running-chromedriver-and-selenium-in-python-on-an-aws-ec2-instance-2fb4ad633bb5)
+- [한 방에 정리!](https://medium.com/@praneeth.jm/running-chromedriver-and-selenium-in-python-on-an-aws-ec2-instance-2fb4ad633bb5)
 
 - Install chromedriver
 ```
@@ -68,8 +68,8 @@ google-chrome --version && which google-chrome
 
 ### Node.js / npm
 - Port 설정 : 인스턴스 > 보안 그룹 생성(또는 변경) > Custon TCP Rule  / PORT 3000
-- 설치방법 링크 : https://gist.github.com/nrollr/325e9bc4c35a0523d290b38cfa3c5142
-- 로컬 노드 버전 탐색 : https://nodejs.org/dist/
+- [설치방법](https://gist.github.com/nrollr/325e9bc4c35a0523d290b38cfa3c5142)
+- [로컬 노드 버전 탐색](https://nodejs.org/dist/)
 - 로컬 노드 버전 확인 : ```node --version```
 
 ```
@@ -133,4 +133,4 @@ crontab -e
 
 
 
-- Created by [Jingoo Kim](https://github.com/Kimjingoo), [Youngjin Yang](https://github.com/ojin0611), [Jungbin Im](https://github.com/dlawjdqls10), [Seoyoung Jang](https://github.com/Seoyoung1202) -
+Created by [Jingoo Kim](https://github.com/Kimjingoo), [Youngjin Yang](https://github.com/ojin0611), [Jungbin Im](https://github.com/dlawjdqls10), [Seoyoung Jang](https://github.com/Seoyoung1202)
