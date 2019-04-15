@@ -2,7 +2,6 @@
 - Amazon EC2 : 자동화
 - Amazon S3  : 결과 데이터 저장
 - Amazon DynamoDB : Admin DB Table 저장
-- Amazon Athena : S3에 저장된 데이터 쿼리
 
 ## 2가지 process
 1. 주기적으로 전체 브랜드 크롤링 
@@ -133,4 +132,4 @@ crontab -e
 
 
 
-Created by [Jingoo Kim](https://github.com/Kimjingoo), [Youngjin Yang](https://github.com/ojin0611), [Jungbin Im](https://github.com/dlawjdqls10), [Seoyoung Jang](https://github.com/Seoyoung1202)
+Created by [Youngjin Yang](https://github.com/ojin0611), [Jungbin Im](https://github.com/dlawjdqls10), [Seoyoung Jang](https://github.com/Seoyoung1202) & [Jingoo Kim](https://github.com/Kimjingoo)
